@@ -1,96 +1,134 @@
 import { request } from "https";
 import React, { useState } from "react";
+import { updateTrackDrift } from "./drift"
+import { initSoundPlayer, updateSoundPlayer, setTrackVolume, setTrackDisable, setTrackActivity } from "./soundplayer"
 import "./App.css";
+import { isPropertySignature } from "typescript";
 
-const driftAmt = 0.05;
-const maxDriftSpeed = 0.2;
-
-class App extends React.Component<any,any> {
+export class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      tracks :[
-        { index: 0, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
-        { index: 1, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
-        { index: 2, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
-        { index: 3, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
-        { index: 4, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
-      ]
+      tracks: [
+        {
+          index: 0,
+          volume: 50,
+          activity: 50,
+          volDriftVelocity: 0,
+          actDriftVelocity: 0,
+          drifting: false,
+          disabled: false,
+        },
+        {
+          index: 1,
+          volume: 50,
+          activity: 50,
+          volDriftVelocity: 0,
+          actDriftVelocity: 0,
+          drifting: false,
+          disabled: false,
+        },
+        {
+          index: 2,
+          volume: 50,
+          activity: 50,
+          volDriftVelocity: 0,
+          actDriftVelocity: 0,
+          drifting: false,
+          disabled: false,
+        },
+        //{ index: 3, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
+        //{ index: 4, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
+      ],
+      currentChord: "G",
     };
 
-    this.appLoop = this.appLoop.bind(this)
-    this.handleVolumeChange = this.handleVolumeChange.bind(this)
-    this.handleActivityChange = this.handleActivityChange.bind(this)
-    this.handleDriftToggle = this.handleDriftToggle.bind(this)
-    this.handleDisableToggle = this.handleDisableToggle.bind(this)
-
+    this.appLoop = this.appLoop.bind(this);
+    this.handleVolumeChange = this.handleVolumeChange.bind(this);
+    this.handleActivityChange = this.handleActivityChange.bind(this);
+    this.handleDriftToggle = this.handleDriftToggle.bind(this);
+    this.handleDisableToggle = this.handleDisableToggle.bind(this);
+    this.handleChordClick = this.handleChordClick.bind(this);
   }
 
-  appLoop(){
-    
-    const oldTrackState = this.state.tracks
-
-    oldTrackState.forEach((track : any) => {
-      if (!track.disabled){
-        if (track.drifting){
-          track.volDriftVelocity = randomDriftVelocity(track.volDriftVelocity, driftAmt, maxDriftSpeed, -maxDriftSpeed)
-          track.volume = parseFloat(limitDriftIncrease(track.volume, track.volDriftVelocity, 100, 0))
-          if (track.volume === 0 || track.volume === 100){track.volDriftVelocity = 0} 
-
-          track.actDriftVelocity = randomDriftVelocity(track.actDriftVelocity, driftAmt, maxDriftSpeed, -maxDriftSpeed)
-          track.activity = parseFloat(limitDriftIncrease(track.activity, track.actDriftVelocity, 100, 0))
-          if (track.activity === 0 || track.activity === 100){track.actDriftVelocity = 0}
-        }
+  appLoop() {
+    const newTrackState = updateTrackDrift(this.state.tracks);
+    newTrackState.forEach((track: any, index: number) => {
+      if (track.volume !== this.state.volume) {
+        this.handleVolumeChange(track.volume, index);
       }
-    })
-    
-    this.setState(()=>({tracks : oldTrackState}))
+      if (track.activity !== this.state.activity) {
+        this.handleActivityChange(track.activity, index);
+      }
+    });
+
+    updateSoundPlayer(this.state.tracks, this.state.currentChord)
 
     window.requestAnimationFrame(this.appLoop);
   }
 
-  handleVolumeChange(value : number, index : number){
+  handleVolumeChange(value: any, index: number) {
     let newTrackState = this.state.tracks;
-    newTrackState[index].volume = value;
-    this.setState({tracks: newTrackState})
+    newTrackState[index].volume = parseFloat(value);
+    this.setState({ tracks: newTrackState }, () =>
+      setTrackVolume(this.state.tracks[index].volume, index)
+    );
   }
 
-  handleActivityChange(value : number, index : number){
+  handleActivityChange(value: any, index: number) {
     let newTrackState = this.state.tracks;
-    newTrackState[index].activity = value;
-    this.setState({tracks: newTrackState})
+    newTrackState[index].activity = parseFloat(value);
+    this.setState({ tracks: newTrackState }, () =>
+      setTrackActivity(this.state.tracks[index].activity, index)
+    );
   }
 
-  handleDriftToggle(index : number){
+  handleDriftToggle(index: number) {
     let newTrackState = this.state.tracks;
     newTrackState[index].drifting = !newTrackState[index].drifting;
-    this.setState({tracks: newTrackState})
+    this.setState({ tracks: newTrackState });
   }
 
-  handleDisableToggle(index : number){
+  handleDisableToggle(index: number) {
     let newTrackState = this.state.tracks;
     newTrackState[index].disabled = !newTrackState[index].disabled;
-    this.setState({tracks: newTrackState})
+    this.setState({ tracks: newTrackState }, () => {
+      setTrackDisable(this.state.tracks, index);
+    });
   }
 
-  render(){
-    return(
-      <UIContainer 
-        numberOfTracks = {this.state.numberOfTracks} 
-        tracks = {this.state.tracks} 
-        handleVolumeChange = {this.handleVolumeChange}
-        handleActivityChange = {this.handleActivityChange}
-        handleDriftToggle = {this.handleDriftToggle}
-        handleDisableToggle = {this.handleDisableToggle}/>
-    )
+  handleChordClick(chord: string) {
+    if (chord !== this.state.currentChord){
+      this.setState({ currentChord: chord });
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <FaderContainer
+          numberOfTracks={this.state.numberOfTracks}
+          tracks={this.state.tracks}
+          handleVolumeChange={this.handleVolumeChange}
+          handleActivityChange={this.handleActivityChange}
+          handleDriftToggle={this.handleDriftToggle}
+          handleDisableToggle={this.handleDisableToggle}
+        />
+        <ChordContainer
+          currentChord={this.state.currentChord}
+          handleChordClick={this.handleChordClick}
+        />
+      </div>
+    );
   }
 
   componentDidMount() {
+    initSoundPlayer(this.state.tracks);
     this.appLoop();
   }
 }
 
-class UIContainer extends React.Component<any,any> {
+class FaderContainer extends React.Component<any,any> {
   constructor(props: any) {
     super(props)
     this.state = {
@@ -100,7 +138,7 @@ class UIContainer extends React.Component<any,any> {
   render(){
 
     return (
-      <div className = "UIContainer">
+      <div className = "FaderContainer">
         {this.props.tracks.map((track : any) => {
           return (
             <TrackUI 
@@ -181,7 +219,7 @@ class TrackUI extends React.Component<any, any> {
           Enabled:{" "}
           <input
             type="checkbox"
-            value={this.props.disabled}
+            checked={!this.props.disabled}
             onChange={this.handleDisableToggle}
           ></input>
         </p>
@@ -190,19 +228,25 @@ class TrackUI extends React.Component<any, any> {
   }
 }
 
+function ChordContainer(props : any){
+  return (
+    <div className = "ChordContainer">
+      <ChordButton value = "G" name = "G" handleChordClick = {props.handleChordClick} />
+      <ChordButton value = "E" name = "Em" handleChordClick = {props.handleChordClick} />
+      <ChordButton value = "C" name = "C" handleChordClick = {props.handleChordClick} />
+      the current chord is {props.currentChord}
+    </div>
+  )
+}
+
+function ChordButton(props : any){
+  return (
+    <div className = "ChordButton">
+      <button onClick = { () => props.handleChordClick(props.value) }>
+      {props.name}</button>
+    </div>
+  )
+}
+
 export default App;
 
-function randomDriftVelocity(value: number, amount: number, max: number, min: number){
-  value -= amount / 2;
-  value += amount * Math.random();
-  if (value > max) {value = max};
-  if (value < min) {value = min};
-  return Math.round(value * 100) / 100
-}
-
-function limitDriftIncrease(value: any, adder: number, max: number, min: number){
-  value += adder;
-  if (value > max) {value = max};
-  if (value < min) {value = min};
-  return value 
-}

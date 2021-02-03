@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-.UIContainer {
+.FaderContainer {
   width: 100%;
   min-width: 400px;
   display: flex;
@@ -21,4 +21,16 @@ input[type="range"] {
   width: 100px;
   margin-top: 70px;
   margin-bottom: 50px;
+}
+
+.ChordContainer {
+  width: 30%;
+  position: absolute;
+  display: flex;
+  bottom: 20px;
+  left: 20px;
+}
+
+.ChordButton {
+  margin: auto;
 }
