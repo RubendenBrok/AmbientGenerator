@@ -37,7 +37,15 @@ export class App extends React.Component<any, any> {
           drifting: false,
           disabled: false,
         },
-        //{ index: 3, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
+        {
+          index: 3,
+          volume: 50,
+          activity: 50,
+          volDriftVelocity: 0,
+          actDriftVelocity: 0,
+          drifting: false,
+          disabled: false,
+        },
         //{ index: 4, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
       ],
       currentChord: "G",
@@ -232,8 +240,11 @@ function ChordContainer(props : any){
   return (
     <div className = "ChordContainer">
       <ChordButton value = "G" name = "G" handleChordClick = {props.handleChordClick} />
-      <ChordButton value = "E" name = "Em" handleChordClick = {props.handleChordClick} />
+      <ChordButton value = "A" name = "Am" handleChordClick = {props.handleChordClick} />
+      <ChordButton value = "B" name = "Bm" handleChordClick = {props.handleChordClick} />
       <ChordButton value = "C" name = "C" handleChordClick = {props.handleChordClick} />
+      <ChordButton value = "D" name = "D" handleChordClick = {props.handleChordClick} />
+      <ChordButton value = "E" name = "Em" handleChordClick = {props.handleChordClick} />
       the current chord is {props.currentChord}
     </div>
   )

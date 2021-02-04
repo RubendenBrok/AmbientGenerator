@@ -28,7 +28,7 @@ soundSources [
 ]
 */
 export function initSoundPlayer(trackData : any){
-    Howler.volume(0.6)
+    //Howler.volume(0.6)
 
     soundSources.forEach((track, index) => {
         track.sampleLoader.forEach(sample =>{
@@ -49,28 +49,15 @@ export function updateSoundPlayer(trackData : any, currentChord : string){
         if (frameCounter > track.nextSoundTimer) {
         
           track.sounds[track.currentSoundIndex].howl.stop()
-          /*
-          track.sounds[track.currentSoundIndex].fading = true;
-          track.sounds[track.currentSoundIndex].howl.fade(
-            track.sounds[track.currentSoundIndex].howl.volume(),
-            0,
-            track.fadeOutTime, 
-            () => {track.sounds[track.currentSoundIndex].fading = false}
-          );
-          */
+
+         track.nextSoundIndex = getNextSoundIndex(track.currentSoundIndex, track.sounds, currentChord)
+
          if (!isNaN(track.nextSoundIndex)) { 
             track.sounds[track.nextSoundIndex].howl.play();     
             track.currentSoundIndex = track.nextSoundIndex;
           }
 
-
-         let nextSoundIndex = getNextSoundIndex(track.currentSoundIndex, track.sounds, currentChord)
-
-          track.nextSoundIndex = nextSoundIndex;
-
-
-
-          track.nextSoundTimer = frameCounter + ((100 - trackData[index].activity) / 100) * track.maxSampleLength + track.minSampleLength;
+          track.nextSoundTimer = frameCounter + ((100 - trackData[index].activity) / 100) * track.maxSampleLength + track.minSampleLength ;
         }
     }
     })
@@ -118,11 +105,11 @@ function getNextSoundIndex(currentSoundIndex : number, sounds : object[], curren
     let indexInOptions : number
 
     sounds.forEach((sound : any, index : number) => {
-        if (index !== currentSoundIndex){
+      //  if (index !== currentSoundIndex){
             if (sound.chords.includes(currentChord)){
                 newSoundOptions.push(index)
             }
-        }
+      //  }
     })
 
     newSoundIndex = newSoundOptions[Math.floor(Math.random() * newSoundOptions.length)]
