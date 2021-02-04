@@ -1,12 +1,22 @@
+import { time } from "console";
 import { Howl, Howler } from "howler"
-import { soundSources } from "./soundsources"
+import { start } from "repl";
+import { soundSources, drumSources } from "./soundsources"
 
 let frameCounter : number;
+const SEQUENCER = {
+    rhythmicSequence : false,
+    startOfSequence : 0,
+    currentSequencePos : -1,
+    nextSequencePos : 0,
+    bpm : 100
+}
+
+
 
 class Sound {
   howl: any;
   chords: any;
-  fading: boolean
 
   constructor(url: string, baseVolume: number, chords: Array<string>) {
     this.howl = new Howl({
@@ -15,7 +25,6 @@ class Sound {
 
     });
     this.chords = chords;
-    this.fading = false
   }
 }
 
@@ -27,16 +36,25 @@ soundSources [
     ]}
 ]
 */
-export function initSoundPlayer(trackData : any){
-    //Howler.volume(0.6)
-
-    soundSources.forEach((track, index) => {
+export function initSoundPlayer(trackData : any, bpm : number){
+    soundSources.forEach((track) => {
         track.sampleLoader.forEach(sample =>{
-            soundSources[index].sounds.push(
+            track.sounds.push(
                 new Sound(sample.sampleSource, track.baseVolume, sample.chords)
             )
         })
     })
+
+    drumSources.forEach((track) => {
+        track.sampleLoader.forEach(sample =>{
+            track.sounds.push(
+                new Sound(sample.sampleSource, track.baseVolume, [])
+            )
+        })
+    })
+
+
+    SEQUENCER.bpm = bpm;
 }
 
 
@@ -44,23 +62,40 @@ export function updateSoundPlayer(trackData : any, currentChord : string){
 
     frameCounter = performance.now();
 
-    soundSources.forEach((track, index) => { 
-        if (!trackData[index].disabled){
-        if (frameCounter > track.nextSoundTimer) {
-        
-          track.sounds[track.currentSoundIndex].howl.stop()
-
-         track.nextSoundIndex = getNextSoundIndex(track.currentSoundIndex, track.sounds, currentChord)
-
-         if (!isNaN(track.nextSoundIndex)) { 
-            track.sounds[track.nextSoundIndex].howl.play();     
-            track.currentSoundIndex = track.nextSoundIndex;
-          }
-
-          track.nextSoundTimer = frameCounter + ((100 - trackData[index].activity) / 100) * track.maxSampleLength + track.minSampleLength ;
+    if (SEQUENCER.rhythmicSequence){
+        SEQUENCER.currentSequencePos = calcSequencePos(SEQUENCER.startOfSequence, SEQUENCER.bpm);
+        if (SEQUENCER.currentSequencePos >= 32){sequencerInit()};
+        if (SEQUENCER.currentSequencePos === SEQUENCER.nextSequencePos){
+            SEQUENCER.nextSequencePos++;
+            if (!isNaN(drumSources[0].patterns[SEQUENCER.currentSequencePos])){
+                drumSources[0].sounds[0].howl.play();
+            }
+            soundSources.forEach((track : any, index : number) => {
+                if (!trackData[index].disabled){
+                    if (!isNaN(track.currentSequence[SEQUENCER.currentSequencePos])){
+                        track.nextSoundIndex = track.currentSequence[SEQUENCER.currentSequencePos]
+                        track.sounds[track.currentSoundIndex].howl.stop();
+                        track.sounds[track.nextSoundIndex].howl.play();
+                        track.currentSoundIndex = track.nextSoundIndex;
+                    }
+                }
+            })
         }
+    } else {
+        soundSources.forEach((track, index) => { 
+            if (!trackData[index].disabled){
+            if (frameCounter > track.nextSoundTimer) {
+             track.sounds[track.currentSoundIndex].howl.stop()
+             track.nextSoundIndex = getNextSoundIndex(track.sounds, currentChord)
+             if (!isNaN(track.nextSoundIndex)) { 
+                track.sounds[track.nextSoundIndex].howl.play();     
+                track.currentSoundIndex = track.nextSoundIndex;
+              }
+              track.nextSoundTimer = frameCounter + ((100 - trackData[index].activity) / 100) * track.maxSampleLength + track.minSampleLength ;
+            }
+        }
+        })
     }
-    })
 }
 
 export function setTrackVolume(volume : number, index : number){
@@ -99,10 +134,9 @@ function getRandomIntButNotThisOne(range : number, current : number){
     return out
 }
 
-function getNextSoundIndex(currentSoundIndex : number, sounds : object[], currentChord : string){
+function getNextSoundIndex(sounds : object[], currentChord : string){
     let newSoundIndex : number
     let newSoundOptions : number[] = []
-    let indexInOptions : number
 
     sounds.forEach((sound : any, index : number) => {
       //  if (index !== currentSoundIndex){
@@ -114,4 +148,59 @@ function getNextSoundIndex(currentSoundIndex : number, sounds : object[], curren
 
     newSoundIndex = newSoundOptions[Math.floor(Math.random() * newSoundOptions.length)]
     return newSoundIndex
+}
+
+export function toggleRhythmic(value : boolean, trackState : any){
+    SEQUENCER.rhythmicSequence = value;
+    if (value){
+        sequencerInit()
+    }
+
+    resetSoundSourcesSequencers(trackState)
+}
+
+export function updateBPM(bpm : number){
+    SEQUENCER.bpm = bpm
+}
+
+function calcSixteenthNoteLength(bpm : number){
+    return ( 60 / bpm / 4 ) * 1000;
+}
+
+function calcSequencePos(startTime : number, bpm : number){
+    let sixteenth = calcSixteenthNoteLength(bpm);
+    let timePassed = performance.now() - startTime;
+    return Math.floor(timePassed / sixteenth)
+}
+
+function sequencerInit(){
+    SEQUENCER.startOfSequence = performance.now();
+    SEQUENCER.currentSequencePos = -1;
+    SEQUENCER.nextSequencePos = 0;
+}
+
+function resetSoundSourcesSequencers(trackState : any){
+    soundSources.forEach((track : any, index : number) => {
+        track.currentSequence = []
+        for (let i = 0; i < 32; i++){
+            if (Math.random() > ((100 - trackState[index].activity) / 100)){
+                let newSoundIndex = getNextSoundIndex(track.sounds, "G");
+                track.currentSequence.push(newSoundIndex);
+            } else {
+                track.currentSequence.push(NaN)
+            }
+        }
+    })
+}
+
+export function updateCurrentSequenceChords(chord : string){
+    soundSources.forEach((track : any, index : number) => {
+        track.currentSequence.forEach((seqItem: number, seqIndex : number) => {
+            if (!isNaN(seqItem)){
+                if (!track.sounds[seqItem].chords.includes(chord)){
+                    track.currentSequence[seqIndex] = getNextSoundIndex(track.sounds, chord)
+                }
+            }
+        })
+    })
 }

@@ -67,6 +67,7 @@ import kalimba14 from "./sound/4 kalimba/14.mp3"
 import kalimba15 from "./sound/4 kalimba/15.mp3"
 import kalimba16 from "./sound/4 kalimba/16.mp3"
 
+import kick from "./sound/drums/kick.mp3"
 
 export const soundSources = [
   {
@@ -101,6 +102,7 @@ export const soundSources = [
     minSampleLength: 300,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
+    currentsequence : []
   },
   {
     sampleLoader: [  
@@ -117,7 +119,7 @@ export const soundSources = [
       { sampleSource: synthbas11, chords: ["E"] },
       { sampleSource: synthbas12, chords: ["E"] },
       { sampleSource: synthbas13, chords: ["F"] },
-      { sampleSource: synthbas14, chords: ["D"] },
+      { sampleSource: synthbas14, chords: ["F"] },
     ],
     sounds: [] as any,
     nextSoundTimer: 1,
@@ -128,6 +130,7 @@ export const soundSources = [
     minSampleLength: 300,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
+    currentsequence : []
   },
   {
     sampleLoader: [
@@ -155,6 +158,7 @@ export const soundSources = [
     minSampleLength: 1000,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
+    currentSequence : []
   },
   {
     sampleLoader: [
@@ -183,5 +187,17 @@ export const soundSources = [
     minSampleLength: 300,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
+    currentsequence : []
   },
 ];
+
+export const drumSources = [
+  {
+  sampleLoader:[
+    {sampleSource: kick}
+  ],
+  patterns: [0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, 0, NaN],
+  baseVolume: 1,
+  sounds: [] as any
+  }
+]

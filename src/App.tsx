@@ -1,7 +1,7 @@
 import { request } from "https";
 import React, { useState } from "react";
 import { updateTrackDrift } from "./drift"
-import { initSoundPlayer, updateSoundPlayer, setTrackVolume, setTrackDisable, setTrackActivity } from "./soundplayer"
+import { initSoundPlayer, updateSoundPlayer, setTrackVolume, setTrackDisable, setTrackActivity, toggleRhythmic, updateBPM, updateCurrentSequenceChords } from "./soundplayer"
 import "./App.css";
 import { isPropertySignature } from "typescript";
 
@@ -49,6 +49,8 @@ export class App extends React.Component<any, any> {
         //{ index: 4, volume: 50, activity: 50, volDriftVelocity: 0, actDriftVelocity: 0, drifting: false, disabled: false},
       ],
       currentChord: "G",
+      rhythmic: false,
+      bpm: 100
     };
 
     this.appLoop = this.appLoop.bind(this);
@@ -56,6 +58,8 @@ export class App extends React.Component<any, any> {
     this.handleActivityChange = this.handleActivityChange.bind(this);
     this.handleDriftToggle = this.handleDriftToggle.bind(this);
     this.handleDisableToggle = this.handleDisableToggle.bind(this);
+    this.handleBpmChange = this.handleBpmChange.bind(this);
+    this.handleRhythmicToggle = this.handleRhythmicToggle.bind(this);
     this.handleChordClick = this.handleChordClick.bind(this);
   }
 
@@ -91,15 +95,15 @@ export class App extends React.Component<any, any> {
     );
   }
 
-  handleDriftToggle(index: number) {
+  handleDriftToggle(value :boolean, index: number) {
     let newTrackState = this.state.tracks;
-    newTrackState[index].drifting = !newTrackState[index].drifting;
+    newTrackState[index].drifting = value;
     this.setState({ tracks: newTrackState });
   }
 
-  handleDisableToggle(index: number) {
+  handleDisableToggle(value : boolean, index: number) {
     let newTrackState = this.state.tracks;
-    newTrackState[index].disabled = !newTrackState[index].disabled;
+    newTrackState[index].disabled = !value;
     this.setState({ tracks: newTrackState }, () => {
       setTrackDisable(this.state.tracks, index);
     });
@@ -107,8 +111,16 @@ export class App extends React.Component<any, any> {
 
   handleChordClick(chord: string) {
     if (chord !== this.state.currentChord){
-      this.setState({ currentChord: chord });
+      this.setState({ currentChord: chord }, () => updateCurrentSequenceChords(this.state.currentChord));
     }
+  }
+
+  handleBpmChange(newBpm : number){
+    this.setState( {bpm : newBpm}, () => updateBPM(this.state.bpm) )
+  }
+
+  handleRhythmicToggle(value : boolean){
+    this.setState( {rhythmic : value}, () => toggleRhythmic(this.state.rhythmic, this.state.tracks) )
   }
 
   render() {
@@ -122,6 +134,12 @@ export class App extends React.Component<any, any> {
           handleDriftToggle={this.handleDriftToggle}
           handleDisableToggle={this.handleDisableToggle}
         />
+        <RhythmContainer
+          rhythmic={this.state.rhythmic}
+          bpm={this.state.bpm}
+          handleBpmChange={this.handleBpmChange}
+          handleRhythmicToggle={this.handleRhythmicToggle}
+        />
         <ChordContainer
           currentChord={this.state.currentChord}
           handleChordClick={this.handleChordClick}
@@ -131,23 +149,15 @@ export class App extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    initSoundPlayer(this.state.tracks);
+    initSoundPlayer(this.state.tracks, this.state.bpm);
     this.appLoop();
   }
 }
 
-class FaderContainer extends React.Component<any,any> {
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      tracks : this.props.tracks}
-    } 
-
-  render(){
-
+function FaderContainer(props : any){
     return (
       <div className = "FaderContainer">
-        {this.props.tracks.map((track : any) => {
+        {props.tracks.map((track : any) => {
           return (
             <TrackUI 
               index = {track.index} 
@@ -155,86 +165,91 @@ class FaderContainer extends React.Component<any,any> {
               activity = {track.activity} 
               disabled = {track.disabled}
               key = {track.index} 
-              handleVolumeChange = {this.props.handleVolumeChange}
-              handleActivityChange = {this.props.handleActivityChange}
-              handleDriftToggle = {this.props.handleDriftToggle}
-              handleDisableToggle = {this.props.handleDisableToggle}
+              handleVolumeChange = {props.handleVolumeChange}
+              handleActivityChange = {props.handleActivityChange}
+              handleDriftToggle = {props.handleDriftToggle}
+              handleDisableToggle = {props.handleDisableToggle}
               />
           )})
         }
       </div>
     )
-  }
 }
 
-class TrackUI extends React.Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.handleVolumeChange = this.handleVolumeChange.bind(this);
-    this.handleActivityChange = this.handleActivityChange.bind(this);
-    this.handleDriftToggle = this.handleDriftToggle.bind(this);
-    this.handleDisableToggle = this.handleDisableToggle.bind(this);
-  }
-
-  handleVolumeChange(e: any) {
-    this.props.handleVolumeChange(e.target.value, this.props.index);
-  }
-
-  handleActivityChange(e: any) {
-    this.props.handleActivityChange(e.target.value, this.props.index);
-  }
-
-  handleDriftToggle() {
-    this.props.handleDriftToggle(this.props.index);
-  }
-
-  handleDisableToggle() {
-    this.props.handleDisableToggle(this.props.index);
-  }
-
-  render() {
+//class TrackUI extends React.Component<any, any> {
+function TrackUI(props : any) {
     return (
       <div className="TrackUI">
-        <p>This is track number {this.props.index}</p>
-        <p>its volume is {Math.round(this.props.volume)}</p>
+        <p>This is track number {props.index}</p>
+        <p>its volume is {Math.round(props.volume)}</p>
         <p>
-          <input
-            type="range"
-            value={this.props.volume}
-            onChange={this.handleVolumeChange}
-            disabled={this.props.disabled}
-          ></input>
+          <ControlledSlider
+            value={props.volume}
+            onChange={props.handleVolumeChange}
+            disabled={props.disabled}
+            index={props.index}
+            min={0}
+            max={100}
+          />
         </p>
-        <p>its activity is {Math.round(this.props.activity)}</p>
+        <p>its activity is {Math.round(props.activity)}</p>
         <p>
-          <input
-            type="range"
-            value={this.props.activity}
-            onChange={this.handleActivityChange}
-            disabled={this.props.disabled}
-          ></input>
+          <ControlledSlider
+            value={props.activity}
+            onChange={props.handleActivityChange}
+            disabled={props.disabled}
+            index={props.index}
+            min={0}
+            max={100}
+          />
         </p>
         <p>
           Drift:{" "}
-          <input
-            type="checkbox"
-            value={this.props.drifting}
-            onChange={this.handleDriftToggle}
-            disabled={this.props.disabled}
-          ></input>
+          <ControlledCheckbox
+            index={props.index}
+            checked={props.drifting}
+            onChange={props.handleDriftToggle}
+            disabled={props.disabled}
+          />
         </p>
         <p>
           Enabled:{" "}
-          <input
-            type="checkbox"
-            checked={!this.props.disabled}
-            onChange={this.handleDisableToggle}
-          ></input>
+          <ControlledCheckbox
+            index={props.index}
+            checked={!props.disabled}
+            onChange={props.handleDisableToggle}
+            disabled={false}
+          />
         </p>
       </div>
     );
   }
+
+function RhythmContainer(props : any){
+  return (
+    <div className = "RhythmContainer">
+    <p>Rhythmic:{" "}
+    <ControlledCheckbox 
+      index = {0}
+      checked = {props.rhythmic}
+      onChange = {props.handleRhythmicToggle}
+      disabled = {false}
+    />
+    </p>
+    <p>
+      The current BPM is {props.bpm}
+    </p>
+    <ControlledSlider 
+      index = {0}
+      value = {props.bpm}
+      onChange = {props.handleBpmChange}
+      min={40}
+      max={130}
+      />
+    </div>
+  )
 }
+
 
 function ChordContainer(props : any){
   return (
@@ -256,6 +271,36 @@ function ChordButton(props : any){
       <button onClick = { () => props.handleChordClick(props.value) }>
       {props.name}</button>
     </div>
+  )
+}
+
+function ControlledSlider(props : any){
+  function handleChange(event : any){
+    props.onChange(event.target.value, props.index)
+  }
+  return (
+    <input
+    type="range"
+    value={props.value}
+    onChange={handleChange}
+    disabled={props.disabled}
+    min={props.min}
+    max={props.max}
+  ></input>
+  )
+}
+
+function ControlledCheckbox(props : any){
+  function handleChange(event : any){
+    props.onChange(event.target.checked, props.index)
+  }
+  return (
+    <input
+    type="checkbox"
+    checked={props.checked}
+    onChange={handleChange}
+    disabled={props.disabled}
+  ></input>
   )
 }
 
