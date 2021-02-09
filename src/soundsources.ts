@@ -95,6 +95,7 @@ import forest from "./sound/fx/forest.mp3"
 
 
 export const soundSources : any = [
+//INSTURMENTS////
   {
     sampleLoader: [
       { sampleSource: piano1, chords: ['G','E','C'] },
@@ -118,6 +119,7 @@ export const soundSources : any = [
       { sampleSource: piano19, chords: ['G'] },
       { sampleSource: piano20, chords: ['D','A','B'] },
     ],
+    kind: "inst",
     sequencer : {},
     fadeOutTime: 40,
     baseVolume: 1,
@@ -145,6 +147,7 @@ export const soundSources : any = [
       { sampleSource: synthbas13, chords: ["F"] },
       { sampleSource: synthbas14, chords: ["F"] },
     ],
+    kind: "inst",
     sequencer : {},
     fadeOutTime: 70,
     baseVolume: 1,
@@ -172,6 +175,7 @@ export const soundSources : any = [
       { sampleSource: synthpad13, chords: ['G','B'] },
       { sampleSource: synthpad14, chords: ['E','B','G','D'] },
     ],
+    kind: "inst",
     sequencer : {},
     fadeOutTime: 500,
     baseVolume: 0.5,
@@ -200,6 +204,7 @@ export const soundSources : any = [
       { sampleSource: kalimba14, chords: ['G','C','E'] },
       { sampleSource: kalimba15, chords: ['A','C'] }, 
     ],
+    kind: "inst",
     sequencer : {},
     fadeOutTime: 40,
     baseVolume: 0.6,
@@ -231,6 +236,7 @@ export const soundSources : any = [
       { sampleSource: strings17, chords: ['D','G','B'] }, 
 
     ],
+    kind: "inst",
     sequencer : {},
     fadeOutTime: 40,
     baseVolume: 0.3,
@@ -241,13 +247,12 @@ export const soundSources : any = [
     maxSoundsInSequence: 3,
     minSoundsInSequence: 1,
   },
-];
-
-export const drumSources = [
+  //DRUMS///
   {
   sampleLoader:[
     {sampleSource: kick}
   ],
+  kind: "drum",
   patterns: [[0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, 0, NaN],],
   baseVolume: 1,
   currentVolume: 1,
@@ -262,6 +267,8 @@ export const drumSources = [
       {sampleSource: snare2},
       {sampleSource: snare3},
     ],
+    kind: "drum",
+
     patterns: [[NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN, NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN],],
     baseVolume: 0.5,
     currentVolume: 1,
@@ -269,23 +276,24 @@ export const drumSources = [
     sequencer : {},
     maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
-    }
-]
-
-export const fxSources = [
+    },
+//FX//////
   {
     sampleLoader: [{ sampleSource: vinyl }],
     baseVolume: 1,
     currentVolume: 1,
+    kind: "fx",
   },
   {
     sampleLoader: [{ sampleSource: rain }],
     baseVolume: 1,
     currentVolume: 1,
+    kind: "fx",
   },
   {
     sampleLoader: [{ sampleSource: forest }],
     baseVolume: 1,
     currentVolume: 1,
+    kind: "fx",
   },
 ];
