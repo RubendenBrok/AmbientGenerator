@@ -12,18 +12,6 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-/*
-mockLoop();
-
-function mockLoop(){
-
-  trackArr[1].volume ++;
-
-
-
-  requestAnimationFrame(mockLoop);
-}
-*/
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -1,7 +1,7 @@
 import { request } from "https";
 import React, { useState } from "react";
 import { updateTrackDrift } from "./drift"
-import { initSoundPlayer, updateSoundPlayer, setTrackVolume, setTrackDisable, setTrackActivity, toggleRhythmic, updateBPM, updateCurrentSequenceChords } from "./soundplayer"
+import { initSoundPlayer, updateSoundPlayer, setTrackVolume, setTrackDisable, updateTrackActivity, toggleRhythmic, updateBPM, updateCurrentSequenceChords} from "./soundplayer"
 import "./App.css";
 import { isPropertySignature } from "typescript";
 
@@ -50,7 +50,7 @@ export class App extends React.Component<any, any> {
       ],
       currentChord: "G",
       rhythmic: false,
-      bpm: 100
+      bpm: 100,
     };
 
     this.appLoop = this.appLoop.bind(this);
@@ -74,7 +74,7 @@ export class App extends React.Component<any, any> {
       }
     });
 
-    updateSoundPlayer(this.state.tracks, this.state.currentChord)
+    updateSoundPlayer(this.state.rhythmic)
 
     window.requestAnimationFrame(this.appLoop);
   }
@@ -91,7 +91,7 @@ export class App extends React.Component<any, any> {
     let newTrackState = this.state.tracks;
     newTrackState[index].activity = parseFloat(value);
     this.setState({ tracks: newTrackState }, () =>
-      setTrackActivity(this.state.tracks[index].activity, index)
+      updateTrackActivity(this.state.tracks[index].activity, index)
     );
   }
 
@@ -116,12 +116,14 @@ export class App extends React.Component<any, any> {
   }
 
   handleBpmChange(newBpm : number){
-    this.setState( {bpm : newBpm}, () => updateBPM(this.state.bpm) )
+    this.setState( {bpm : newBpm}, () => updateBPM(this.state.bpm, this.state.rhythmic) )
   }
 
   handleRhythmicToggle(value : boolean){
-    this.setState( {rhythmic : value}, () => toggleRhythmic(this.state.rhythmic, this.state.tracks) )
+    this.setState( {rhythmic : value}, () => toggleRhythmic(this.state.rhythmic, this.state.bpm) )
   }
+
+
 
   render() {
     return (
@@ -149,10 +151,10 @@ export class App extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    initSoundPlayer(this.state.tracks, this.state.bpm);
+    initSoundPlayer(this.state.tracks, this.state.bpm, this.state.currentChord, this.state.rhythmic);
     this.appLoop();
   }
-}
+} 
 
 function FaderContainer(props : any){
     return (
@@ -303,6 +305,7 @@ function ControlledCheckbox(props : any){
   ></input>
   )
 }
+
 
 export default App;
 

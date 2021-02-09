@@ -65,11 +65,10 @@ import kalimba12 from "./sound/4 kalimba/12.mp3"
 import kalimba13 from "./sound/4 kalimba/13.mp3"
 import kalimba14 from "./sound/4 kalimba/14.mp3"
 import kalimba15 from "./sound/4 kalimba/15.mp3"
-import kalimba16 from "./sound/4 kalimba/16.mp3"
 
 import kick from "./sound/drums/kick.mp3"
 
-export const soundSources = [
+export const soundSources : any = [
   {
     sampleLoader: [
       { sampleSource: piano1, chords: ['G','E','C'] },
@@ -93,13 +92,10 @@ export const soundSources = [
       { sampleSource: piano19, chords: ['G'] },
       { sampleSource: piano20, chords: ['D','A','B'] },
     ],
-    sounds: [] as any,
-    nextSoundTimer: 1,
+    sequencer : {},
     fadeOutTime: 40,
     baseVolume: 1,
     currentVolume: 1,
-    maxSampleLength: 10000,
-    minSampleLength: 300,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
     currentsequence : []
@@ -121,13 +117,10 @@ export const soundSources = [
       { sampleSource: synthbas13, chords: ["F"] },
       { sampleSource: synthbas14, chords: ["F"] },
     ],
-    sounds: [] as any,
-    nextSoundTimer: 1,
+    sequencer : {},
     fadeOutTime: 70,
     baseVolume: 1,
     currentVolume: 1,
-    maxSampleLength: 10000,
-    minSampleLength: 300,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
     currentsequence : []
@@ -149,13 +142,10 @@ export const soundSources = [
       { sampleSource: synthpad13, chords: ['G','B'] },
       { sampleSource: synthpad14, chords: ['E','B','G','D'] },
     ],
-    sounds: [] as any,
-    nextSoundTimer: 1,
+    sequencer : {},
     fadeOutTime: 500,
     baseVolume: 0.5,
     currentVolume: 1,
-    maxSampleLength: 10000,
-    minSampleLength: 1000,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
     currentSequence : []
@@ -177,14 +167,12 @@ export const soundSources = [
       { sampleSource: kalimba13, chords: ['A','C','E'] },
       { sampleSource: kalimba14, chords: ['G','C','E'] },
       { sampleSource: kalimba15, chords: ['A','C'] }, 
+      { sampleSource: kalimba15, chords: ['A','C'] }, 
     ],
-    sounds: [] as any,
-    nextSoundTimer: 1,
+    sequencer : {},
     fadeOutTime: 40,
     baseVolume: 0.6,
     currentVolume: 1,
-    maxSampleLength: 10000,
-    minSampleLength: 300,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
     currentsequence : []
@@ -196,8 +184,8 @@ export const drumSources = [
   sampleLoader:[
     {sampleSource: kick}
   ],
-  patterns: [0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, 0, NaN],
+  patterns: [[0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, 0, NaN],],
   baseVolume: 1,
-  sounds: [] as any
+  sequencer : {},
   }
 ]
