@@ -66,7 +66,33 @@ import kalimba13 from "./sound/4 kalimba/13.mp3"
 import kalimba14 from "./sound/4 kalimba/14.mp3"
 import kalimba15 from "./sound/4 kalimba/15.mp3"
 
+import strings1 from "./sound/5 strings/1.mp3"
+import strings2 from "./sound/5 strings/2.mp3"
+import strings3 from "./sound/5 strings/3.mp3"
+import strings4 from "./sound/5 strings/4.mp3"
+import strings5 from "./sound/5 strings/5.mp3"
+import strings6 from "./sound/5 strings/6.mp3"
+import strings7 from "./sound/5 strings/7.mp3"
+import strings8 from "./sound/5 strings/8.mp3"
+import strings9 from "./sound/5 strings/9.mp3"
+import strings10 from "./sound/5 strings/10.mp3"
+import strings11 from "./sound/5 strings/11.mp3"
+import strings12 from "./sound/5 strings/12.mp3"
+import strings13 from "./sound/5 strings/13.mp3"
+import strings14 from "./sound/5 strings/14.mp3"
+import strings15 from "./sound/5 strings/15.mp3"
+import strings16 from "./sound/5 strings/16.mp3"
+import strings17 from "./sound/5 strings/17.mp3"
+
 import kick from "./sound/drums/kick.mp3"
+import snare1 from "./sound/drums/snare1.mp3"
+import snare2 from "./sound/drums/snare2.mp3"
+import snare3 from "./sound/drums/snare3.mp3"
+
+import rain from "./sound/fx/rain.mp3"
+import vinyl from "./sound/fx/vinyl.mp3"
+import forest from "./sound/fx/forest.mp3"
+
 
 export const soundSources : any = [
   {
@@ -98,7 +124,9 @@ export const soundSources : any = [
     currentVolume: 1,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
-    currentsequence : []
+    currentsequence : [],
+    maxSoundsInSequence: 12,
+    minSoundsInSequence: 1,
   },
   {
     sampleLoader: [  
@@ -123,7 +151,9 @@ export const soundSources : any = [
     currentVolume: 1,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
-    currentsequence : []
+    currentsequence : [],
+    maxSoundsInSequence: 12,
+    minSoundsInSequence: 1,
   },
   {
     sampleLoader: [
@@ -148,7 +178,9 @@ export const soundSources : any = [
     currentVolume: 1,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
-    currentSequence : []
+    currentSequence : [],
+    maxSoundsInSequence: 5,
+    minSoundsInSequence: 1,
   },
   {
     sampleLoader: [
@@ -167,7 +199,6 @@ export const soundSources : any = [
       { sampleSource: kalimba13, chords: ['A','C','E'] },
       { sampleSource: kalimba14, chords: ['G','C','E'] },
       { sampleSource: kalimba15, chords: ['A','C'] }, 
-      { sampleSource: kalimba15, chords: ['A','C'] }, 
     ],
     sequencer : {},
     fadeOutTime: 40,
@@ -175,7 +206,40 @@ export const soundSources : any = [
     currentVolume: 1,
     currentSoundIndex : 0,
     nextSoundIndex : 0,
-    currentsequence : []
+    currentsequence : [],
+    maxSoundsInSequence: 12,
+    minSoundsInSequence: 1,
+  },
+  {
+    sampleLoader: [
+      { sampleSource: strings1, chords: ['G','E'] },
+      { sampleSource: strings2, chords: ['B','G'] },
+      { sampleSource: strings3, chords: ['A','C'] },
+      { sampleSource: strings4, chords: ['C','E'] },
+      { sampleSource: strings5, chords: ['E','G'] },
+      { sampleSource: strings6, chords: ['C'] },
+      { sampleSource: strings7, chords: ['A','E'] },
+      { sampleSource: strings8, chords: ['D','B'] },
+      { sampleSource: strings9, chords: ['G','E','A','C'] },
+      { sampleSource: strings10, chords: ['D','G','B'] },
+      { sampleSource: strings11, chords: ['A','C','E'] },
+      { sampleSource: strings12, chords: ['D','G','B','A'] },
+      { sampleSource: strings13, chords: ['D','G','B','E','A','C'] },
+      { sampleSource: strings14, chords: ['A','C','D'] },
+      { sampleSource: strings15, chords: ['D','G','B'] }, 
+      { sampleSource: strings16, chords: ['D','G','B','E','A','C'] }, 
+      { sampleSource: strings17, chords: ['D','G','B'] }, 
+
+    ],
+    sequencer : {},
+    fadeOutTime: 40,
+    baseVolume: 0.3,
+    currentVolume: 1,
+    currentSoundIndex : 0,
+    nextSoundIndex : 0,
+    currentsequence : [],
+    maxSoundsInSequence: 3,
+    minSoundsInSequence: 1,
   },
 ];
 
@@ -186,6 +250,42 @@ export const drumSources = [
   ],
   patterns: [[0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, 0, NaN],],
   baseVolume: 1,
+  currentVolume: 1,
+  currentsequence : [],
   sequencer : {},
-  }
+  maxSoundsInSequence: 12,
+  minSoundsInSequence: 1,
+  },
+  {
+    sampleLoader:[
+      {sampleSource: snare1},
+      {sampleSource: snare2},
+      {sampleSource: snare3},
+    ],
+    patterns: [[NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN, NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN],],
+    baseVolume: 0.5,
+    currentVolume: 1,
+    currentsequence : [],
+    sequencer : {},
+    maxSoundsInSequence: 12,
+    minSoundsInSequence: 1,
+    }
 ]
+
+export const fxSources = [
+  {
+    sampleLoader: [{ sampleSource: vinyl }],
+    baseVolume: 1,
+    currentVolume: 1,
+  },
+  {
+    sampleLoader: [{ sampleSource: rain }],
+    baseVolume: 1,
+    currentVolume: 1,
+  },
+  {
+    sampleLoader: [{ sampleSource: forest }],
+    baseVolume: 1,
+    currentVolume: 1,
+  },
+];
