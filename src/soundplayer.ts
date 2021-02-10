@@ -1,20 +1,19 @@
-import { Howl } from "howler"
+import { Howl, Howler } from "howler"
 import { soundSources } from "./soundsources"
 import { keys } from "./App"
+import { SSL_OP_NO_QUERY_MTU } from "constants";
 
 const chordOptions = ["G","A","B","C","D","E"];
 
-const maxSoundsInSequence = 10
-const minSoundsInSequence = 1
-const freeBPM = 10;
-const freeBPMRandomness = 10
-const sequenceLength = 32
+const sequenceLength = 32;
+const FXLength = 7000;
 
 window.onload = () => {
   masterSeq.playing = true;
   masterSeq.restart();
 }
 
+// MasterSeq holds track of the current sequencer position
 class MasterSeq {
   bpm: number;
   startOfSequence: number;
@@ -23,6 +22,7 @@ class MasterSeq {
   currentChord: string;
   barsPlayed: number;
   playing: boolean;
+  FXTimer: number;
 
   constructor() {
     this.bpm = 0;
@@ -32,9 +32,10 @@ class MasterSeq {
     this.currentChord = "";
     this.barsPlayed = 0;
     this.playing = false;
+    this.FXTimer = -FXLength;
   }
 
-  advanceSequence() {
+  advanceSequence(trackState : any) {
     if (this.playing) {
       this.calcSequencePos();
       if (this.currentSequencePos >= 32) {
@@ -45,14 +46,25 @@ class MasterSeq {
         this.restart();
       }
 
-      if (this.currentSequencePos === this.nextSequencePos) {
+      if (this.currentSequencePos >= this.nextSequencePos) {
         soundSources.forEach((track: any) => {
           if (track.kind === "inst" || track.kind === "drum")
           track.sequencer.playCurrentSequencePos();
         });
 
-        this.nextSequencePos++;
+        this.nextSequencePos = this.currentSequencePos + 1;
       }
+    }
+
+    if (this.FXTimer < performance.now() - FXLength){
+      this.FXTimer = performance.now();
+      soundSources.forEach((track : any, index : number)=>{
+        if (track.kind === "fx"){
+          if (!trackState[keys.disabledKey + index]){
+            track.sequencer.sounds[0].howl.play()
+          }
+        }
+      })
     }
   }
 
@@ -114,9 +126,7 @@ class Sequencer {
 
   build() {
     if (this.patterns) {
-      this.currentSequence = this.patterns[
-        Math.floor(Math.random() * this.patterns.length)
-      ];
+
     } else {
       this.calcAmountOfNotes();
       this.currentSequence = [];
@@ -198,11 +208,11 @@ class Sound {
   howl: any;
   chords: any;
 
-  constructor(url: string, baseVolume: number, chords: Array<string>) {
+  constructor(url: string, baseVolume: number, initVolume: number, chords: string[]) {
     this.howl = new Howl({
       src: [url],
-      volume: baseVolume,
-    });
+      volume: baseVolume * (initVolume / 100)
+    })
     this.chords = chords;
   }
 }
@@ -221,6 +231,8 @@ class Sound {
 */
 
 export function initSoundPlayer(state: any) {
+  Howler.volume(2);
+
   masterSeq.bpm = state.bpm;
   masterSeq.currentChord = state.currentChord;
 
@@ -230,7 +242,7 @@ export function initSoundPlayer(state: any) {
       case "inst":
         track.sampleLoader.forEach((sample: any) => {
           soundsArr.push(
-            new Sound(sample.sampleSource, track.baseVolume, sample.chords)
+            new Sound(sample.sampleSource, track.baseVolume, track.initVolume, sample.chords)
           );
         });
         track.sequencer = new Sequencer(
@@ -247,7 +259,7 @@ export function initSoundPlayer(state: any) {
       case "drum":
         track.sampleLoader.forEach((sample: any) => {
           soundsArr.push(
-            new Sound(sample.sampleSource, track.baseVolume, sample.chords)
+            new Sound(sample.sampleSource, track.baseVolume, track.initVolume, sample.chords)
           );
         });
         track.sequencer = new Sequencer(
@@ -259,22 +271,41 @@ export function initSoundPlayer(state: any) {
           track.maxSoundsInSequence,
           track.minSoundsInSequence
         );
+        track.sequencer.currentSequence = soundSources[index].patterns[soundSources[index].initPattern];
         break;
+
+        case "fx":
+          track.sampleLoader.forEach((sample: any) => {
+            soundsArr.push(
+              new Sound(sample.sampleSource, track.baseVolume, track.initVolume, sample.chords)
+            );
+          });
+          track.sequencer = new Sequencer(
+            soundsArr,
+            100,
+            state[keys.disabledKey + index].disabled,
+            false,
+            false,
+            track.maxSoundsInSequence,
+            track.minSoundsInSequence
+          );
+          break;
+          
     }
+    
   });
 }
 
 
-export function updateSoundPlayer() {
-  masterSeq.advanceSequence();
+export function updateSoundPlayer(trackState : any) {
+  masterSeq.advanceSequence(trackState);
   return (masterSeq.currentChord);
 }
 
 export function setTrackVolume(volume: number, index: number) {
-  soundSources[index].currentVolume = volume / 100;
   soundSources[index].sequencer.sounds.forEach((sound: any) => {
     sound.howl.volume(
-      soundSources[index].currentVolume * soundSources[index].baseVolume
+      (volume / 100) * soundSources[index].baseVolume
     );
   });
 }
@@ -288,6 +319,9 @@ export function setTrackDisable(disabled : boolean, index: number) {
   soundSources[index].sequencer.disabled = disabled;
   if (disabled) {
     stopAllSounds(index);
+  }
+  if (!disabled && soundSources[index].kind === "fx"){
+    soundSources[index].sequencer.sounds[0].howl.play()
   }
 }
 
@@ -319,20 +353,6 @@ function getNextSoundIndex(sounds: object[], currentChord: string) {
   return newSoundIndex;
 }
 
-export function toggleRhythmic(rhythmic: boolean, bpm: number) {
-  if (rhythmic) {
-    soundSources.forEach((track: any, index: any) => {
-      track.sequencer.bpm = bpm;
-      track.sequencer.build();
-      track.sequencer.restart();
-    });
-  } else {
-    soundSources.forEach((track: any, index: any) => {
-      track.sequencer.bpm = freeBPM + Math.random() * freeBPMRandomness;
-    });
-  }
-}
-
 export function updateBPM(bpm: number, rhythmic: boolean) {
   let timePassed = performance.now() - masterSeq.startOfSequence;
   if (masterSeq.bpm !== bpm){
@@ -349,6 +369,10 @@ export function updateCurrentSequenceChords(currentChord: string) {
       track.sequencer.updateChords();
     }
   });
+}
+
+export function updatePattern(value: number, index: number){
+  soundSources[index].sequencer.currentSequence = soundSources[index].patterns[value - 1];
 }
 
 function newRandomChord() {

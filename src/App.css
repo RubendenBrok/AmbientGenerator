@@ -1,38 +1,88 @@
+:root {
+  --borderstyle: solid 2px black;
+}
+
 .App {
   text-align: center;
 }
 
-.FaderContainer {
-  width: 100%;
+body{
+  padding: 10px;
+}
+
+h1 {
+  display: block;
+  font-size: 25px;
+  margin-left: 20px;
+  margin-bottom: -10px;
+}
+
+.InstrumentContainer {
   min-width: 400px;
   display: flex;
-  top: 10px;
+  padding-left: 20px;
 }
 
 .RhythmContainer {
-  margin-left: 100px;
-  margin-top: 50px;
+  display: flex;
+  padding-left: 20px;
+}
+
+.FXContainer {
+  display: flex;
+  padding-left: 20px;
+}
+
+.fxdiv, .drumdiv {
+  border: var(--borderstyle);
+}
+
+.drumdiv{
+  margin-bottom: 10px;
+}
+
+.UIContainer {
+  display: flex;
+  width: 100%;
+}
+
+.UILeft {
+  justify-content: flex-start;
+  width: auto;
+  flex-grow: 1;
+  border: var(--borderstyle);
+}
+
+.UIRight {
+  margin-left: 10px;
+  width: auto;
+  flex-grow: 1;
 }
 
 .TrackUI {
-  margin: auto;
+  text-align: left;
+  width: 150px;
+}
+
+.bpmslider {
+  text-align: center;
+  margin-left: 20px;
 }
 
 input[type="range"] {
   transform: rotate(270deg);
   display: block;
   background-color: black;
-  width: 100px;
-  margin-top: 70px;
+  width: 80px;
+  margin-top: 50px;
   margin-bottom: 50px;
 }
 
 .ChordContainer {
-  width: 30%;
-  position: absolute;
+  margin-left: 20px;
+  margin-top: 30px;
   display: flex;
-  bottom: 20px;
-  left: 20px;
+  width: 50%;
 }
 
 .ChordButton {

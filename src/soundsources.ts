@@ -93,6 +93,24 @@ import rain from "./sound/fx/rain.mp3"
 import vinyl from "./sound/fx/vinyl.mp3"
 import forest from "./sound/fx/forest.mp3"
 
+// shorten NaN for better sequencer pattern readability (see drumtracks below)
+const N = NaN;
+
+/* soundSources is the source of all non-user-accessible data. 
+each array entry represents one 'track' or sound family, with the following properties:
+
+-sampleLoader: object that holds the URL for every individual sample, together with the chords on which that sample can be played
+-kind: inst, drum of fx - used to make different categories behave in different ways
+-sequencer: soundPlayerInit creates an instance of the Sequencer class here, which holds all sounds (as Howls from howler.js)
+  and the current sequence of the track.
+-baseVolume: can be used to make an entire track louder or softer without having to re-export al samples
+-currentVolume: current volume of the track
+-currentSoundIndex: index of the current sound playing in sequencer.sounds
+-maxSoundsInSequence: amount of sounds per sequence when track activity is 100
+-minSoundsInSequence: amount of sounds per sequence when track activity is 1
+-name: track name
+-init** :stats with which the track will start - accessed in InitializeState
+*/
 
 export const soundSources : any = [
 //INSTURMENTS////
@@ -121,14 +139,14 @@ export const soundSources : any = [
     ],
     kind: "inst",
     sequencer : {},
-    fadeOutTime: 40,
-    baseVolume: 1,
-    currentVolume: 1,
-    currentSoundIndex : 0,
-    nextSoundIndex : 0,
-    currentsequence : [],
-    maxSoundsInSequence: 12,
+    baseVolume: 0.8,
+    maxSoundsInSequence: 8,
     minSoundsInSequence: 1,
+    name: "Piano",
+    initDisabled: false,
+    initActivity: 20,
+    initDrifting: true,
+    initVolume: 100,
   },
   {
     sampleLoader: [  
@@ -149,14 +167,14 @@ export const soundSources : any = [
     ],
     kind: "inst",
     sequencer : {},
-    fadeOutTime: 70,
     baseVolume: 1,
-    currentVolume: 1,
-    currentSoundIndex : 0,
-    nextSoundIndex : 0,
-    currentsequence : [],
     maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
+    name: "Bass",
+    initDisabled: false,
+    initActivity: 40,
+    initDrifting: false,
+    initVolume: 100,
   },
   {
     sampleLoader: [
@@ -177,14 +195,14 @@ export const soundSources : any = [
     ],
     kind: "inst",
     sequencer : {},
-    fadeOutTime: 500,
     baseVolume: 0.5,
-    currentVolume: 1,
-    currentSoundIndex : 0,
-    nextSoundIndex : 0,
-    currentSequence : [],
     maxSoundsInSequence: 5,
     minSoundsInSequence: 1,
+    name: "Pad",
+    initDisabled: false,
+    initActivity: 40,
+    initDrifting: false,
+    initVolume: 50,
   },
   {
     sampleLoader: [
@@ -206,14 +224,14 @@ export const soundSources : any = [
     ],
     kind: "inst",
     sequencer : {},
-    fadeOutTime: 40,
-    baseVolume: 0.6,
-    currentVolume: 1,
-    currentSoundIndex : 0,
-    nextSoundIndex : 0,
-    currentsequence : [],
+    baseVolume: 0.7,
     maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
+    name: "Kalimba",
+    initDisabled: true,
+    initActivity: 20,
+    initDrifting: false,
+    initVolume: 100,
   },
   {
     sampleLoader: [
@@ -238,28 +256,39 @@ export const soundSources : any = [
     ],
     kind: "inst",
     sequencer : {},
-    fadeOutTime: 40,
     baseVolume: 0.3,
-    currentVolume: 1,
-    currentSoundIndex : 0,
-    nextSoundIndex : 0,
-    currentsequence : [],
     maxSoundsInSequence: 3,
     minSoundsInSequence: 1,
+    name: "Strings",
+    initDisabled: true,
+    initActivity: 20,
+    initDrifting: false,
+    initVolume: 50,
   },
   //DRUMS///
   {
-  sampleLoader:[
-    {sampleSource: kick}
-  ],
-  kind: "drum",
-  patterns: [[0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, NaN, NaN, 0   , NaN, 0, NaN],],
-  baseVolume: 1,
-  currentVolume: 1,
-  currentsequence : [],
-  sequencer : {},
-  maxSoundsInSequence: 12,
-  minSoundsInSequence: 1,
+    sampleLoader:[
+      {sampleSource: kick}
+    ],
+    kind: "drum",
+    patterns: [
+    //|1           2           3           4          |1           2           3           4         |
+      [0, N, N, N, N, N, N, N, N, N, N, N, N, N, 0, N, 0, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N],
+      [0, N, N, N, N, N, N, N, 0, N, N, N, N, N, 0, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N],
+      [0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, 0, N],
+      [0, N, N, 0, 0, N, 0, N, 0, N, N, N, 0, N, 0, N, 0, N, N, N, 0, N, N, N, 0, N, N, 0, N, N, 0, N],
+      ],
+    baseVolume: 1,
+    currentsequence : [],
+    sequencer : {},
+    maxSoundsInSequence: 12,
+    minSoundsInSequence: 1,
+    name: "Kick",
+    initDisabled: false,
+    initActivity: 20,
+    initDrifting: false,
+    initVolume: 100,
+    initPattern: 2,
   },
   {
     sampleLoader:[
@@ -268,32 +297,53 @@ export const soundSources : any = [
       {sampleSource: snare3},
     ],
     kind: "drum",
-
-    patterns: [[NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN, NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN, NaN , NaN, NaN, NaN, 0   , NaN, NaN, NaN],],
+    patterns: [
+    //|1           2           3           4          |1           2           3           4         |
+      [N, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N],
+      [N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N],
+      [N, N, N, 0, N, N, N, N, N, N, 0, N, N, N, N, N, N, 0, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N],
+      ],
     baseVolume: 0.5,
-    currentVolume: 1,
     currentsequence : [],
     sequencer : {},
     maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
+    name: "Snare",
+    initDisabled: false,
+    initActivity: 20,
+    initDrifting: false,
+    initVolume: 100,
+    initPattern: 1,
     },
 //FX//////
   {
     sampleLoader: [{ sampleSource: vinyl }],
-    baseVolume: 1,
-    currentVolume: 1,
+    baseVolume: 0.3,
     kind: "fx",
+    name: "Vinyl",
+    initDisabled: false,
+    initActivity: 20,
+    initDrifting: true,
+    initVolume: 100,
   },
   {
     sampleLoader: [{ sampleSource: rain }],
-    baseVolume: 1,
-    currentVolume: 1,
+    baseVolume: 0.07,
     kind: "fx",
+    name: "Rain",
+    initDisabled: false,
+    initActivity: 20,
+    initDrifting: true,
+    initVolume: 40,
   },
   {
     sampleLoader: [{ sampleSource: forest }],
-    baseVolume: 1,
-    currentVolume: 1,
+    baseVolume: 0.2,
     kind: "fx",
+    name: "Forest",
+    initDisabled: true,
+    initActivity: 20,
+    initDrifting: false,
+    initVolume: 0,
   },
 ];
