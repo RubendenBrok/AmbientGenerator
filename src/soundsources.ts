@@ -84,6 +84,21 @@ import strings15 from "./sound/5 strings/15.mp3"
 import strings16 from "./sound/5 strings/16.mp3"
 import strings17 from "./sound/5 strings/17.mp3"
 
+import pluckbas1 from "./sound/6 pluckbas/1.mp3"
+import pluckbas2 from "./sound/6 pluckbas/2.mp3"
+import pluckbas3 from "./sound/6 pluckbas/3.mp3"
+import pluckbas4 from "./sound/6 pluckbas/4.mp3"
+import pluckbas5 from "./sound/6 pluckbas/5.mp3"
+import pluckbas6 from "./sound/6 pluckbas/6.mp3"
+import pluckbas7 from "./sound/6 pluckbas/7.mp3"
+import pluckbas8 from "./sound/6 pluckbas/8.mp3"
+import pluckbas9 from "./sound/6 pluckbas/9.mp3"
+import pluckbas10 from "./sound/6 pluckbas/10.mp3"
+import pluckbas11 from "./sound/6 pluckbas/11.mp3"
+import pluckbas12 from "./sound/6 pluckbas/12.mp3"
+import pluckbas13 from "./sound/6 pluckbas/13.mp3"
+import pluckbas14 from "./sound/6 pluckbas/14.mp3"
+
 import kick from "./sound/drums/kick.mp3"
 import snare1 from "./sound/drums/snare1.mp3"
 import snare2 from "./sound/drums/snare2.mp3"
@@ -252,7 +267,6 @@ export const soundSources : any = [
       { sampleSource: strings15, chords: ['D','G','B'] }, 
       { sampleSource: strings16, chords: ['D','G','B','E','A','C'] }, 
       { sampleSource: strings17, chords: ['D','G','B'] }, 
-
     ],
     kind: "inst",
     sequencer : {},
@@ -260,6 +274,34 @@ export const soundSources : any = [
     maxSoundsInSequence: 3,
     minSoundsInSequence: 1,
     name: "Strings",
+    initDisabled: true,
+    initActivity: 20,
+    initDrifting: false,
+    initVolume: 50,
+  },
+  {
+    sampleLoader: [
+      { sampleSource: pluckbas1, chords: ['E','A'] },
+      { sampleSource: pluckbas2, chords: ['D','G'] },
+      { sampleSource: pluckbas3, chords: ['G','E','C'] },
+      { sampleSource: pluckbas4, chords: ['A','D'] },
+      { sampleSource: pluckbas5, chords: ['B','E','G'] },
+      { sampleSource: pluckbas6, chords: ['C','A'] },
+      { sampleSource: pluckbas7, chords: ['D','G','B','E','C'] },
+      { sampleSource: pluckbas8, chords: ['E'] },
+      { sampleSource: pluckbas9, chords: ['D'] },
+      { sampleSource: pluckbas10, chords: ['G'] },
+      { sampleSource: pluckbas11, chords: ['A'] },
+      { sampleSource: pluckbas12, chords: ['B','E','G'] },
+      { sampleSource: pluckbas13, chords: ['C','A'] },
+      { sampleSource: pluckbas14, chords: ['D','G','B','E','C','A'] },
+    ],
+    kind: "inst",
+    sequencer : {},
+    baseVolume: 0.7,
+    maxSoundsInSequence: 8,
+    minSoundsInSequence: 1,
+    name: "Pluck Bass",
     initDisabled: true,
     initActivity: 20,
     initDrifting: false,
