@@ -1,5 +1,5 @@
-export const driftAmt = 0.15;
-export const maxDriftSpeed = 0.3;
+export const driftAmt = 0.45;
+export const maxDriftSpeed = 0.9;
 
 export function updateDrift(currentValue: number, driftVelocity: number, max: number, min: number) {
   const driftObj = {

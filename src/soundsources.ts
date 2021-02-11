@@ -162,6 +162,7 @@ export const soundSources : any = [
     initActivity: 20,
     initDrifting: true,
     initVolume: 100,
+    mutationChance: 0.2,
   },
   {
     sampleLoader: [  
@@ -190,6 +191,7 @@ export const soundSources : any = [
     initActivity: 40,
     initDrifting: false,
     initVolume: 100,
+    mutationChance: 0.2,
   },
   {
     sampleLoader: [
@@ -218,6 +220,7 @@ export const soundSources : any = [
     initActivity: 40,
     initDrifting: false,
     initVolume: 50,
+    mutationChance: 0.2,
   },
   {
     sampleLoader: [
@@ -247,6 +250,7 @@ export const soundSources : any = [
     initActivity: 20,
     initDrifting: false,
     initVolume: 100,
+    mutationChance: 0.2,
   },
   {
     sampleLoader: [
@@ -278,6 +282,7 @@ export const soundSources : any = [
     initActivity: 20,
     initDrifting: false,
     initVolume: 50,
+    mutationChance: 0.2,
   },
   {
     sampleLoader: [
@@ -306,6 +311,7 @@ export const soundSources : any = [
     initActivity: 20,
     initDrifting: false,
     initVolume: 50,
+    mutationChance: 0.3,
   },
   //DRUMS///
   {
@@ -331,19 +337,20 @@ export const soundSources : any = [
     initDrifting: false,
     initVolume: 100,
     initPattern: 2,
+    mutationChance: 0.2,
   },
   {
     sampleLoader:[
       {sampleSource: snare1},
       {sampleSource: snare2},
-      {sampleSource: snare3},
+      //{sampleSource: snare3},
     ],
     kind: "drum",
     patterns: [
     //|1           2           3           4          |1           2           3           4         |
       [N, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N],
       [N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N],
-      [N, N, N, 0, N, N, N, N, N, N, 0, N, N, N, N, N, N, 0, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N],
+      [N, N, N, 0, N, N, N, N, N, N, N, N, 0, N, N, N, N, 0, N, N, 0, N, N, N, N, N, 0, N, 0, N, N, N],
       ],
     baseVolume: 0.5,
     currentsequence : [],
@@ -356,6 +363,7 @@ export const soundSources : any = [
     initDrifting: false,
     initVolume: 100,
     initPattern: 1,
+    mutationChance: 0.3,
     },
 //FX//////
   {

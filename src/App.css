@@ -14,27 +14,26 @@ h1 {
   display: block;
   font-size: 25px;
   margin-left: 20px;
-  margin-bottom: -10px;
+  margin-right: 20px;
+  margin-bottom: 0px;
 }
 
 .InstrumentContainer {
-  min-width: 400px;
+  width: auto;
   display: flex;
   padding-left: 20px;
+  padding-right: 20px;
 }
 
-.RhythmContainer {
+.FXContainer, .RhythmContainer {
+  width: auto;
   display: flex;
-  padding-left: 20px;
-}
-
-.FXContainer {
-  display: flex;
-  padding-left: 20px;
+  padding: 0 20px 0 20px;
 }
 
 .fxdiv, .drumdiv {
   border: var(--borderstyle);
+  padding-bottom: 20px;
 }
 
 .drumdiv{
@@ -44,24 +43,28 @@ h1 {
 .UIContainer {
   display: flex;
   width: 100%;
+  justify-content: space-between;
 }
 
 .UILeft {
-  justify-content: flex-start;
   width: auto;
-  flex-grow: 1;
+  height: min-content;
+  padding-bottom: 20px;
+  flex-grow: 0;
   border: var(--borderstyle);
 }
 
 .UIRight {
   margin-left: 10px;
   width: auto;
-  flex-grow: 1;
+  flex-grow: 0;
 }
 
 .TrackUI {
   text-align: left;
-  width: 150px;
+  width: auto;
+  min-width: 110px;
+  flex-grow: 1;
 }
 
 .bpmslider {

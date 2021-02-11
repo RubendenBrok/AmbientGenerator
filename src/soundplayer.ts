@@ -1,9 +1,7 @@
 import { Howl, Howler } from "howler"
 import { soundSources } from "./soundsources"
-import { keys, seqLength } from "./App"
+import { keys, seqLength, randomArrEntry } from "./App"
 import { SSL_OP_NO_QUERY_MTU } from "constants";
-
-const chordOptions = ["G","A","B","C","D","E"];
 
 class Sequencer {
   disabled: boolean;
@@ -16,6 +14,7 @@ class Sequencer {
   tonal : boolean;
   maxSoundsInSequence: number;
   minSoundsInSequence: number;
+  initPattern: number;
 
   constructor(
     sounds: any[],
@@ -25,7 +24,8 @@ class Sequencer {
     tonal: boolean,
     maxSoundsInSequence: number,
     minSoundsInSequence: number,
-    currentChord: string
+    currentChord: string,
+    initPattern: number
   ) {
     this.sounds = sounds;
     this.disabled = disabled;
@@ -35,10 +35,11 @@ class Sequencer {
     this.patterns = patterns;
     this.tonal = tonal;
     this.currentSoundIndex = 0;
-    this.maxSoundsInSequence = maxSoundsInSequence
-    this.minSoundsInSequence = minSoundsInSequence
+    this.maxSoundsInSequence = maxSoundsInSequence;
+    this.minSoundsInSequence = minSoundsInSequence;
+    this.initPattern = initPattern
 
-    this.build(currentChord);
+    this.build(currentChord, initPattern);
   }
 
   calcAmountOfNotes() {
@@ -47,25 +48,39 @@ class Sequencer {
       Math.floor((this.activity / 100) * this.maxSoundsInSequence);
   }
 
-  build(currentChord : string) {
+  build(currentChord : string, initPattern : number) {
     if (this.patterns) {
-
+      this.buildFromPattern(initPattern)
     } else {
-      this.calcAmountOfNotes();
-      this.currentSequence = [];
-      let possibleIndexes = [];
-      for (let i = 0; i < seqLength; i++) {
-        this.currentSequence.push(NaN);
-        possibleIndexes.push(i);
-      }
-      for (let i = 0; i < this.noteAmt; i++) {
-        let newSeqIndex =
-          possibleIndexes[Math.floor(Math.random() * seqLength)];
-        let newSoundIndex = getNextSoundIndex(this.sounds, currentChord);
-        this.currentSequence[newSeqIndex] = newSoundIndex;
-        possibleIndexes.splice(newSeqIndex, 1);
-      }
+      this.buildFromActivity(currentChord)
     }
+  }
+
+  buildFromActivity(currentChord : string){
+    this.calcAmountOfNotes();
+    this.currentSequence = [];
+    let possibleIndexes = [];
+    for (let i = 0; i < seqLength; i++) {
+      this.currentSequence.push(NaN);
+      possibleIndexes.push(i);
+    }
+    for (let i = 0; i < this.noteAmt; i++) {
+      let newSeqIndex =
+        possibleIndexes[Math.floor(Math.random() * seqLength)];
+      let newSoundIndex = getNextSoundIndex(this.sounds, currentChord);
+      this.currentSequence[newSeqIndex] = newSoundIndex;
+      possibleIndexes.splice(newSeqIndex, 1);
+    }
+  }
+
+  buildFromPattern(patternIndex : number){
+    let newSeq = [...this.patterns[patternIndex]];
+    newSeq.forEach((step : number, index : number)=>{
+      if (!isNaN(step)){
+        newSeq[index] = Math.floor(Math.random() * this.sounds.length)
+      }
+    })
+    this.currentSequence = newSeq;
   }
 
   playSeqPosition(position : number){
@@ -77,8 +92,6 @@ class Sequencer {
         }
       }  
   }
-
-  mutate() {}
 
   updateChords(currentChord : string) {
     if (this.tonal) {
@@ -173,7 +186,8 @@ export function initSoundPlayer(state: any) {
           true,
           track.maxSoundsInSequence,
           track.minSoundsInSequence,
-          state.currentChord
+          state.currentChord,
+          track.initPattern
         );
         break;
 
@@ -191,9 +205,9 @@ export function initSoundPlayer(state: any) {
           false,
           track.maxSoundsInSequence,
           track.minSoundsInSequence,
-          state.currentChord
+          state.currentChord,
+          track.initPattern
         );
-        track.sequencer.currentSequence = soundSources[index].patterns[soundSources[index].initPattern];
         break;
 
         case "fx":
@@ -210,7 +224,8 @@ export function initSoundPlayer(state: any) {
             false,
             track.maxSoundsInSequence,
             track.minSoundsInSequence,
-            state.currentChord
+            state.currentChord,
+            track.initPattern
           );
           break;     
     }    
@@ -263,8 +278,7 @@ function getNextSoundIndex(sounds: object[], currentChord: string) {
       newSoundOptions.push(index);
     }
   });
-  newSoundIndex =
-    newSoundOptions[Math.floor(Math.random() * newSoundOptions.length)];
+  newSoundIndex = randomArrEntry(newSoundOptions);
 
   return newSoundIndex;
 }
@@ -296,13 +310,50 @@ export function playFX(){
 }
 
 export function updatePattern(value: number, index: number){
-  soundSources[index].sequencer.currentSequence = soundSources[index].patterns[value - 1];
+  soundSources[index].sequencer.buildFromPattern(value - 1);
 }
 
-function newRandomChord() {
-  updateCurrentSequenceChords(chordOptions[Math.floor(Math.random() * 6)]);
+export function mutateSequence(currentChord: string, index: number) {
+  soundSources[index].sequencer.currentSequence = randomMutation(
+    1,
+    soundSources[index].sequencer.currentSequence,
+    soundSources[index].sequencer.sounds,
+    soundSources[index].sequencer.tonal,
+    currentChord
+  );
 }
 
+
+function randomMutation(
+  iterations: number,
+  startingSeq: number[],
+  sounds: any,
+  tonal: boolean,
+  currentChord: string
+) {
+  let newSeq = [...startingSeq];
+  for (let i = 0; i < iterations; i++) {
+    let emptyIndexes: number[] = [];
+    let filledIndexes: number[] = [];
+    newSeq.forEach((step: number, index: number) => {
+      isNaN(step) ? emptyIndexes.push(index) : filledIndexes.push(index);
+    });
+    if (tonal){
+      newSeq[
+        emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)]
+      ] = getNextSoundIndex(sounds, currentChord)
+    } else {
+      newSeq[
+        emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)]
+      ] = Math.floor(Math.random() * sounds.length);
+    }
+
+    newSeq[
+      filledIndexes[Math.floor(Math.random() * filledIndexes.length)]
+    ] = NaN;
+  }
+  return newSeq;
+}
 
 
 
