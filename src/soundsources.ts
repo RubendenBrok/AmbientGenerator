@@ -1,3 +1,4 @@
+/*
 import piano1 from "./sound/1 piano/1.mp3"
 import piano2 from "./sound/1 piano/2.mp3"
 import piano3 from "./sound/1 piano/3.mp3"
@@ -18,6 +19,32 @@ import piano17 from "./sound/1 piano/17.mp3"
 import piano18 from "./sound/1 piano/18.mp3"
 import piano19 from "./sound/1 piano/19.mp3"
 import piano20 from "./sound/1 piano/20.mp3"
+*/
+
+import piano1 from "./sound/11 piano2/1.mp3"
+import piano2 from "./sound/11 piano2/2.mp3"
+import piano3 from "./sound/11 piano2/3.mp3"
+import piano4 from "./sound/11 piano2/4.mp3"
+import piano5 from "./sound/11 piano2/5.mp3"
+import piano6 from "./sound/11 piano2/6.mp3"
+import piano7 from "./sound/11 piano2/7.mp3"
+import piano8 from "./sound/11 piano2/8.mp3"
+import piano9 from "./sound/11 piano2/9.mp3"
+import piano10 from "./sound/1 piano/10.mp3"
+import piano11 from "./sound/11 piano2/11.mp3"
+import piano12 from "./sound/11 piano2/12.mp3"
+import piano13 from "./sound/11 piano2/13.mp3"
+import piano14 from "./sound/11 piano2/14.mp3"
+import piano15 from "./sound/11 piano2/15.mp3"
+import piano16 from "./sound/11 piano2/16.mp3"
+import piano17 from "./sound/11 piano2/17.mp3"
+import piano18 from "./sound/11 piano2/18.mp3"
+import piano19 from "./sound/11 piano2/19.mp3"
+import piano20 from "./sound/11 piano2/20.mp3"
+import piano21 from "./sound/11 piano2/21.mp3"
+import piano22 from "./sound/11 piano2/22.mp3"
+import piano23 from "./sound/11 piano2/23.mp3"
+import piano24 from "./sound/11 piano2/24.mp3"
 
 import synthbas1 from "./sound/2 synthbas/1.mp3"
 import synthbas2 from "./sound/2 synthbas/2.mp3"
@@ -33,6 +60,19 @@ import synthbas11 from "./sound/2 synthbas/11.mp3"
 import synthbas12 from "./sound/2 synthbas/12.mp3"
 import synthbas13 from "./sound/2 synthbas/13.mp3"
 import synthbas14 from "./sound/2 synthbas/14.mp3"
+
+import moogbas1 from "./sound/9 moogbas/1.mp3"
+import moogbas2 from "./sound/9 moogbas/2.mp3"
+import moogbas3 from "./sound/9 moogbas/3.mp3"
+import moogbas4 from "./sound/9 moogbas/4.mp3"
+import moogbas5 from "./sound/9 moogbas/5.mp3"
+import moogbas6 from "./sound/9 moogbas/6.mp3"
+import moogbas7 from "./sound/9 moogbas/7.mp3"
+import moogbas8 from "./sound/9 moogbas/8.mp3"
+import moogbas9 from "./sound/9 moogbas/9.mp3"
+import moogbas10 from "./sound/9 moogbas/10.mp3"
+import moogbas11 from "./sound/9 moogbas/11.mp3"
+import moogbas12 from "./sound/9 moogbas/12.mp3"
 
 
 import synthpad1 from "./sound/3 synthpad/1.mp3"
@@ -84,6 +124,26 @@ import strings15 from "./sound/5 strings/15.mp3"
 import strings16 from "./sound/5 strings/16.mp3"
 import strings17 from "./sound/5 strings/17.mp3"
 
+import duomoog1 from "./sound/7 duomoog/1.mp3"
+import duomoog2 from "./sound/7 duomoog/2.mp3"
+import duomoog3 from "./sound/7 duomoog/3.mp3"
+import duomoog4 from "./sound/7 duomoog/4.mp3"
+import duomoog5 from "./sound/7 duomoog/5.mp3"
+import duomoog6 from "./sound/7 duomoog/6.mp3"
+import duomoog7 from "./sound/7 duomoog/7.mp3"
+import duomoog8 from "./sound/7 duomoog/8.mp3"
+import duomoog9 from "./sound/7 duomoog/9.mp3"
+import duomoog10 from "./sound/7 duomoog/10.mp3"
+import duomoog11 from "./sound/7 duomoog/11.mp3"
+import duomoog12 from "./sound/7 duomoog/12.mp3"
+import duomoog13 from "./sound/7 duomoog/13.mp3"
+import duomoog14 from "./sound/7 duomoog/14.mp3"
+import duomoog15 from "./sound/7 duomoog/15.mp3"
+import duomoog16 from "./sound/7 duomoog/16.mp3"
+import duomoog17 from "./sound/7 duomoog/17.mp3"
+import duomoog18 from "./sound/7 duomoog/18.mp3"
+import duomoog19 from "./sound/7 duomoog/19.mp3"
+
 import pluckbas1 from "./sound/6 pluckbas/1.mp3"
 import pluckbas2 from "./sound/6 pluckbas/2.mp3"
 import pluckbas3 from "./sound/6 pluckbas/3.mp3"
@@ -98,6 +158,15 @@ import pluckbas11 from "./sound/6 pluckbas/11.mp3"
 import pluckbas12 from "./sound/6 pluckbas/12.mp3"
 import pluckbas13 from "./sound/6 pluckbas/13.mp3"
 import pluckbas14 from "./sound/6 pluckbas/14.mp3"
+
+import submarine1 from "./sound/10 moog submarine/1.mp3"
+import submarine2 from "./sound/10 moog submarine/2.mp3"
+import submarine3 from "./sound/10 moog submarine/3.mp3"
+import submarine4 from "./sound/10 moog submarine/4.mp3"
+import submarine5 from "./sound/10 moog submarine/5.mp3"
+import submarine6 from "./sound/10 moog submarine/6.mp3"
+import submarine7 from "./sound/10 moog submarine/7.mp3"
+import submarine8 from "./sound/10 moog submarine/8.mp3"
 
 import kick from "./sound/drums/kick.mp3"
 import snare1 from "./sound/drums/snare1.mp3"
@@ -131,26 +200,30 @@ export const soundSources : any = [
 //INSTURMENTS////
   {
     sampleLoader: [
-      { sampleSource: piano1, chords: ['G','E','C'] },
-      { sampleSource: piano2, chords: ['B','D','G','E'] },
-      { sampleSource: piano3, chords: ['D','G','B'] },
-      { sampleSource: piano4, chords: ['A','C','D','G'] },
-      { sampleSource: piano5, chords: ['A','C'] },
-      { sampleSource: piano6, chords: ['A','D','C'] },
-      { sampleSource: piano7, chords: ['C','A'] },
-      { sampleSource: piano8, chords: ['A'] },
-      { sampleSource: piano9, chords: ['A','C'] },
-      { sampleSource: piano10, chords: ['A','C'] },
-      { sampleSource: piano11, chords: ['C','G','E'] },
-      { sampleSource: piano12, chords: ['B'] },
-      { sampleSource: piano13, chords: ['D','B'] },
-      { sampleSource: piano14, chords: ['E'] },
-      { sampleSource: piano15, chords: ['G'] },
-      { sampleSource: piano16, chords: ['A'] },
-      { sampleSource: piano17, chords: ['D'] },
+      { sampleSource: piano1, chords: ['G'] },
+      { sampleSource: piano2, chords: ['G'] },
+      { sampleSource: piano3, chords: ['G'] },
+      { sampleSource: piano4, chords: ['A'] },
+      { sampleSource: piano5, chords: ['A'] },
+      { sampleSource: piano6, chords: ['A'] },
+      { sampleSource: piano7, chords: ['B'] },
+      { sampleSource: piano8, chords: ['B'] },
+      { sampleSource: piano9, chords: ['B'] },
+      { sampleSource: piano10, chords: ['C'] },
+      { sampleSource: piano11, chords: ['C'] },
+      { sampleSource: piano12, chords: ['C'] },
+      { sampleSource: piano13, chords: ['D'] },
+      { sampleSource: piano14, chords: ['D'] },
+      { sampleSource: piano15, chords: ['D'] },
+      { sampleSource: piano16, chords: ['E'] },
+      { sampleSource: piano17, chords: ['E'] },
       { sampleSource: piano18, chords: ['E'] },
-      { sampleSource: piano19, chords: ['G'] },
-      { sampleSource: piano20, chords: ['D','A','B'] },
+      { sampleSource: piano19, chords: ['G','A','C','E'] },
+      { sampleSource: piano20, chords: ['G','A','D','E','B'] },
+      { sampleSource: piano21, chords: ['G','A','C','E'] },
+      { sampleSource: piano22, chords: ['G','A','D','E','B'] },
+      { sampleSource: piano23, chords: ['G','B','E','C','D'] },
+      { sampleSource: piano24, chords: ['G','B','E','C','D'] },
     ],
     kind: "inst",
     sequencer : {},
@@ -162,28 +235,26 @@ export const soundSources : any = [
     initActivity: 20,
     initDrifting: true,
     initVolume: 100,
-    mutationChance: 0.2,
+    mutationChance: 0.1,
   },
   {
     sampleLoader: [  
-      { sampleSource: synthbas1, chords: ["G"] },
-      { sampleSource: synthbas2, chords: ["G"] },
-      { sampleSource: synthbas3, chords: ["A"] },
-      { sampleSource: synthbas4, chords: ["A"] },
-      { sampleSource: synthbas5, chords: ["B"] },
-      { sampleSource: synthbas6, chords: ["B"] },
-      { sampleSource: synthbas7, chords: ["C"] },
-      { sampleSource: synthbas8, chords: ["C"] },
-      { sampleSource: synthbas9, chords: ["D"] },
-      { sampleSource: synthbas10, chords: ["D"] },
-      { sampleSource: synthbas11, chords: ["E"] },
-      { sampleSource: synthbas12, chords: ["E"] },
-      { sampleSource: synthbas13, chords: ["F"] },
-      { sampleSource: synthbas14, chords: ["F"] },
+      { sampleSource: moogbas1, chords: ["G"] },
+      { sampleSource: moogbas2, chords: ["G"] },
+      { sampleSource: moogbas3, chords: ["A"] },
+      { sampleSource: moogbas4, chords: ["A"] },
+      { sampleSource: moogbas5, chords: ["B"] },
+      { sampleSource: moogbas6, chords: ["B"] },
+      { sampleSource: moogbas7, chords: ["C"] },
+      { sampleSource: moogbas8, chords: ["C"] },
+      { sampleSource: moogbas9, chords: ["D"] },
+      { sampleSource: moogbas10, chords: ["D"] },
+      { sampleSource: moogbas11, chords: ["E"] },
+      { sampleSource: moogbas12, chords: ["E"] },
     ],
     kind: "inst",
     sequencer : {},
-    baseVolume: 1,
+    baseVolume: 0.5,
     maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
     name: "Bass",
@@ -191,7 +262,7 @@ export const soundSources : any = [
     initActivity: 40,
     initDrifting: false,
     initVolume: 100,
-    mutationChance: 0.2,
+    mutationChance: 0.1,
   },
   {
     sampleLoader: [
@@ -220,8 +291,9 @@ export const soundSources : any = [
     initActivity: 40,
     initDrifting: false,
     initVolume: 50,
-    mutationChance: 0.2,
-  },
+    mutationChance: 0.1,
+  }, 
+  /*
   {
     sampleLoader: [
       { sampleSource: kalimba1, chords: ['G','E','C','A','D'] },
@@ -251,7 +323,43 @@ export const soundSources : any = [
     initDrifting: false,
     initVolume: 100,
     mutationChance: 0.2,
-  },
+  }, 
+  */
+ {
+  sampleLoader: [
+    { sampleSource: duomoog1, chords: ['G','E','C','A'] },
+    { sampleSource: duomoog2, chords: ['D','G','E','A','C'] },
+    { sampleSource: duomoog3, chords: ['D','G','B','E','A','C'] },
+    { sampleSource: duomoog4, chords: ['D','G','A','C'] },
+    { sampleSource: duomoog5, chords: ['D','G','B','E','A','C'] },
+    { sampleSource: duomoog6, chords: ['D','G','B','E','A','C'] },
+    { sampleSource: duomoog7, chords: ['B','D','G','E'] },
+    { sampleSource: duomoog8, chords: ['D','B'] },
+    { sampleSource: duomoog9, chords: ['G','E','C'] },
+    { sampleSource: duomoog10, chords: ['D','B','G'] },
+    { sampleSource: duomoog11, chords: ['A','C'] },
+    { sampleSource: duomoog12, chords: ['G','B'] },
+    { sampleSource: duomoog13, chords: ['G','E'] },
+    { sampleSource: duomoog14, chords: ['D','B'] },
+    { sampleSource: duomoog15, chords: ['E','C'] }, 
+    { sampleSource: duomoog16, chords: ['G','E','C'] },
+    { sampleSource: duomoog17, chords: ['C','E'] },
+    { sampleSource: duomoog18, chords: ['A','C','E'] },
+    { sampleSource: duomoog19, chords: ['A'] }, 
+  ],
+  kind: "inst",
+  sequencer : {},
+  baseVolume: 0.7,
+  maxSoundsInSequence: 12,
+  minSoundsInSequence: 1,
+  name: "Duomoog",
+  initDisabled: true,
+  initActivity: 20,
+  initDrifting: false,
+  initVolume: 100,
+  mutationChance: 0.1,
+}, 
+/*
   {
     sampleLoader: [
       { sampleSource: strings1, chords: ['G','E'] },
@@ -282,8 +390,9 @@ export const soundSources : any = [
     initActivity: 20,
     initDrifting: false,
     initVolume: 50,
-    mutationChance: 0.2,
+    mutationChance: 0.1,
   },
+  */
   {
     sampleLoader: [
       { sampleSource: pluckbas1, chords: ['E','A'] },
@@ -311,7 +420,30 @@ export const soundSources : any = [
     initActivity: 20,
     initDrifting: false,
     initVolume: 50,
-    mutationChance: 0.3,
+    mutationChance: 0.1,
+  },
+  {
+    sampleLoader: [
+      { sampleSource: submarine1, chords: ['D','G','B','E','C'] },
+      { sampleSource: submarine2, chords: ['D','G','E','C','A'] },
+      { sampleSource: submarine3, chords: ['G','B','E','A'] },
+      { sampleSource: submarine4, chords: ['G','E','G','A'] },
+      { sampleSource: submarine5, chords: ['D','G','B','E','A'] },
+      { sampleSource: submarine6, chords: ['D','G','B','E','C','A'] },
+      { sampleSource: submarine7, chords: ['C','A'] },
+      { sampleSource: submarine8, chords: ['D','G','B','E','C','A'] },
+    ],
+    kind: "inst",
+    sequencer : {},
+    baseVolume: 0.5,
+    maxSoundsInSequence: 8,
+    minSoundsInSequence: 1,
+    name: "Submarine",
+    initDisabled: true,
+    initActivity: 20,
+    initDrifting: false,
+    initVolume: 50,
+    mutationChance: 0.1,
   },
   //DRUMS///
   {
@@ -337,7 +469,7 @@ export const soundSources : any = [
     initDrifting: false,
     initVolume: 100,
     initPattern: 2,
-    mutationChance: 0.2,
+    mutationChance: 0.1,
   },
   {
     sampleLoader:[
@@ -363,7 +495,7 @@ export const soundSources : any = [
     initDrifting: false,
     initVolume: 100,
     initPattern: 1,
-    mutationChance: 0.3,
+    mutationChance: 0.1,
     },
 //FX//////
   {

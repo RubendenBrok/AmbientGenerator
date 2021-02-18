@@ -52,12 +52,18 @@ h1 {
   padding-bottom: 20px;
   flex-grow: 0;
   border: var(--borderstyle);
+  position: absolute;
+  left: 10px;
+  top: 10px;
 }
 
 .UIRight {
   margin-left: 10px;
   width: auto;
   flex-grow: 0;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
 
 .TrackUI {

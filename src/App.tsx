@@ -14,6 +14,7 @@ import {
 } from "./soundplayer";
 import { soundSources } from "./soundsources";
 import "./App.css";
+import { updateGraphics, initGraphics } from "./visuals";
 
 // keys for dymaically creating and accessing state properties
 export const keys = { 
@@ -247,11 +248,15 @@ export class App extends React.Component<any, any> {
 
   // main loop
   appLoop() {
+
+    updateGraphics();
+
     window.requestAnimationFrame(this.appLoop);
   }
 
   componentDidMount() {
     initSoundPlayer(this.state);
+    initGraphics();
     let sixteenth = (60 / this.state.bpm / 4) * 1000;
     setTimeout(this.updateMasterSeq, sixteenth);
 
