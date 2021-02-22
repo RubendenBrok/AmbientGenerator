@@ -232,8 +232,8 @@ export const soundSources : any = [
     minSoundsInSequence: 1,
     name: "Piano",
     initDisabled: false,
-    initActivity: 20,
-    initDrifting: true,
+    initActivity: 30,
+    initDrifting: false,
     initVolume: 100,
     mutationChance: 0.1,
   },
@@ -258,7 +258,7 @@ export const soundSources : any = [
     maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
     name: "Bass",
-    initDisabled: false,
+    initDisabled: true,
     initActivity: 40,
     initDrifting: false,
     initVolume: 100,
@@ -287,7 +287,7 @@ export const soundSources : any = [
     maxSoundsInSequence: 5,
     minSoundsInSequence: 1,
     name: "Pad",
-    initDisabled: false,
+    initDisabled: true,
     initActivity: 40,
     initDrifting: false,
     initVolume: 50,
@@ -445,32 +445,7 @@ export const soundSources : any = [
     initVolume: 50,
     mutationChance: 0.1,
   },
-  //DRUMS///
-  {
-    sampleLoader:[
-      {sampleSource: kick}
-    ],
-    kind: "drum",
-    patterns: [
-    //|1           2           3           4          |1           2           3           4         |
-      [0, N, N, N, N, N, N, N, N, N, N, N, N, N, 0, N, 0, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N],
-      [0, N, N, N, N, N, N, N, 0, N, N, N, N, N, 0, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N],
-      [0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, 0, N],
-      [0, N, N, 0, 0, N, 0, N, 0, N, N, N, 0, N, 0, N, 0, N, N, N, 0, N, N, N, 0, N, N, 0, N, N, 0, N],
-      ],
-    baseVolume: 1,
-    currentsequence : [],
-    sequencer : {},
-    maxSoundsInSequence: 12,
-    minSoundsInSequence: 1,
-    name: "Kick",
-    initDisabled: false,
-    initActivity: 20,
-    initDrifting: false,
-    initVolume: 100,
-    initPattern: 2,
-    mutationChance: 0.1,
-  },
+  //DRUMS//
   {
     sampleLoader:[
       {sampleSource: snare1},
@@ -490,12 +465,37 @@ export const soundSources : any = [
     maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
     name: "Snare",
-    initDisabled: false,
+    initDisabled: true,
     initActivity: 20,
     initDrifting: false,
     initVolume: 100,
     initPattern: 1,
     mutationChance: 0.1,
+    },
+    {
+      sampleLoader:[
+        {sampleSource: kick}
+      ],
+      kind: "drum",
+      patterns: [
+      //|1           2           3           4          |1           2           3           4         |
+        [0, N, N, N, N, N, N, N, N, N, N, N, N, N, 0, N, 0, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N],
+        [0, N, N, N, N, N, N, N, 0, N, N, N, N, N, 0, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N],
+        [0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, 0, N],
+        [0, N, N, 0, 0, N, 0, N, 0, N, N, N, 0, N, 0, N, 0, N, N, N, 0, N, N, N, 0, N, N, 0, N, N, 0, N],
+        ],
+      baseVolume: 1,
+      currentsequence : [],
+      sequencer : {},
+      maxSoundsInSequence: 12,
+      minSoundsInSequence: 1,
+      name: "Kick",
+      initDisabled: false,
+      initActivity: 20,
+      initDrifting: false,
+      initVolume: 100,
+      initPattern: 2,
+      mutationChance: 0.1,
     },
 //FX//////
   {

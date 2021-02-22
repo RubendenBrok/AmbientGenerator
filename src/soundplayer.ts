@@ -3,143 +3,6 @@ import { soundSources } from "./soundsources"
 import { keys, seqLength, randomArrEntry } from "./App"
 import { SSL_OP_NO_QUERY_MTU } from "constants";
 
-class Sequencer {
-  disabled: boolean;
-  sounds: any[];
-  currentSequence: number[];
-  currentSoundIndex: number;
-  activity: number;
-  noteAmt: number;
-  patterns: any;
-  tonal : boolean;
-  maxSoundsInSequence: number;
-  minSoundsInSequence: number;
-  initPattern: number;
-
-  constructor(
-    sounds: any[],
-    activity: number,
-    disabled: boolean,
-    patterns: any,
-    tonal: boolean,
-    maxSoundsInSequence: number,
-    minSoundsInSequence: number,
-    currentChord: string,
-    initPattern: number
-  ) {
-    this.sounds = sounds;
-    this.disabled = disabled;
-    this.currentSequence = [];
-    this.activity = activity;
-    this.noteAmt = 0;
-    this.patterns = patterns;
-    this.tonal = tonal;
-    this.currentSoundIndex = 0;
-    this.maxSoundsInSequence = maxSoundsInSequence;
-    this.minSoundsInSequence = minSoundsInSequence;
-    this.initPattern = initPattern
-
-    this.build(currentChord, initPattern);
-  }
-
-  calcAmountOfNotes() {
-    this.noteAmt =
-      this.minSoundsInSequence +
-      Math.floor((this.activity / 100) * this.maxSoundsInSequence);
-  }
-
-  build(currentChord : string, initPattern : number) {
-    if (this.patterns) {
-      this.buildFromPattern(initPattern)
-    } else {
-      this.buildFromActivity(currentChord)
-    }
-  }
-
-  buildFromActivity(currentChord : string){
-    this.calcAmountOfNotes();
-    this.currentSequence = [];
-    let possibleIndexes = [];
-    for (let i = 0; i < seqLength; i++) {
-      this.currentSequence.push(NaN);
-      possibleIndexes.push(i);
-    }
-    for (let i = 0; i < this.noteAmt; i++) {
-      let newSeqIndex =
-        possibleIndexes[Math.floor(Math.random() * seqLength)];
-      let newSoundIndex = getNextSoundIndex(this.sounds, currentChord);
-      this.currentSequence[newSeqIndex] = newSoundIndex;
-      possibleIndexes.splice(newSeqIndex, 1);
-    }
-  }
-
-  buildFromPattern(patternIndex : number){
-    let newSeq = [...this.patterns[patternIndex]];
-    newSeq.forEach((step : number, index : number)=>{
-      if (!isNaN(step)){
-        newSeq[index] = Math.floor(Math.random() * this.sounds.length)
-      }
-    })
-    this.currentSequence = newSeq;
-  }
-
-  playSeqPosition(position : number){
-      if (!isNaN(this.currentSequence[position])) {
-        //this.sounds[this.currentSoundIndex].howl.stop();
-        if (!this.disabled) {
-          this.sounds[this.currentSequence[position]].howl.play();
-          this.currentSoundIndex = this.currentSequence[position];
-        }
-      }  
-  }
-
-  updateChords(currentChord : string) {
-    if (this.tonal) {
-      this.currentSequence.forEach((seqItem: number, seqIndex: number) => {
-        if (!isNaN(seqItem)) {
-          if (!this.sounds[seqItem].chords.includes(currentChord)) {
-            this.currentSequence[seqIndex] = getNextSoundIndex(
-              this.sounds,
-              currentChord
-            );
-          }
-        }
-      });
-    }
-  }
-
-  updateActivity(currentChord : string){
-    this.calcAmountOfNotes();
-    let currentSequenceNoteIndices : number[] = [];
-    let currentSequenceEmptyIndices : number[] = [];
-    let editIndex : number;
-    let noteDifference : number;
-
-    this.currentSequence.forEach((seqItem : number, index: number) => {
-        if (!isNaN(seqItem)){
-            currentSequenceNoteIndices.push(index)
-        }   else {
-            currentSequenceEmptyIndices.push(index)
-        }
-    })
-
-    noteDifference = this.noteAmt - currentSequenceNoteIndices.length
-    if (noteDifference < 0){
-        for (let i = 0; i > noteDifference; i--){
-            editIndex = Math.floor(Math.random() * currentSequenceNoteIndices.length);
-            this.currentSequence[currentSequenceNoteIndices[editIndex]] = NaN;
-            currentSequenceNoteIndices.splice(editIndex, 1)
-        }
-    } else if (noteDifference > 0){
-        for (let i = 0; i < noteDifference; i++){
-            editIndex = Math.floor(Math.random() * currentSequenceEmptyIndices.length);
-            this.currentSequence[currentSequenceEmptyIndices[editIndex]] = getNextSoundIndex(this.sounds, currentChord);
-            currentSequenceEmptyIndices.splice(editIndex, 1)
-        }
-    }
-  }
-}
-
 class Sound {
   howl: any;
   chords: any;
@@ -158,11 +21,10 @@ class Sound {
     All these sounds are then pushed into a sequencer object, which controls the playback
     
     soundSources [
-        sequencer :
-            sounds: [{
-                howl: *ACTUAL SOUND*
-                chords ["Array of chords it can be played on"]
-            ]}
+        sounds: [{
+            howl: *ACTUAL SOUND*
+            chords ["Array of chords it can be played on"]
+        ]}
     ]  
 */
 
@@ -175,89 +37,59 @@ export function initSoundPlayer(state: any) {
       case "inst":
         track.sampleLoader.forEach((sample: any) => {
           soundsArr.push(
-            new Sound(sample.sampleSource, track.baseVolume, track.initVolume, sample.chords)
+            new Sound(
+              sample.sampleSource,
+              track.baseVolume,
+              track.initVolume,
+              sample.chords
+            )
           );
         });
-        track.sequencer = new Sequencer(
-          soundsArr,
-          state[keys.actKey + index],
-          state[keys.disabledKey + index],
-          false,
-          true,
-          track.maxSoundsInSequence,
-          track.minSoundsInSequence,
-          state.currentChord,
-          track.initPattern
-        );
+        track.sounds = soundsArr;
         break;
 
       case "drum":
         track.sampleLoader.forEach((sample: any) => {
           soundsArr.push(
-            new Sound(sample.sampleSource, track.baseVolume, track.initVolume, sample.chords)
+            new Sound(
+              sample.sampleSource,
+              track.baseVolume,
+              track.initVolume,
+              sample.chords
+            )
           );
         });
-        track.sequencer = new Sequencer(
-          soundsArr,
-          100,
-          state[keys.disabledKey + index].disabled,
-          track.patterns,
-          false,
-          track.maxSoundsInSequence,
-          track.minSoundsInSequence,
-          state.currentChord,
-          track.initPattern
-        );
+        track.sounds = soundsArr;
         break;
 
-        case "fx":
-          track.sampleLoader.forEach((sample: any) => {
-            soundsArr.push(
-              new Sound(sample.sampleSource, track.baseVolume, track.initVolume, sample.chords)
-            );
-          });
-          track.sequencer = new Sequencer(
-            soundsArr,
-            100,
-            state[keys.disabledKey + index].disabled,
-            false,
-            false,
-            track.maxSoundsInSequence,
-            track.minSoundsInSequence,
-            state.currentChord,
-            track.initPattern
+      case "fx":
+        track.sampleLoader.forEach((sample: any) => {
+          soundsArr.push(
+            new Sound(
+              sample.sampleSource,
+              track.baseVolume,
+              track.initVolume,
+              sample.chords
+            )
           );
-          break;     
+        });
+        track.sounds = soundsArr;
+        break;
     }    
   });
 }
 
 
 export function setTrackVolume(volume: number, index: number) {
-  soundSources[index].sequencer.sounds.forEach((sound: any) => {
+  soundSources[index].sounds.forEach((sound: any) => {
     sound.howl.volume(
       (volume / 100) * soundSources[index].baseVolume
     );
   });
 }
 
-export function updateTrackActivity(activity: number, index: number, currentChord: string) {
-  soundSources[index].sequencer.activity = activity;
-  soundSources[index].sequencer.updateActivity(currentChord);
-}
-
-export function setTrackDisable(disabled : boolean, index: number) {
-  soundSources[index].sequencer.disabled = disabled;
-  if (disabled) {
-    stopAllSounds(index);
-  }
-  if (!disabled && soundSources[index].kind === "fx"){
-    soundSources[index].sequencer.sounds[0].howl.play()
-  }
-}
-
 export function stopAllSounds(index: number) {
-  soundSources[index].sequencer.sounds.forEach((sound: any) => {
+  soundSources[index].sounds.forEach((sound: any) => {
     sound.howl.stop();
   });
 }
@@ -283,48 +115,17 @@ function getNextSoundIndex(sounds: object[], currentChord: string) {
   return newSoundIndex;
 }
 
-export function updateCurrentSequenceChords(currentChord: string) {
-  soundSources.forEach((track: any, index: any) => {
-    if (track.kind === "inst"){
-      track.sequencer.updateChords(currentChord);
-    }
-  });
-}
-
-export function playSequencers(position: number){
-  soundSources.forEach((track: any, index: any) => {
-    if (track.kind === "inst" || track.kind === "drum"){
-      track.sequencer.playSeqPosition(position);
-    }
-  });
-}
-
-export function playFX(){
+export function playFX(state: any){
   soundSources.forEach((track: any, index: any) => {
     if (track.kind === "fx"){
-      if (!track.sequencer.disabled){
-      track.sequencer.sounds[0].howl.play();
+      if (!state[keys.disabledKey + index]){
+      track.sounds[0].howl.play();
       }
     }
   });
 }
 
-export function updatePattern(value: number, index: number){
-  soundSources[index].sequencer.buildFromPattern(value - 1);
-}
-
-export function mutateSequence(currentChord: string, index: number) {
-  soundSources[index].sequencer.currentSequence = randomMutation(
-    1,
-    soundSources[index].sequencer.currentSequence,
-    soundSources[index].sequencer.sounds,
-    soundSources[index].sequencer.tonal,
-    currentChord
-  );
-}
-
-
-function randomMutation(
+export function randomMutation(
   iterations: number,
   startingSeq: number[],
   sounds: any,
@@ -356,5 +157,100 @@ function randomMutation(
 }
 
 
+export function buildFromActivity(
+  currentChord: string,
+  sounds: any[],
+  activity: number,
+  minNotes: number,
+  maxNotes: number,
+) {
+  let noteAmt = calcAmountOfNotes(minNotes, maxNotes, activity);
+  let currentSequence = [];
+  let possibleIndexes = [];
+  for (let i = 0; i < seqLength; i++) {
+    currentSequence.push(NaN);
+    possibleIndexes.push(i);
+  }
+  for (let i = 0; i < noteAmt; i++) {
+    let newSeqIndex = possibleIndexes[Math.floor(Math.random() * seqLength)];
+    let newSoundIndex = getNextSoundIndex(sounds, currentChord);
+    currentSequence[newSeqIndex] = newSoundIndex;
+    possibleIndexes.splice(newSeqIndex, 1);
+  }
+  return currentSequence;
+}
+
+export function buildFromPattern(patternIndex : number, patterns: any[], sounds: any[]){
+  let newSeq = [...patterns[patternIndex]];
+  newSeq.forEach((step : number, index : number)=>{
+    if (!isNaN(step)){
+      newSeq[index] = Math.floor(Math.random() * sounds.length)
+    }
+  })
+  return newSeq;
+}
+
+function calcAmountOfNotes(min: number, max: number, activity: number) {
+  return min + Math.floor((activity / 100) * max);
+}
+
+export function updateActivity(
+  currentChord: string,
+  sounds: any[],
+  activity: number,
+  minNotes: number,
+  maxNotes: number,
+  currentSequence: number[]
+) {
+  let noteAmt = calcAmountOfNotes(minNotes, maxNotes, activity);
+  let currentSequenceNoteIndices: number[] = [];
+  let currentSequenceEmptyIndices: number[] = [];
+  let editIndex: number;
+  let noteDifference: number;
+
+  currentSequence.forEach((seqItem: number, index: number) => {
+    if (!isNaN(seqItem)) {
+      currentSequenceNoteIndices.push(index);
+    } else {
+      currentSequenceEmptyIndices.push(index);
+    }
+  });
+
+  noteDifference = noteAmt - currentSequenceNoteIndices.length;
+  if (noteDifference < 0) {
+    for (let i = 0; i > noteDifference; i--) {
+      editIndex = Math.floor(Math.random() * currentSequenceNoteIndices.length);
+      currentSequence[currentSequenceNoteIndices[editIndex]] = NaN;
+      currentSequenceNoteIndices.splice(editIndex, 1);
+    }
+  } else if (noteDifference > 0) {
+    for (let i = 0; i < noteDifference; i++) {
+      editIndex = Math.floor(
+        Math.random() * currentSequenceEmptyIndices.length
+      );
+      currentSequence[
+        currentSequenceEmptyIndices[editIndex]
+      ] = getNextSoundIndex(sounds, currentChord);
+      currentSequenceEmptyIndices.splice(editIndex, 1);
+    }
+  }
+
+  return currentSequence;
+}
+
+export function updateSeqChords(currentChord : string, sounds: any, currentSequence: number[]) {
+    currentSequence.forEach((seqItem: number, seqIndex: number) => {
+      if (!isNaN(seqItem)) {
+        if (!sounds[seqItem].chords.includes(currentChord)) {
+          currentSequence[seqIndex] = getNextSoundIndex(
+            sounds,
+            currentChord
+          );
+        }
+      }
+    });
+
+    return currentSequence;
+}
 
 
