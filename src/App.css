@@ -7,9 +7,9 @@
 }
 
 body{
-  padding: 10px;
   background-color: rgb(40, 40, 40);
   color: white;
+  margin:0;
 }
 
 h1 {
@@ -20,21 +20,26 @@ h1 {
   margin-bottom: 0px;
 }
 
-.InstrumentContainer {
-  width: auto;
-  display: flex;
-  padding-left: 20px;
-  padding-right: 20px;
+p {
+  margin: 0;
 }
 
-.FXContainer, .RhythmContainer {
+.instrumentContainer {
   width: auto;
+  padding-left: 20px;
   display: flex;
+  flex-grow: 1;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fxContainer, .RhythmContainer {
+  width: auto;
   padding: 0 20px 0 20px;
 }
 
 .fxdiv, .drumdiv {
-  border: var(--borderstyle);
   padding-bottom: 20px;
 }
 
@@ -50,10 +55,7 @@ h1 {
 
 .UILeft {
   width: auto;
-  height: min-content;
-  padding-bottom: 20px;
-  flex-grow: 0;
-  border: var(--borderstyle);
+  height: 100%;
   position: absolute;
   left: 10px;
   top: 10px;
@@ -68,11 +70,15 @@ h1 {
   top: 10px;
 }
 
-.TrackUI {
+.trackUI {
   text-align: left;
+  display: flex;
   width: auto;
+  height: auto;
+  margin: auto;
   min-width: 110px;
   flex-grow: 1;
+  padding-top: 20px;
 }
 
 .bpmslider {
@@ -80,22 +86,68 @@ h1 {
   margin-left: 20px;
 }
 
-input[type="range"] {
-  transform: rotate(270deg);
+
+
+.chordContainer {
+  position: absolute;
+  right: 20px;
+  bottom: 30px;
+  display: flex;
+  width: 30%;
+}
+
+.trackIndicator {
+  width: 40px;
+  height: 40px;
+  margin-top: 5px;
+}
+
+.inst{
+  border-radius: 50%;
+}
+
+.drum {
+  border-radius: 10%;
+}
+
+.trackSliders {
+  margin-left: 30px;
+  margin-top: 10px;
+}
+
+.chordButton {
+  margin: auto;
+}
+
+
+.slider {
+  -webkit-appearance: none;  
+  appearance: none;
+  height: 1px; 
+  background: none;
+  outline: none;
+  border: solid 1px #888888;
+  border-radius: 2px;
   display: block;
   background-color: black;
   width: 80px;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 
-.ChordContainer {
-  margin-left: 20px;
-  margin-top: 30px;
-  display: flex;
-  width: 50%;
+input[type="range"] ::-webkit-slider-thumb {
+  -webkit-appearance: none; 
+  appearance: none;
+  width: 10px; 
+  height: 10px; 
+  border-radius: 50%;
+  background: #DDDDDD; 
+  cursor: pointer; 
 }
 
-.ChordButton {
-  margin: auto;
+input[type="range"] ::-webkit-slider-thumb:hover {
+  background: #FFFFFF; 
+}
+
+.disabled {
+  opacity: 0.3;
 }

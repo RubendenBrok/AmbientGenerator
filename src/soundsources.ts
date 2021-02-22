@@ -523,7 +523,7 @@ export const soundSources : any = [
     baseVolume: 0.2,
     kind: "fx",
     name: "Forest",
-    initDisabled: true,
+    initDisabled: false,
     initActivity: 20,
     initDrifting: false,
     initVolume: 0,

@@ -13,7 +13,7 @@ import {
 } from "./soundplayer";
 import { soundSources } from "./soundsources";
 import "./App.css";
-import { updateGraphics, initGraphics, ripple } from "./visuals";
+import { updateGraphics, initGraphics, ripple, colors } from "./visuals";
 
 // keys for dymaically creating and accessing state properties
 export const keys = { 
@@ -24,7 +24,8 @@ actDriftKey : "actDriftVelocity",
 driftingKey : "drifting",
 disabledKey : "disabled",
 patKey : "pattern",
-seqKey : "currentSequence"
+seqKey : "currentSequence",
+showTrack : "showTrack"
 }
 export const seqLength = 32;
 const chordOptions = ["G","A","B","C","D","E"],
@@ -66,6 +67,7 @@ export class App extends React.Component<any, any> {
     this.handleInstUIToggle = this.handleInstUIToggle.bind(this);
     this.handleDrumUIToggle = this.handleDrumUIToggle.bind(this);
     this.handleFxUIToggle = this.handleFxUIToggle.bind(this);
+    this.handleShowTrackToggle = this.handleShowTrackToggle.bind(this);
   }
 
   handleVolumeChange(value: any, index: number) {
@@ -150,11 +152,18 @@ export class App extends React.Component<any, any> {
     });
   }
 
+  handleShowTrackToggle(index: number) {
+    let newShowTrackState: any = {};
+    newShowTrackState[keys.showTrack + index] = !this.state[keys.showTrack + index];
+    this.setState({ ...newShowTrackState })
+  }
+
   handleInstUIToggle() {
     let newUIState: any = {};
     newUIState.showInstUI = !this.state.showInstUI;
     this.setState({ ...newUIState });
   }
+
   handleDrumUIToggle() {
     let newUIState: any = {};
     newUIState.showDrumUI = !this.state.showDrumUI;
@@ -345,12 +354,8 @@ export class App extends React.Component<any, any> {
             handleDriftToggle={this.handleDriftToggle}
             handleDisableToggle={this.handleDisableToggle}
             handleUIToggle={this.handleInstUIToggle}
-            showUI={this.state.showInstUI}
-          />
-          <ChordContainer
-            currentChord={this.state.currentChord}
-            handleChordClick={this.handleChordClick}
-            showUI={this.state.showInstUI}
+            handleShowTrackToggle={this.handleShowTrackToggle}
+            handlePatternChange={this.handlePatternChange}
           />
         </div>
         <div className="UIRight">
@@ -378,6 +383,11 @@ export class App extends React.Component<any, any> {
             showUI={this.state.showFxUI}
           />
         </div>
+        <ChordContainer
+            currentChord={this.state.currentChord}
+            handleChordClick={this.handleChordClick}
+            showUI={this.state.showInstUI}
+          />
       </div>
     );
   }
@@ -385,13 +395,9 @@ export class App extends React.Component<any, any> {
 
 const InstrumentContainer = React.memo(function InstrumentContainer(props: any) {
   return (
-    <div>
-      <h1 onClick = {()=>{props.handleUIToggle()}}>Instruments </h1>
-      {props.showUI
-      ? 
-      <div className="InstrumentContainer">
+      <div className="instrumentContainer">
         {soundSources.map((track: any, index: number) => {
-          if (track.kind === "inst")
+          if (track.kind === "inst" || track.kind === "drum")
             return (
               <TrackUI
                 index={index}
@@ -404,24 +410,34 @@ const InstrumentContainer = React.memo(function InstrumentContainer(props: any) 
                 range2Max={100}
                 range2Step={1}
                 key={index}
+                kind={track.kind}
+                showTrack={props.tracks[keys.showTrack + index]}
                 handleVolumeChange={props.handleVolumeChange}
-                handleRange2Change={props.handleActivityChange}
+                handleActivityChange={props.handleActivityChange}
+                handlePatternChange={props.handlePatternChange}
                 handleDriftToggle={props.handleDriftToggle}
                 handleDisableToggle={props.handleDisableToggle}
+                handleShowTrackToggle={props.handleShowTrackToggle}
               />
             );
         })}
       </div>
-      :""}
-    </div>
   );
 })
 
-const TrackUI = React.memo(function TrackUI(props : any) {
-    return (
-      <div className="TrackUI">
-        <p><b>{soundSources[props.index].name}</b></p>
-        <p>Volume: {Math.round(props.volume)}</p>
+const TrackUI = React.memo(function TrackUI(props: any) {
+  let colorStr = colors[props.index].toString(16);
+  colorStr = "#".concat(colorStr);
+  let indicatorClass = "trackIndicator";
+  props.kind === "inst" ? indicatorClass += " inst" : indicatorClass += " drum"
+  return (
+    <div className="trackUI">
+      <div
+        className={indicatorClass}
+        style={{ backgroundColor: colorStr }}
+        onClick={() => props.handleShowTrackToggle(props.index)}
+      ></div>
+      <div className="trackSliders">
         <p>
           <ControlledSlider
             value={props.volume}
@@ -433,70 +449,48 @@ const TrackUI = React.memo(function TrackUI(props : any) {
             step={1}
           />
         </p>
-        <p>{props.range2Label}{Math.round(props.range2Value)}</p>
-        <p>
-          <ControlledSlider
-            value={props.range2Value}
-            onChange={props.handleRange2Change}
-            disabled={props.disabled}
-            index={props.index}
-            min={props.range2Min}
-            max={props.range2Max}
-            step={props.range2Step}
-          />
-        </p>
-        <p>
-          Drift:{" "}
-          <ControlledCheckbox
-            index={props.index}
-            checked={props.drifting}
-            onChange={props.handleDriftToggle}
-            disabled={props.disabled}
-          />
-        </p>
-        <p>
-          Enabled:{" "}
-          <ControlledCheckbox
-            index={props.index}
-            checked={!props.disabled}
-            onChange={props.handleDisableToggle}
-            disabled={false}
-          />
-        </p>
+        {props.kind === "inst" ? (
+          <p>
+            <ControlledSlider
+              value={props.range2Value}
+              onChange={props.handleActivityChange}
+              disabled={props.disabled}
+              index={props.index}
+              min={props.range2Min}
+              max={props.range2Max}
+              step={props.range2Step}
+            />
+          </p>
+        ) : (
+          <p>
+            <ControlledSlider
+              value={props.range2Value}
+              onChange={props.handlePatternChange}
+              disabled={props.disabled}
+              index={props.index}
+              min={1}
+              max={soundSources[props.index].patterns.length}
+              step={props.range2Step}
+            />
+          </p>
+        )}
       </div>
-    );
-  }
-)
+      <p>
+        <ControlledCheckbox
+          index={props.index}
+          checked={!props.disabled}
+          onChange={props.handleDisableToggle}
+          disabled={false}
+        />
+      </p>
+    </div>
+  );
+});
 
 const RhythmContainer = React.memo(function RhythmContainer(props: any) {
   return (
     <div className="drumdiv">
-      <h1 onClick = {()=>{props.handleUIToggle()}}>Drums</h1>
-      {props.showUI
-      ?
-      <div className="RhythmContainer">
-        {soundSources.map((track: any, index: number) => {
-          if (track.kind === "drum") {
-            return (
-              <TrackUI
-                index={index}
-                volume={props.tracks[keys.volKey + index]}
-                disabled={props.tracks[keys.disabledKey + index]}
-                drifting={props.tracks[keys.driftingKey + index]}
-                range2Value={props.tracks[keys.patKey + index]}
-                range2Label={"Pattern: "}
-                range2Min={1}
-                range2Max={soundSources[index].patterns.length}
-                range2Step={1}
-                key={index}
-                handleVolumeChange={props.handleVolumeChange}
-                handleRange2Change={props.handlePatternChange}
-                handleDriftToggle={props.handleDriftToggle}
-                handleDisableToggle={props.handleDisableToggle}
-              />
-            );
-          }
-        })}
+
         <div className="bpmslider">
           <p>BPM: {props.bpm}</p>
           <ControlledSlider
@@ -514,18 +508,13 @@ const RhythmContainer = React.memo(function RhythmContainer(props: any) {
         </div>
 
       </div>
-      :""}
-    </div>
   );
 });
 
 const FXContainer = React.memo(function FXContainer(props: any) {
   return (
     <div className="fxdiv">
-      <h1 onClick = {()=>{props.handleUIToggle()}}>FX</h1>
-      {props.showUI
-      ?
-      <div className="FXContainer">
+      <div className="fxContainer">
         {soundSources.map((track: any, index: number) => {
           if (track.kind === "fx") {
             return (
@@ -543,16 +532,13 @@ const FXContainer = React.memo(function FXContainer(props: any) {
           }
         })}
       </div>
-      :""}
     </div>
   );
 })
 
 const FXUI = React.memo(function FXUI(props: any){
   return (
-    <div className="TrackUI">
-      <p><b>{soundSources[props.index].name}</b></p>
-      <p>Volume: {Math.round(props.volume)}</p>
+    <div className="trackUI">
       <p>
         <ControlledSlider
           value={props.volume}
@@ -564,24 +550,6 @@ const FXUI = React.memo(function FXUI(props: any){
           step={1}
         />
       </p>
-      <p>
-        Drift:{" "}
-        <ControlledCheckbox
-          index={props.index}
-          checked={props.drifting}
-          onChange={props.handleDriftToggle}
-          disabled={props.disabled}
-        />
-      </p>
-      <p>
-        Enabled:{" "}
-        <ControlledCheckbox
-          index={props.index}
-          checked={!props.disabled}
-          onChange={props.handleDisableToggle}
-          disabled={false}
-        />
-      </p>
     </div>
   );
 })
@@ -590,7 +558,7 @@ function ChordContainer(props: any) {
   return (
     <div>
       {props.showUI ? (
-        <div className="ChordContainer">
+        <div className="chordContainer">
           <ChordButton
             value="G"
             name="G"
@@ -632,7 +600,7 @@ function ChordContainer(props: any) {
 
 function ChordButton(props : any){
   return (
-    <div className = "ChordButton">
+    <div className = "chordButton">
       <button onClick = { () => props.handleChordClick(props.value) }>
       {props.name}</button>
     </div>
@@ -645,6 +613,7 @@ function ControlledSlider(props : any){
   }
   return (
     <input
+    className="slider"
     type="range"
     value={props.value}
     onChange={handleChange}
@@ -676,8 +645,8 @@ function initializeState(){
   initState.playing = true;
 
   initState.showInstUI = true;
-  initState.showDrumUI = true;
-  initState.showFxUI = true;
+  initState.showDrumUI = false;
+  initState.showFxUI = false;
 
   initState.masterSeq = {
     currentSequencePos : 0,
@@ -699,6 +668,7 @@ function initializeState(){
         initState[keys.actDriftKey + index] = 0;
         initState[keys.driftingKey + index] = soundSources[index].initDrifting;
         initState[keys.disabledKey + index] = soundSources[index].initDisabled;
+        initState[keys.showTrack + index] = false;
         break;
   
       case "drum":

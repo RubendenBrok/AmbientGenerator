@@ -20,7 +20,7 @@ const seqStepAngle = 2 * PI / 32;
 let circleMaxR = window.innerHeight / 2 - 50;
 let circleMinR = circleMaxR / 5;
 const dotSize = 15;
-const colors = [0xEE1F49, 0xE02689, 0x7209B7, 0x4361EE, 0x77FFE6, 0x7BFF88, 0xD4FF5C, 0xFFEF93]
+export const colors = [0xEE1F49, 0xE02689, 0x7209B7, 0x4361EE, 0x77FFE6, 0x7BFF88, 0xD4FF5C, 0xFFEF93]
 let circleMidX = window.innerWidth / 2;
 let circleMidY = window.innerHeight / 2;
 
