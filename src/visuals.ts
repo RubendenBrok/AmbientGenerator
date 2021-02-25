@@ -169,6 +169,7 @@ export function updateGraphics(state: any){
     })
     
 
+    // draw 8 white indicator lines
     overlay.lineStyle(1, 0x555555);
     for (let i = 0; i < 8; i++){
       overlay.moveTo(circleMidX, height / 2);
@@ -186,10 +187,14 @@ export function updateGraphics(state: any){
           let timeInCurrentStep = performance.now() - state.lastPlayTime;
           let angle = (state.masterSeq.currentSequencePos * seqStepAngle) + (timeInCurrentStep / sixteenth) * seqStepAngle - PI - 0.2;
           let size = dotSize * (state[keys.volKey + index] / 100);
+
+          // draw a big circle in the color of the track
           fx.lineStyle(2, colors[index], 0.5)
           fx.drawCircle(circleMidX, circleMidY, r)
           overlay.lineStyle(2, colors[index], 0.5)
           overlay.drawCircle(circleMidX, circleMidY, r)
+
+          //for each track, draw a circle when there is a sound in the sequencer
           graph.beginFill(colors[index]);
           for (let i = 0; i < seqLength; i++) {
             if (!isNaN(state[keys.seqKey + index][i])) {
@@ -201,13 +206,17 @@ export function updateGraphics(state: any){
             }
           }
           graph.endFill()
-          overlay.beginFill(0xCCCCCC);
-          overlay.drawCircle(
-            circleMidX + r * Math.sin(- angle),
-            circleMidY + r * Math.cos(- angle),
-            3
-          );
-          overlay.endFill()
+
+          //draw the small circle to indicate where the sequencer is
+          if (state.playing) {
+            overlay.beginFill(0xcccccc);
+            overlay.drawCircle(
+              circleMidX + r * Math.sin(-angle),
+              circleMidY + r * Math.cos(-angle),
+              3
+            );
+            overlay.endFill();
+          }
 
         }
       }

@@ -1,5 +1,6 @@
 :root {
-  --borderstyle: solid 2px black;
+  --borderstyle: solid 2px rgb(202, 202, 202);
+  --roundness: 10px;
 }
 
 .App {
@@ -28,10 +29,16 @@ p {
   width: auto;
   padding-left: 20px;
   display: flex;
-  flex-grow: 1;
   height: 100%;
   flex-direction: column;
-  justify-content: space-between;
+}
+
+.drumContainer {
+  width: auto;
+  padding-left: 20px;
+  display: flex;
+  height: auto;
+  flex-direction: column;
 }
 
 .fxContainer, .RhythmContainer {
@@ -54,53 +61,73 @@ p {
 }
 
 .UILeft {
-  width: auto;
+  width: 240px;
   height: 100%;
   position: absolute;
   left: 10px;
   top: 10px;
 }
 
-.UIRight {
-  margin-left: 10px;
-  width: auto;
+.trackContainer {
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 60px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+
   flex-grow: 0;
-  position: absolute;
-  right: 10px;
-  top: 10px;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .trackUI {
-  text-align: left;
   display: flex;
-  width: auto;
-  height: auto;
-  margin: auto;
-  min-width: 110px;
-  flex-grow: 1;
-  padding-top: 20px;
-}
-
-.bpmslider {
-  text-align: center;
-  margin-left: 20px;
-}
-
-
-
-.chordContainer {
-  position: absolute;
-  right: 20px;
-  bottom: 30px;
-  display: flex;
-  width: 30%;
+  padding-top: 35px;
 }
 
 .trackIndicator {
-  width: 40px;
-  height: 40px;
-  margin-top: 5px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
 }
+
+.trackSliders {
+height: 100%;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+
+.UIRight {
+  width: 240px;
+  height: 100%;
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.bpmslider {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.chordContainer {
+  display: flex;
+  margin-bottom: 20px;
+  margin-top: 40px;
+}
+
+.playContainer {
+  margin-bottom: 30px;
+  margin-top: auto;
+}
+
 
 .inst{
   border-radius: 50%;
@@ -110,44 +137,93 @@ p {
   border-radius: 10%;
 }
 
-.trackSliders {
-  margin-left: 30px;
-  margin-top: 10px;
-}
-
 .chordButton {
   margin: auto;
 }
 
-
 .slider {
   -webkit-appearance: none;  
   appearance: none;
-  height: 1px; 
+  height: 0px; 
   background: none;
   outline: none;
   border: solid 1px #888888;
   border-radius: 2px;
   display: block;
-  background-color: black;
-  width: 80px;
-  margin-bottom: 20px;
+  background: #AAAAAA;
+  width: 100px;
+  margin-top: 9px;
+  margin-bottom: 18px;
 }
 
-input[type="range"] ::-webkit-slider-thumb {
+::-webkit-slider-thumb {
   -webkit-appearance: none; 
   appearance: none;
-  width: 10px; 
-  height: 10px; 
-  border-radius: 50%;
+  width: 7px; 
+  height: 15px; 
+  border-radius: 3px;
   background: #DDDDDD; 
   cursor: pointer; 
 }
 
-input[type="range"] ::-webkit-slider-thumb:hover {
-  background: #FFFFFF; 
+
+::-webkit-slider-thumb:hover {
+  background: #FFFFFF;
+  box-shadow: 0 0 3px #FFFFFF; 
 }
 
 .disabled {
-  opacity: 0.3;
+  opacity: 0.2;
+}
+
+.disableButton {
+  font-size: 1.2em;
+  width: 40px;
+  text-align: center;
+}
+
+button {
+	background: none;
+	color: inherit;
+	border: none;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+  font-size: 20px;
+  border: var(--borderstyle);
+  border-radius:  var(--roundness);
+  min-width: 94px;
+  padding: 6px;
+  margin-right: 12px;
+}
+
+.selected {
+  text-shadow: 0 0 10px #FFFFFF;
+  box-shadow: 0 0 10px #FFFFFF;
+}
+
+.iconContainer {
+  width: 20px;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.icon {
+  width: 100%;
+  margin-bottom: 6px;
+  opacity: 0.6;
+}
+
+.speedIcon {
+  width: 30px;
+  margin-top: -15px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.buttonContainer {
+  width: 100%;
+  justify-content: flex-end;
+  display: flex;
+  margin-bottom: 30px;
 }
