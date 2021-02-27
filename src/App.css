@@ -1,6 +1,7 @@
 :root {
-  --borderstyle: solid 2px rgb(202, 202, 202);
-  --roundness: 10px;
+  --borderstyle: solid 1px rgb(202, 202, 202);
+  --roundness: 5px;
+  --buttonSize: 40px;
 }
 
 .App {
@@ -11,6 +12,14 @@ body{
   background-color: rgb(40, 40, 40);
   color: white;
   margin:0;
+  overflow: scroll;
+  -webkit-touch-callout: none; 
+  -webkit-user-select: none; 
+   -khtml-user-select: none; 
+     -moz-user-select: none; 
+      -ms-user-select: none; 
+          user-select: none;
+
 }
 
 h1 {
@@ -29,8 +38,15 @@ p {
   width: auto;
   padding-left: 20px;
   display: flex;
-  height: 100%;
   flex-direction: column;
+}
+
+.playContainer {
+  margin-bottom: 20px;
+  margin-right: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .drumContainer {
@@ -41,42 +57,38 @@ p {
   flex-direction: column;
 }
 
-.fxContainer, .RhythmContainer {
-  width: auto;
-  padding: 0 20px 0 20px;
-}
-
-.fxdiv, .drumdiv {
-  padding-bottom: 20px;
-}
-
 .drumdiv{
   margin-bottom: 10px;
 }
 
 .UIContainer {
-  display: flex;
   width: 100%;
-  justify-content: space-between;
+  height: 100%;
+  min-width: 1150px;
+  min-height: 750px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .UILeft {
   width: 240px;
   height: 100%;
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   left: 10px;
-  top: 10px;
 }
 
 .trackContainer {
   text-align: left;
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 200px;
   height: 60px;
   margin-top: 30px;
   margin-bottom: 20px;
-
   flex-grow: 0;
   justify-content: space-between;
   align-items: center;
@@ -84,12 +96,12 @@ p {
 
 .trackUI {
   display: flex;
-  padding-top: 35px;
+  padding-top: 25px;
 }
 
-.trackIndicator {
-  width: 30px;
-  height: 30px;
+.trackIndicator, button{
+  width: var(--buttonSize);
+  height: var(--buttonSize);
   cursor: pointer;
 }
 
@@ -100,45 +112,104 @@ flex-direction: column;
 justify-content: center;
 }
 
+.fxSlider {
+  display: flex;
+}
+
 .UIRight {
-  width: 240px;
+  width: 390px;
   height: 100%;
   position: absolute;
   right: 20px;
-  top: 10px;
   display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   flex-direction: column;
-
 }
 
 .bpmslider {
-  width: 100%;
+  width: 20px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  height: 150px;
+}
+
+.vertical {
+  transform: rotate(270deg);
 }
 
 .chordContainer {
   display: flex;
+  justify-self: flex-end;
+  width: 300px;
+  height: 40px;
+  border-radius: 10px;
   margin-bottom: 20px;
-  margin-top: 40px;
+  border: var(--borderstyle);
+  margin-left: 20px;
 }
-
-.playContainer {
-  margin-bottom: 30px;
-  margin-top: auto;
-}
-
 
 .inst{
   border-radius: 50%;
 }
 
 .drum {
-  border-radius: 10%;
+  border-radius: var(--roundness);
 }
 
-.chordButton {
-  margin: auto;
+.chordButton { 
+  text-align: center;
+  line-height: 40px;
+  width: 25%;
+  height: 100%;
+}
+
+.chordButton:hover{
+  text-shadow: 0 0 4px #FFFFFF;
+  background-color: #666666;
+}
+
+.fxContainer{
+  width: 240px;
+  margin-top: 40px;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.fxIndicator {
+  border-radius: var(--roundness);
+  border: solid 1px rgb(202, 202, 202);
+  line-height: 40px;
+  text-align: center;
+  box-shadow: 0px 0px 3px #FFFFFF;
+}
+
+.fxUI{
+  margin-top: 60px;
+  margin-left: 33px;
+}
+
+#firstChord{
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+#lastChord{
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+#secondChord, #thirdChord {
+  border-left: solid 1px #777777;
+}
+
+#thirdChord{
+  border-right: solid 1px #777777;
 }
 
 .slider {
@@ -147,13 +218,13 @@ justify-content: center;
   height: 0px; 
   background: none;
   outline: none;
-  border: solid 1px #888888;
+  border: solid 1px #666666;
   border-radius: 2px;
   display: block;
   background: #AAAAAA;
-  width: 100px;
-  margin-top: 9px;
-  margin-bottom: 18px;
+  width: 80px;
+  margin-top: 7px;
+  margin-bottom: 15px;
 }
 
 ::-webkit-slider-thumb {
@@ -192,18 +263,14 @@ button {
   font-size: 20px;
   border: var(--borderstyle);
   border-radius:  var(--roundness);
-  min-width: 94px;
-  padding: 6px;
-  margin-right: 12px;
+  margin-left: 25px;
+  background-repeat: round;
 }
 
-.selected {
-  text-shadow: 0 0 10px #FFFFFF;
-  box-shadow: 0 0 10px #FFFFFF;
-}
+
 
 .iconContainer {
-  width: 20px;
+  width: 15px;
   margin-left: 8px;
   margin-right: 8px;
 }
@@ -211,7 +278,7 @@ button {
 .icon {
   width: 100%;
   margin-bottom: 6px;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .speedIcon {
@@ -225,5 +292,28 @@ button {
   width: 100%;
   justify-content: flex-end;
   display: flex;
-  margin-bottom: 30px;
+}
+
+.currentChord {
+  text-shadow: 0 0 4px #FFFFFF;
+  background-color : #333333;
+  font-weight: bold;
+}
+
+.driftButton {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: var(--borderstyle);
+  border-radius: 50%;
+  text-align: center;
+  line-height: 80px;
+}
+
+.drifting {
+  text-shadow: 0 0 10px #FFFFFF;
+  box-shadow: 0 0 10px #FFFFFF;
 }

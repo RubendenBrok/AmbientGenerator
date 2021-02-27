@@ -30,7 +30,7 @@ import piano6 from "./sound/11 piano2/6.mp3"
 import piano7 from "./sound/11 piano2/7.mp3"
 import piano8 from "./sound/11 piano2/8.mp3"
 import piano9 from "./sound/11 piano2/9.mp3"
-import piano10 from "./sound/1 piano/10.mp3"
+import piano10 from "./sound/11 piano2/10.mp3"
 import piano11 from "./sound/11 piano2/11.mp3"
 import piano12 from "./sound/11 piano2/12.mp3"
 import piano13 from "./sound/11 piano2/13.mp3"
@@ -172,6 +172,11 @@ import kick from "./sound/drums/kick.mp3"
 import snare1 from "./sound/drums/snare1.mp3"
 import snare2 from "./sound/drums/snare2.mp3"
 import snare3 from "./sound/drums/snare3.mp3"
+import hihatkort1 from "./sound/drums/hihatkort1.mp3"
+import hihatkort2 from "./sound/drums/hihatkort2.mp3"
+import click1 from "./sound/drums/click1.mp3"
+
+
 
 import rain from "./sound/fx/rain.mp3"
 import vinyl from "./sound/fx/vinyl.mp3"
@@ -197,8 +202,9 @@ each array entry represents one 'track' or sound family, with the following prop
 */
 
 export const soundSources : any = [
-//INSTURMENTS////
-  {
+//INSTRUMENTS////
+  
+{
     sampleLoader: [
       { sampleSource: piano1, chords: ['G'] },
       { sampleSource: piano2, chords: ['G'] },
@@ -233,35 +239,29 @@ export const soundSources : any = [
     name: "Piano",
     initDisabled: false,
     initActivity: 30,
-    initDrifting: false,
     initVolume: 100,
     mutationChance: 0.1,
   },
   {
-    sampleLoader: [  
-      { sampleSource: moogbas1, chords: ["G"] },
-      { sampleSource: moogbas2, chords: ["G"] },
-      { sampleSource: moogbas3, chords: ["A"] },
-      { sampleSource: moogbas4, chords: ["A"] },
-      { sampleSource: moogbas5, chords: ["B"] },
-      { sampleSource: moogbas6, chords: ["B"] },
-      { sampleSource: moogbas7, chords: ["C"] },
-      { sampleSource: moogbas8, chords: ["C"] },
-      { sampleSource: moogbas9, chords: ["D"] },
-      { sampleSource: moogbas10, chords: ["D"] },
-      { sampleSource: moogbas11, chords: ["E"] },
-      { sampleSource: moogbas12, chords: ["E"] },
+    sampleLoader: [
+      { sampleSource: submarine1, chords: ['D','G','B','E','C'] },
+      { sampleSource: submarine2, chords: ['D','G','E','C','A'] },
+      { sampleSource: submarine3, chords: ['G','B','E','A'] },
+      { sampleSource: submarine4, chords: ['G','E','G','A'] },
+      { sampleSource: submarine5, chords: ['D','G','B','E','A'] },
+      { sampleSource: submarine6, chords: ['D','G','B','E','C','A'] },
+      { sampleSource: submarine7, chords: ['C','A'] },
+      { sampleSource: submarine8, chords: ['D','G','B','E','C','A'] },
     ],
     kind: "inst",
     sequencer : {},
     baseVolume: 0.5,
-    maxSoundsInSequence: 12,
+    maxSoundsInSequence: 8,
     minSoundsInSequence: 1,
-    name: "Bass",
+    name: "Submarine",
     initDisabled: true,
-    initActivity: 40,
-    initDrifting: false,
-    initVolume: 100,
+    initActivity: 20,
+    initVolume: 50,
     mutationChance: 0.1,
   },
   {
@@ -289,7 +289,6 @@ export const soundSources : any = [
     name: "Pad",
     initDisabled: true,
     initActivity: 40,
-    initDrifting: false,
     initVolume: 50,
     mutationChance: 0.1,
   }, 
@@ -349,14 +348,13 @@ export const soundSources : any = [
   ],
   kind: "inst",
   sequencer : {},
-  baseVolume: 0.7,
+  baseVolume: 0.6,
   maxSoundsInSequence: 12,
   minSoundsInSequence: 1,
   name: "Duomoog",
-  initDisabled: true,
+  initDisabled: false,
   initActivity: 20,
-  initDrifting: false,
-  initVolume: 100,
+  initVolume: 70,
   mutationChance: 0.1,
 }, 
 /*
@@ -418,34 +416,65 @@ export const soundSources : any = [
     name: "Pluck Bass",
     initDisabled: true,
     initActivity: 20,
-    initDrifting: false,
     initVolume: 50,
     mutationChance: 0.1,
   },
   {
-    sampleLoader: [
-      { sampleSource: submarine1, chords: ['D','G','B','E','C'] },
-      { sampleSource: submarine2, chords: ['D','G','E','C','A'] },
-      { sampleSource: submarine3, chords: ['G','B','E','A'] },
-      { sampleSource: submarine4, chords: ['G','E','G','A'] },
-      { sampleSource: submarine5, chords: ['D','G','B','E','A'] },
-      { sampleSource: submarine6, chords: ['D','G','B','E','C','A'] },
-      { sampleSource: submarine7, chords: ['C','A'] },
-      { sampleSource: submarine8, chords: ['D','G','B','E','C','A'] },
+    sampleLoader: [  
+      { sampleSource: moogbas1, chords: ["G"] },
+      { sampleSource: moogbas2, chords: ["G"] },
+      { sampleSource: moogbas3, chords: ["A"] },
+      { sampleSource: moogbas4, chords: ["A"] },
+      { sampleSource: moogbas5, chords: ["B"] },
+      { sampleSource: moogbas6, chords: ["B"] },
+      { sampleSource: moogbas7, chords: ["C"] },
+      { sampleSource: moogbas8, chords: ["C"] },
+      { sampleSource: moogbas9, chords: ["D"] },
+      { sampleSource: moogbas10, chords: ["D"] },
+      { sampleSource: moogbas11, chords: ["E"] },
+      { sampleSource: moogbas12, chords: ["E"] },
     ],
     kind: "inst",
     sequencer : {},
     baseVolume: 0.5,
-    maxSoundsInSequence: 8,
+    maxSoundsInSequence: 12,
     minSoundsInSequence: 1,
-    name: "Submarine",
+    name: "Bass",
+    initDisabled: false,
+    initActivity: 40,
+    initVolume: 100,
+    mutationChance: 0.1,
+  },
+
+  //DRUMS//
+  {
+    sampleLoader:[
+      {sampleSource: hihatkort1},
+      {sampleSource: hihatkort2},
+      {sampleSource: click1},
+    ],
+    kind: "drum",
+    patterns: [
+    //|1           2           3           4          |1           2           3           4         |
+      [N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, N, N, N, N, N, N, 0, N, 0, N],
+      [N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N, N, N, 0, N],
+      [N, N, 0, 0, N, N, 0, N, N, N, 0, 0, N, 0, 0, N, N, N, 0, N, N, N, 0, 0, N, N, 0, N, N, 0, 0, N],
+      [N, 0, 0, 0, 0, N, 0, 0, N, N, 0, 0, 0, 0, 0, N, N, 0, 0, N, N, 0, 0, 0, N, 0, 0, 0, N, 0, 0, N],
+
+      ],
+    baseVolume: 0.3,
+    currentsequence : [],
+    sequencer : {},
+    maxSoundsInSequence: 12,
+    minSoundsInSequence: 1,
+    name: "Snare",
     initDisabled: true,
     initActivity: 20,
     initDrifting: false,
-    initVolume: 50,
+    initVolume: 100,
+    initPattern: 1,
     mutationChance: 0.1,
-  },
-  //DRUMS//
+    },
   {
     sampleLoader:[
       {sampleSource: snare1},
@@ -500,7 +529,7 @@ export const soundSources : any = [
 //FX//////
   {
     sampleLoader: [{ sampleSource: vinyl }],
-    baseVolume: 0.3,
+    baseVolume: 0.5,
     kind: "fx",
     name: "Vinyl",
     initDisabled: false,
@@ -510,7 +539,7 @@ export const soundSources : any = [
   },
   {
     sampleLoader: [{ sampleSource: rain }],
-    baseVolume: 0.07,
+    baseVolume: 0.08,
     kind: "fx",
     name: "Rain",
     initDisabled: false,

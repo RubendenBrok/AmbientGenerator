@@ -13,22 +13,24 @@ let graphicsArr: any[] = [];
 let bloomFilter : any;
 let blurFilter : any;
 
-let nextCircle = performance.now()+100;
+let height: number;
+let width: number;
+let circleMaxR : number; 
+let circleMinR : number; 
+let circleMidX : number;
+let circleMidY : number;
+let ringDistance : number;
+
 let objID = 0;
 const PI = Math.PI;
 const seqStepAngle = 2 * PI / 32;
-let circleMaxR = window.innerHeight / 2 - 50;
-let circleMinR = circleMaxR / 5;
 const dotSize = 15;
-export const colors = [0xEE1F49, 0xE02689, 0x7209B7, 0x4361EE, 0x77FFE6, 0x7BFF88, 0xD4FF5C, 0xFFEF93]
-let circleMidX = window.innerWidth / 2;
-let circleMidY = window.innerHeight / 2;
 
-let width = window.innerWidth;
-let height = window.innerHeight;
+export const colors = [0xEE1F49, 0xE02689, 0x7209B7, 0x4361EE, 0x77FFE6, 0x7BFF88, 0xD4FF5C, 0xFFEF93, 0xFFE8C4]
 
-let amountOfDrawnTracks = 0;
-let ringDistance = 0;
+let amountOfDrawnTracks : number = 0;
+
+window.onresize = () => screenResize();
 
 export function initGraphics() {
   // prevents crash on some Firefox versions (https://github.com/pixijs/pixi.js/issues/7070)
@@ -45,7 +47,6 @@ export function initGraphics() {
 
   document.body.appendChild(app.view);
 
-
   overlay = new PIXI.Graphics();
   app.stage.addChild(overlay);
   graph = new PIXI.Graphics();
@@ -59,7 +60,7 @@ export function initGraphics() {
       amountOfDrawnTracks++;
     }
   });
-  ringDistance = (circleMaxR - circleMinR) / amountOfDrawnTracks;
+  screenResize();
 
   bloomFilter = new AdvancedBloomFilter();
   bloomFilter.threshold = 0.20;
@@ -134,6 +135,9 @@ class rippleCircle {
         this.startOpacity -
         this.startOpacity * (howLongAmIFading / this.fadeTime);
     }
+    if (performance.now() > this.creationTime + this.lifeTime) {
+      this.dead = true;
+    }
   }
 
   draw() {
@@ -153,26 +157,23 @@ export function updateGraphics(state: any){
     graph.drawRect(0,0, width, height);
     graph.endFill();
     
-    let deadIndexes: number[] = [];
     graphicsArr.forEach((obj: any, index: number)=>{
         obj.update();
         obj.draw();
-        if (performance.now() > obj.creationTime + obj.lifeTime){
-            deadIndexes.push(index);
-        }
     })
 
-    graphicsArr.reverse();
-
-    deadIndexes.forEach((index: number)=>{
-        graphicsArr.splice(graphicsArr.length-1-index, 1)
-    })
-    
+    for (let i = graphicsArr.length - 1; i >=0 ; i--){
+      if (graphicsArr[i].dead){
+        graphicsArr.splice(i, 1)
+      }
+    }
 
     // draw 8 white indicator lines
     overlay.lineStyle(1, 0x555555);
     for (let i = 0; i < 8; i++){
-      overlay.moveTo(circleMidX, height / 2);
+      overlay.moveTo(
+        circleMidX + 40 * Math.sin(i / 8 * (2 * PI)),
+      circleMidY + 40 * Math.cos(i / 8 * (2 * PI)))
       overlay.lineTo(
       circleMidX + circleMaxR * Math.sin(i / 8 * (2 * PI)),
       circleMidY + circleMaxR * Math.cos(i / 8 * (2 * PI))
@@ -230,4 +231,16 @@ function getVectorComponents(direction: number, speed: number) {
 
 export function ripple(track: number, volume: number, seqIndex: number){
   graphicsArr.push(new rippleCircle(0, 0, volume, track, seqIndex))
+}
+
+function screenResize(){
+  width = Math.max(window.innerWidth, 1150);
+  height = Math.max(window.innerHeight, 750);
+  app.renderer.resize(width, height);
+  circleMaxR = height / 2 - 50;
+  circleMinR = circleMaxR / 4;
+  circleMidX = width / 2;
+  circleMidY = height / 2;
+  ringDistance = (circleMaxR - circleMinR) / (amountOfDrawnTracks - 1);
+  console.log(amountOfDrawnTracks)
 }
