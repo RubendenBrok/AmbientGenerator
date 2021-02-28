@@ -95,7 +95,8 @@ export class App extends React.Component<any, any> {
     this.handleActivityChange = this.handleActivityChange.bind(this);
     this.handleDriftToggle = this.handleDriftToggle.bind(this);
     this.handleDisableToggle = this.handleDisableToggle.bind(this);
-    this.handleFXToggle = this.handleFXToggle.bind(this);
+    this.handleChordUIToggle = this.handleChordUIToggle.bind(this);
+    this.handleFxUIToggle = this.handleFxUIToggle.bind(this);
     this.handlePatternChange = this.handlePatternChange.bind(this);
     this.handleBpmChange = this.handleBpmChange.bind(this);
     this.handleChordClick = this.handleChordClick.bind(this);
@@ -141,10 +142,16 @@ export class App extends React.Component<any, any> {
     this.setState({ ...newDisabledState })
   }
 
-  handleFXToggle() {
-    let newFXState: any = {};
-    newFXState.showFxUI = !this.state.showFxUI;
-    this.setState({ ...newFXState })
+  handleChordUIToggle() {
+    let newUIState: any = {};
+    newUIState.showChordUI = !this.state.showChordUI;
+    this.setState({ ...newUIState })
+  }
+
+  handleFxUIToggle() {
+    let newUIState: any = {};
+    newUIState.showFxUI = !this.state.showFxUI;
+    this.setState({ ...newUIState })
   }
 
   handleChordClick(index: number) {
@@ -395,7 +402,8 @@ export class App extends React.Component<any, any> {
             }
             progression={this.state.masterSeq.progression}
             handleChordClick={this.handleChordClick}
-            showUI={this.state.showInstUI}
+            showUI={this.state.showChordUI}
+            handleChordUIToggle={this.handleChordUIToggle}
           />
         </div>
         <div className="UIRight">
@@ -410,7 +418,7 @@ export class App extends React.Component<any, any> {
             UIIndex={2}
             tracks={this.state}
             handleVolumeChange={this.handleVolumeChange}
-            handleFXToggle={this.handleFXToggle}
+            handleFxUIToggle={this.handleFxUIToggle}
             showUI={this.state.showFxUI}
           />
           <PlayContainer
@@ -458,11 +466,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
   colorStr = "#".concat(colorStr);
 
   let indicatorClass = "trackIndicator";
-  let flexDirection :any,
-  icon1 = volumeOff,
-  icon2 = volumeOn,
-  icon3 = minus,
-  icon4 = plus;
+  let flexDirection: any;
 
   if (props.kind === "inst") {
     indicatorClass += " inst";
@@ -481,8 +485,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
     indicatorClass += " disabled";
   }
   return (
-    <div className="trackContainer"
-      style = {{flexDirection: flexDirection}}>
+    <div className="trackContainer" style={{ flexDirection: flexDirection }}>
       <div
         className={indicatorClass}
         style={{
@@ -493,9 +496,9 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
       ></div>
       {!props.disabled ? (
         <div className="trackUI">
-          <IconContainer icon1={icon1} icon2={icon3} />
-          <div className="trackSliders">
-            <p>
+          <div className="trackSliderContainer">
+            <p className = "trackSlider">
+              <IconContainer icon1={volumeOff} />
               <ControlledSlider
                 value={props.volume}
                 onChange={props.handleVolumeChange}
@@ -505,9 +508,11 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                 max={100}
                 step={1}
               />
+              <IconContainer icon1={volumeOn} />
             </p>
             {props.kind === "inst" ? (
-              <p>
+              <p  className = "trackSlider">
+                <IconContainer icon1={minus} />
                 <ControlledSlider
                   value={props.range2Value}
                   onChange={props.handleActivityChange}
@@ -517,9 +522,11 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                   max={props.range2Max}
                   step={props.range2Step}
                 />
+                <IconContainer icon1={plus} />
               </p>
             ) : (
-              <p>
+              <p  className = "trackSlider">
+                <IconContainer icon1={minus} />
                 <ControlledSlider
                   value={props.range2Value}
                   onChange={props.handlePatternChange}
@@ -529,10 +536,10 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                   max={soundSources[props.index].patterns.length}
                   step={props.range2Step}
                 />
+                <IconContainer icon1={plus} />
               </p>
             )}
           </div>
-          <IconContainer icon1={icon2} icon2={icon4} />
         </div>
       ) : (
         ""
@@ -588,9 +595,9 @@ const PlayContainer = React.memo(function PlayContainer(props: any) {
         <img className="speedIcon" src={rabbit} />
       </div>
       <div className = {"buttonContainer"}>
-      <button onClick={props.handlePlayingToggle}
+      <div className="button" onClick={props.handlePlayingToggle}
       style = {{backgroundImage: "url("+playIcon+")"}}>
-      </button>
+      </div>
       </div>
     </div>
   );
@@ -609,10 +616,8 @@ const FlowButton = React.memo(function FlowButton(props:any){
 const FXContainer = React.memo(function FXContainer(props: any) {
   let fxIndex = -1;
   return (
-    <div className="trackContainer fxContainer">
-      <div className="trackIndicator fxIndicator" onClick = {props.handleFXToggle}>FX</div>
-      {props.showUI
-      ?
+    <div className="fxContainer">
+      {props.showUI?(
       <div className="fxUI trackSliders">
         {soundSources.map((track: any, index: number) => {
           if (track.kind === "fx") {
@@ -632,7 +637,9 @@ const FXContainer = React.memo(function FXContainer(props: any) {
           }
         })}
       </div>
-      : ""}
+      ) : (
+        <div className = "fxIndicator" onClick={props.handleFxUIToggle}>FX</div>
+      )}
     </div>
   );
 })
@@ -640,7 +647,7 @@ const FXContainer = React.memo(function FXContainer(props: any) {
 const FXUI = React.memo(function FXUI(props: any){
   return (
     <div className="fxSlider">
-
+      <IconContainer icon1={""}/>
       <div className="">
         <ControlledSlider
           value={props.volume}
@@ -652,15 +659,16 @@ const FXUI = React.memo(function FXUI(props: any){
           step={1}
         />
       </div>
-      <IconContainer icon1={fxIcons[props.fxIndex]} icon2=""/>
+      <IconContainer icon1={fxIcons[props.fxIndex]}/>
     </div>
   );
 })
 
 function ChordContainer(props: any) {
   return (
-    <div>
-        <div className="chordContainer">
+    <div className = "chordContainer">
+        {props.showUI ? (
+        <div className="chordProgression">
           <ChordButton
             value = {chords[props.progression[0]].value}
             name = {chords[props.progression[0]].name}
@@ -697,6 +705,10 @@ function ChordContainer(props: any) {
             id = "lastChord"
           />
         </div>
+
+        ) : (
+          <div onClick = {()=> props.handleChordUIToggle()} className = "chordsButton">Change Chord Progression</div>
+        )}
     </div>
   );
 }
@@ -705,7 +717,6 @@ function IconContainer(props: any){
   return (
     <div className = "iconContainer">
       <img className = "icon" src = {props.icon1}></img>
-      <img className = "icon" src = {props.icon2}></img>
     </div>
   )
 }
@@ -751,7 +762,9 @@ function initializeState(){
   initState.playing = true;
   initState.drifting = false;
 
+  initState.showChordUI = false;
   initState.showFxUI = false;
+
 
 
   initState.masterSeq = {

@@ -20,13 +20,14 @@ let circleMinR : number;
 let circleMidX : number;
 let circleMidY : number;
 let ringDistance : number;
+let dotSize : number;
+
 
 let objID = 0;
 const PI = Math.PI;
 const seqStepAngle = 2 * PI / 32;
-const dotSize = 15;
 
-export const colors = [0xEE1F49, 0xE02689, 0x7209B7, 0x4361EE, 0x77FFE6, 0x7BFF88, 0xD4FF5C, 0xFFEF93, 0xFFE8C4]
+export const colors = [0xFF1239, 0xF01BFF, 0x2A22FF, 0x26FFFF, 0x28FF5E, 0xFFFA5C, 0xFFB950, 0xFFDCA8, 0xFFFFFF]
 
 let amountOfDrawnTracks : number = 0;
 
@@ -222,7 +223,6 @@ export function updateGraphics(state: any){
         }
       }
     });
-
 }
 
 function getVectorComponents(direction: number, speed: number) {
@@ -234,13 +234,13 @@ export function ripple(track: number, volume: number, seqIndex: number){
 }
 
 function screenResize(){
-  width = Math.max(window.innerWidth, 1150);
-  height = Math.max(window.innerHeight, 750);
+  width = Math.max(window.innerWidth, 650);
+  height = Math.max(window.innerHeight, 550);
   app.renderer.resize(width, height);
-  circleMaxR = height / 2 - 50;
+  circleMaxR = Math.min(height, width * 0.6) / 2 - 50;
   circleMinR = circleMaxR / 4;
   circleMidX = width / 2;
   circleMidY = height / 2;
   ringDistance = (circleMaxR - circleMinR) / (amountOfDrawnTracks - 1);
-  console.log(amountOfDrawnTracks)
+  dotSize = Math.min(width*0.6, height) / 60;
 }

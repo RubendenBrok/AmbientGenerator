@@ -1,15 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Alata&display=swap');
+
+
 :root {
   --borderstyle: solid 1px rgb(202, 202, 202);
   --roundness: 5px;
-  --buttonSize: 40px;
-}
-
-.App {
-  text-align: center;
+  --buttonSize: 3vw;
+  --bottomButtonSize: 40px;
+  --UISize: 20vw;
+  --iconSize: 1.2vw;
+  --hoverShadow: 0 0 5px #FFFFFF;
 }
 
 body{
   background-color: rgb(40, 40, 40);
+  font-family: 'Alata', sans-serif;
   color: white;
   margin:0;
   overflow: scroll;
@@ -22,36 +26,17 @@ body{
 
 }
 
-h1 {
-  display: block;
-  font-size: 25px;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-bottom: 0px;
-}
-
 p {
   margin: 0;
-}
-
-.instrumentContainer {
-  width: auto;
-  padding-left: 20px;
-  display: flex;
-  flex-direction: column;
 }
 
 .playContainer {
   margin-bottom: 20px;
   margin-right: 5px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 }
 
 .drumContainer {
-  width: auto;
-  padding-left: 20px;
+  width: 100%;
   display: flex;
   height: auto;
   flex-direction: column;
@@ -64,15 +49,15 @@ p {
 .UIContainer {
   width: 100%;
   height: 100%;
-  min-width: 1150px;
-  min-height: 750px;
+  min-width: 650px;
+  min-height: 550px;
   position: absolute;
   top: 0;
   left: 0;
 }
 
 .UILeft {
-  width: 240px;
+  width: var(--UISize);
   height: 100%;
   position: absolute;
   display: flex;
@@ -81,14 +66,21 @@ p {
   left: 10px;
 }
 
-.trackContainer {
-  text-align: left;
+.instrumentContainer {
+  width: 100%;
+  padding-left: 20px;
+  height: 80%;
   display: flex;
-  flex-direction: row;
-  width: 200px;
-  height: 60px;
+  flex-direction: column;
+}
+
+.trackContainer {
+  display: flex;
+  width: 100%;
+  height: 10vh;
+  min-height: 35px;
   margin-top: 30px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   flex-grow: 0;
   justify-content: space-between;
   align-items: center;
@@ -96,28 +88,45 @@ p {
 
 .trackUI {
   display: flex;
+  flex-grow: 1;
   padding-top: 25px;
+  padding-left: 5%;
+  padding-right: 5%;
+  opacity: 0.5;
+}
+
+.trackUI:hover{
+  opacity: 1;
 }
 
 .trackIndicator, button{
   width: var(--buttonSize);
   height: var(--buttonSize);
+  flex-shrink: 0;
   cursor: pointer;
 }
 
-.trackSliders {
-height: 100%;
-display: flex;
-flex-direction: column;
+.trackSliderContainer {
 justify-content: center;
+width: 100%;
+}
+
+.trackSlider {
+  width: 100%;
+  display: flex;
 }
 
 .fxSlider {
   display: flex;
+  opacity: 0.3;
+}
+
+.fxSlider:hover{
+  opacity:1;
 }
 
 .UIRight {
-  width: 390px;
+  width: var(--UISize);
   height: 100%;
   position: absolute;
   right: 20px;
@@ -128,29 +137,34 @@ justify-content: center;
 }
 
 .bpmslider {
-  width: 20px;
   display: flex;
+  width: 20px;
   flex-direction: column-reverse;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  height: 150px;
+  margin-bottom: 2vh;
+  margin-left: 10px;
+  height: calc(10vh + 3 * var(--iconSize));
 }
 
-.vertical {
-  transform: rotate(270deg);
-}
 
 .chordContainer {
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.chordContainer:hover {
+  cursor: pointer;
+  text-shadow: 0 0 10px #FFFFFF;
+}
+
+.chordProgression {
   display: flex;
   justify-self: flex-end;
   width: 300px;
   height: 40px;
   border-radius: 10px;
-  margin-bottom: 20px;
   border: var(--borderstyle);
-  margin-left: 20px;
 }
 
 .inst{
@@ -174,24 +188,32 @@ justify-content: center;
 }
 
 .fxContainer{
-  width: 240px;
-  margin-top: 40px;
-  margin-bottom: auto;
+  width: var(--UISize);
   display: flex;
   flex-direction: row-reverse;
 }
 
 .fxIndicator {
   border-radius: var(--roundness);
-  border: solid 1px rgb(202, 202, 202);
-  line-height: 40px;
+  border: var(--borderstyle);
+  line-height: var(--bottomButtonSize);
   text-align: center;
-  box-shadow: 0px 0px 3px #FFFFFF;
+  width: var(--bottomButtonSize);
+  height: var(--bottomButtonSize);
+}
+
+.fxIndicator:hover {
+  box-shadow: var(--hoverShadow);
 }
 
 .fxUI{
-  margin-top: 60px;
-  margin-left: 33px;
+  width: calc(var(--UISize) / 1.5);
+}
+
+.fxUI, .fxIndicator{
+  position: absolute;
+  bottom: 20px;
+  right: 60px;
 }
 
 #firstChord{
@@ -221,10 +243,15 @@ justify-content: center;
   border: solid 1px #666666;
   border-radius: 2px;
   display: block;
-  background: #AAAAAA;
-  width: 80px;
+  background: none;
+  width: 100%;
   margin-top: 7px;
   margin-bottom: 15px;
+}
+
+.vertical {
+  width: 10vh;
+  transform: rotate(270deg);
 }
 
 ::-webkit-slider-thumb {
@@ -253,30 +280,28 @@ justify-content: center;
   text-align: center;
 }
 
-button {
-	background: none;
-	color: inherit;
-	border: none;
-	font: inherit;
+.button {
 	cursor: pointer;
-	outline: inherit;
-  font-size: 20px;
+  width: var(--bottomButtonSize);
+  height: var(--bottomButtonSize);
   border: var(--borderstyle);
   border-radius:  var(--roundness);
-  margin-left: 25px;
   background-repeat: round;
 }
 
-
+button:hover {
+  box-shadow: var(--hoverShadow);
+}
 
 .iconContainer {
-  width: 15px;
-  margin-left: 8px;
-  margin-right: 8px;
+  width: 15%;
+  margin-left: 5%;
+  margin-right: 5%;
+
 }
 
 .icon {
-  width: 100%;
+  width: var(--iconSize);
   margin-bottom: 6px;
   opacity: 0.7;
 }
@@ -289,7 +314,7 @@ button {
 }
 
 .buttonContainer {
-  width: 100%;
+  width: 40px;
   justify-content: flex-end;
   display: flex;
 }
@@ -311,6 +336,7 @@ button {
   border-radius: 50%;
   text-align: center;
   line-height: 80px;
+  cursor: pointer;
 }
 
 .drifting {
