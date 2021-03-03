@@ -67,6 +67,13 @@ minBpm = 50,
 bpmVariance = 8,
 fxIcons = [gramophone, rain, trees];
 
+let amountOfSoundsLoaded = 0;
+const amountOfSounds = soundSources.reduce((total : number, track : any) => {
+  return total + track.sampleLoader.length;
+}, 0)
+
+export const increaseLoadedSounds = ()=>{amountOfSoundsLoaded++;}
+
 
 // initialize state from soundsources object, create properties for every track
 const initState: any = {};
@@ -385,8 +392,9 @@ export class App extends React.Component<any, any> {
   }
 
   componentDidMount() {
+    console.log(amountOfSounds)
     this.animateLoadingScreen();
-    initSoundPlayer(this.state);
+    initSoundPlayer();
     initGraphics();
 
     soundSources.forEach((sound: any, index: number) => {
@@ -429,6 +437,8 @@ export class App extends React.Component<any, any> {
             hideOpeningScreen={this.state.hideOpeningScreen}
             startApp={this.startApp}
             loadingAnimPoints={this.state.loadingAnimPoints}
+            totalSounds={amountOfSounds}
+            loadedSounds={amountOfSoundsLoaded}
             />
             <FlowButton
               drifting={this.state.drifting}
@@ -495,6 +505,7 @@ const LoadingScreen = React.memo(function LoadingScreen(props: any) {
     opacityClass = "show";
   }
   return (
+
     <div
       className={"loadingContainer " + opacityClass}
       style={{ display: displayStr }}
@@ -533,8 +544,14 @@ const LoadingScreen = React.memo(function LoadingScreen(props: any) {
         </div>
       ) : (
         <div className="loadingBox">
-          {"Loading" + props.loadingAnimPoints.join("")}
+          <div>
+          {"Loading sounds"+props.loadingAnimPoints.join("")}
         </div>
+        <div>
+          {props.loadedSounds + " of " + props.totalSounds}
+        </div>
+        </div>
+
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import { Howl, Howler } from "howler"
 import { soundSources } from "./soundsources"
-import { keys, seqLength, randomArrEntry } from "./App"
+import { keys, seqLength, randomArrEntry, increaseLoadedSounds} from "./App"
 
 class Sound {
   howl: any;
@@ -9,7 +9,8 @@ class Sound {
   constructor(url: string, baseVolume: number, initVolume: number, chords: string[]) {
     this.howl = new Howl({
       src: [url],
-      volume: baseVolume * (initVolume / 100)
+      volume: baseVolume * (initVolume / 100),
+      onload: () => {increaseLoadedSounds()}
     })
     this.chords = chords;
   }
@@ -27,10 +28,10 @@ class Sound {
     ]  
 */
 
-export function initSoundPlayer(state: any) {
+export function initSoundPlayer() {
   Howler.volume(2);
 
-  soundSources.forEach((track: any, index: number) => {
+  soundSources.forEach((track: any) => {
     let soundsArr: any[] = [];
     switch (track.kind) {
       case "inst":
@@ -93,14 +94,6 @@ export function stopAllSounds(index: number) {
   });
 }
 
-function getRandomIntButNotThisOne(range: number, current: number) {
-  let out = Math.floor(Math.random() * range);
-  if (out === current) {
-    out = getRandomIntButNotThisOne(range, out);
-  }
-  return out;
-}
-
 function getNextSoundIndex(sounds: object[], currentChord: string) {
   let newSoundIndex: number;
   let newSoundOptions: number[] = [];
@@ -154,7 +147,6 @@ export function randomMutation(
   }
   return newSeq;
 }
-
 
 export function buildFromActivity(
   currentChord: string,
