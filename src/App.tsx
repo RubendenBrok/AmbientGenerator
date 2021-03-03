@@ -27,9 +27,6 @@ import play from "./img/play.svg"
 import pause from "./img/pause.svg"
 import { isPropertySignature } from "typescript";
 
-
-
-
 // keys for dymaically creating and accessing state properties
 export const keys = { 
 volKey : "volume",
@@ -43,7 +40,6 @@ showTrack : "showTrack",
 nowPlaying : "nowPlaying"
 }
 export const seqLength = 32;
-const chordOptions = ["G","A","B","C","D","E"];
 const chords = [{
   value: "G",
   name: "G"
@@ -63,7 +59,7 @@ const chords = [{
   value: "E",
   name: "Em"
 }],
-barOptions = [1,2,4,8],
+chordChangeOptions = [2,4,8],
 drumChangeOptions = [2,4,8,16],
 tempoChangeOptions = [8,16],
 FXLength = 6000,
@@ -76,13 +72,6 @@ fxIcons = [gramophone, rain, trees];
 // initialize state from soundsources object, create properties for every track
 const initState: any = {};
 initializeState();
-
-/*
-window.onload = () => {
-  masterSeq.playing = true;
-  masterSeq.restart();
-}
-*/
 
 export class App extends React.Component<any, any> {
   constructor(props: any) {
@@ -102,6 +91,28 @@ export class App extends React.Component<any, any> {
     this.handleChordClick = this.handleChordClick.bind(this);
     this.handleChordChange = this.handleChordChange.bind(this);
     this.handlePlayingToggle = this.handlePlayingToggle.bind(this);
+    this.startApp = this.startApp.bind(this);
+    this.animateLoadingScreen = this.animateLoadingScreen.bind(this);
+  }
+
+  startApp() {
+    this.setState({ appStarted: true }, () => {
+      let sixteenth = (60 / this.state.bpm / 4) * 1000;
+      setTimeout(this.updateMasterSeq, sixteenth);
+      setTimeout(this.appLoop, 100);
+      setTimeout(() => this.setState({hideOpeningScreen : true}), 500)
+    });
+  }
+
+  animateLoadingScreen() {
+    console.log("hoi")
+    if (!this.state.loaded){
+      let newPoints = [...this.state.loadingAnimPoints];
+      newPoints.push(".");
+      if (newPoints.length > 4) {newPoints.length = 0;}
+      this.setState({loadingAnimPoints : newPoints})
+      setTimeout(this.animateLoadingScreen, 500)
+    }
   }
 
   handleVolumeChange(value: any, index: number) {
@@ -132,41 +143,45 @@ export class App extends React.Component<any, any> {
   handleDriftToggle() {
     let newDriftState: any = {};
     newDriftState.drifting = !this.state.drifting;
-    newDriftState.newDrumSeq = this.state.barsPlayed + randomArrEntry(drumChangeOptions);
+    newDriftState.masterSeq = this.state.masterSeq;
+    newDriftState.masterSeq.newDrumSeq =
+      this.state.masterSeq.newDrumSeq + randomArrEntry(drumChangeOptions);
     this.setState({ ...newDriftState });
   }
 
   handleDisableToggle(value: boolean, index: number) {
     let newDisabledState: any = {};
     newDisabledState[keys.disabledKey + index] = !value;
-    this.setState({ ...newDisabledState })
+    if (!value) {
+      stopAllSounds(index);
+    }
+    this.setState({ ...newDisabledState });
   }
 
   handleChordUIToggle() {
     let newUIState: any = {};
     newUIState.showChordUI = !this.state.showChordUI;
-    this.setState({ ...newUIState })
+    this.setState({ ...newUIState });
   }
 
   handleFxUIToggle() {
     let newUIState: any = {};
     newUIState.showFxUI = !this.state.showFxUI;
-    this.setState({ ...newUIState })
+    this.setState({ ...newUIState });
   }
 
   handleChordClick(index: number) {
     let newSeq = this.state.masterSeq;
     newSeq.progression[index] = newSeq.progression[index] + 1;
-    if (newSeq.progression[index] >= chords.length){
+    if (newSeq.progression[index] >= chords.length) {
       newSeq.progression[index] = 0;
     }
-    if (newSeq.currentBarInProgression === index){
-      this.handleChordChange(chords[newSeq.progression[index]].value)
+    if (newSeq.currentBarInProgression === index) {
+      this.handleChordChange(chords[newSeq.progression[index]].value);
     }
-
   }
 
-  handleChordChange(chord: string){
+  handleChordChange(chord: string) {
     if (chord !== this.state.currentChord) {
       this.setState({ currentChord: chord }, () => {
         soundSources.forEach((track: any, index: any) => {
@@ -260,9 +275,17 @@ export class App extends React.Component<any, any> {
 
         //handle cycling through the chord progression
         newSeqState.currentBarInProgression++;
-        if (newSeqState.currentBarInProgression > 3){newSeqState.currentBarInProgression = 0}
-        if (chords[newSeqState.progression[newSeqState.currentBarInProgression]].value != this.state.currentChord){
-          this.handleChordChange(chords[newSeqState.progression[newSeqState.currentBarInProgression]].value)
+        if (newSeqState.currentBarInProgression > 3) {
+          newSeqState.currentBarInProgression = 0;
+        }
+        if (
+          chords[newSeqState.progression[newSeqState.currentBarInProgression]]
+            .value != this.state.currentChord
+        ) {
+          this.handleChordChange(
+            chords[newSeqState.progression[newSeqState.currentBarInProgression]]
+              .value
+          );
         }
 
         //should the tempo randomly change?
@@ -324,10 +347,27 @@ export class App extends React.Component<any, any> {
                 );
               }
             });
-            newSeqState.newDrumSeq = randomArrEntry(drumChangeOptions) + newSeqState.barsPlayed;
+            newSeqState.newDrumSeq =
+              randomArrEntry(drumChangeOptions) + newSeqState.barsPlayed;
+          }
+
+          //should the chords randomly change?
+          if (newSeqState.barsPlayed >= newSeqState.newChord) {
+            let changeIndex = Math.floor(
+              Math.random() * newSeqState.progression.length
+            );
+            newSeqState.progression[changeIndex] = Math.floor(
+              Math.random() * chords.length
+            );
+            newSeqState.newChord =
+              randomArrEntry(chordChangeOptions) + newSeqState.barsPlayed;
+            if (newSeqState.barsPlayed % 4 === changeIndex) {
+              this.handleChordChange(
+                chords[newSeqState.progression[changeIndex]].value
+              );
+            }
           }
         }
-
       }
 
       //retrigger FX loops if necessary
@@ -342,12 +382,12 @@ export class App extends React.Component<any, any> {
 
   // main loop
   appLoop() {
-      updateGraphics(this.state);
-
+    updateGraphics(this.state);
     window.requestAnimationFrame(this.appLoop);
   }
 
   componentDidMount() {
+    this.animateLoadingScreen();
     initSoundPlayer(this.state);
     initGraphics();
 
@@ -374,64 +414,133 @@ export class App extends React.Component<any, any> {
       }
     });
 
-    let sixteenth = (60 / this.state.bpm / 4) * 1000;
-    setTimeout(this.updateMasterSeq, sixteenth);
-
-    setTimeout(this.appLoop, 100);
+    
+    window.addEventListener("load", () => {
+      this.setState({ loaded: true });
+    });
+    
+   //setTimeout(()=>this.setState({ loaded: true }), 1000)
   }
 
   render() {
     return (
-      <div className="UIContainer">
-        <FlowButton 
-                    drifting={this.state.drifting}
-                    handleDriftToggle={this.handleDriftToggle}
-        />
-        <div className="UILeft">
-          <InstContainer
-            state={this.state}
-            handleVolumeChange={this.handleVolumeChange}
-            handleActivityChange={this.handleActivityChange}
-            handleDisableToggle={this.handleDisableToggle}
-            handlePatternChange={this.handlePatternChange}
-          />
-          <ChordContainer
-            currentChord={this.state.currentChord}
-            currentBarInProgression={
-              this.state.masterSeq.currentBarInProgression
-            }
-            progression={this.state.masterSeq.progression}
-            handleChordClick={this.handleChordClick}
-            showUI={this.state.showChordUI}
-            handleChordUIToggle={this.handleChordUIToggle}
-          />
-        </div>
-        <div className="UIRight">
-          <DrumContainer
-            tracks={this.state}
-            handleVolumeChange={this.handleVolumeChange}
-            handlePatternChange={this.handlePatternChange}
-            handleDisableToggle={this.handleDisableToggle}
-            showUI={this.state.showDrumUI}
-          />
-          <FXContainer
-            UIIndex={2}
-            tracks={this.state}
-            handleVolumeChange={this.handleVolumeChange}
-            handleFxUIToggle={this.handleFxUIToggle}
-            showUI={this.state.showFxUI}
-          />
-          <PlayContainer
-            bpm={this.state.bpm}
-            playing={this.state.playing}
-            handleBpmChange={this.handleBpmChange}
-            handlePlayingToggle={this.handlePlayingToggle}
-          />
-        </div>
-      </div>
+          <div className="UIContainer">
+            <LoadingScreen
+            loaded={this.state.loaded}
+            started={this.state.appStarted}
+            hideOpeningScreen={this.state.hideOpeningScreen}
+            startApp={this.startApp}
+            loadingAnimPoints={this.state.loadingAnimPoints}
+            />
+            <FlowButton
+              drifting={this.state.drifting}
+              handleDriftToggle={this.handleDriftToggle}
+            />
+            <div className="UILeft">
+              <InstContainer
+                state={this.state}
+                handleVolumeChange={this.handleVolumeChange}
+                handleActivityChange={this.handleActivityChange}
+                handleDisableToggle={this.handleDisableToggle}
+                handlePatternChange={this.handlePatternChange}
+              />
+              <ChordContainer
+                currentChord={this.state.currentChord}
+                currentBarInProgression={
+                  this.state.masterSeq.currentBarInProgression
+                }
+                progression={this.state.masterSeq.progression}
+                handleChordClick={this.handleChordClick}
+                showUI={this.state.showChordUI}
+                handleChordUIToggle={this.handleChordUIToggle}
+              />
+            </div>
+            <div className="UIRight">
+              <DrumContainer
+                tracks={this.state}
+                handleVolumeChange={this.handleVolumeChange}
+                handlePatternChange={this.handlePatternChange}
+                handleDisableToggle={this.handleDisableToggle}
+                showUI={this.state.showDrumUI}
+              />
+              <FXContainer
+                UIIndex={2}
+                tracks={this.state}
+                handleVolumeChange={this.handleVolumeChange}
+                handleFxUIToggle={this.handleFxUIToggle}
+                showUI={this.state.showFxUI}
+              />
+              <PlayContainer
+                bpm={this.state.bpm}
+                playing={this.state.playing}
+                handleBpmChange={this.handleBpmChange}
+                handlePlayingToggle={this.handlePlayingToggle}
+              />
+            </div>
+          </div>
+
     );
   }
 } 
+
+const LoadingScreen = React.memo(function LoadingScreen(props: any) {
+  let opacityClass: string;
+  let displayStr: string;
+  if (props.hideOpeningScreen) {
+    displayStr = "none";
+  } else {
+    displayStr = "block";
+  }
+  if (props.started) {
+    opacityClass = "hide";
+  } else {
+    opacityClass = "show";
+  }
+  return (
+    <div
+      className={"loadingContainer " + opacityClass}
+      style={{ display: displayStr }}
+    >
+      <div className="quoteContainer">
+        <div className="quote" id="quote1">
+          <p>
+            <h2>
+              <i>noun: </i>
+              <b>flow</b>
+            </h2>
+          </p>
+          <ul>
+            <li>
+              the action or fact of moving along in a steady, continuous stream.
+            </li>
+            <li>a steady, continuous stream or supply of something.</li>
+            <li>
+              the gradual permanent deformation of a solid under stress, without
+              melting.
+            </li>
+          </ul>
+        </div>
+
+        <div className="quote" id="quote2">
+          “The only way to make sense out of change is to plunge into it, move
+          with it, and join the dance.”
+          <br />
+          <i>― Alan Wilson Watts</i>
+        </div>
+      </div>
+      {props.loaded ? (
+        <div className="startButton" onClick={props.startApp}>
+          Start
+          <div className="hoverLine"></div>
+        </div>
+      ) : (
+        <div className="loadingBox">
+          {"Loading" + props.loadingAnimPoints.join("")}
+        </div>
+      )}
+    </div>
+  );
+});
 
 const InstContainer = React.memo(function InstrumentContainer(props: any) {
   return (
@@ -485,7 +594,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
     indicatorClass += " disabled";
   }
   return (
-    <div className="trackContainer" style={{ flexDirection: flexDirection }}>
+    <div className="trackContainer" style={{ flexDirection: flexDirection }} id={"track"+props.index}>
       <div
         className={indicatorClass}
         style={{
@@ -607,8 +716,10 @@ const FlowButton = React.memo(function FlowButton(props:any){
   let selectClass = "";
   if (props.drifting){selectClass = " drifting"}
   return(
-  <div onClick={props.handleDriftToggle} className = {"driftButton" + selectClass}>
+  <div onClick={props.handleDriftToggle} className = {"driftButton" + selectClass} id = "driftButton">
   FLOW
+  <div className="hoverLine"></div>
+
 </div>
   )
 })
@@ -765,6 +876,10 @@ function initializeState(){
   initState.showChordUI = false;
   initState.showFxUI = false;
 
+  initState.appStarted = false;
+  initState.loaded = false;
+  initState.hideOpeningScreen = false;
+  initState.loadingAnimPoints = [];
 
 
   initState.masterSeq = {
@@ -773,7 +888,7 @@ function initializeState(){
     barsPlayed : 0,
     FXTimer: -FXLength,
     newDrumSeq: randomArrEntry(drumChangeOptions),
-    nextChord: randomArrEntry(barOptions),
+    newChord: randomArrEntry(chordChangeOptions),
     tempoChangeTimer: randomArrEntry(tempoChangeOptions),
     currentBarInProgression : 0,
     progression : [5, 5, 4, 3],

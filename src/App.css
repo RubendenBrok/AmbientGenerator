@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Alata&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque&display=swap');
 
 
 :root {
@@ -9,6 +11,7 @@
   --UISize: 20vw;
   --iconSize: 1.2vw;
   --hoverShadow: 0 0 5px #FFFFFF;
+  --titleFont: 'Darker Grotesque', sans-serif;
 }
 
 body{
@@ -25,6 +28,74 @@ body{
           user-select: none;
 
 }
+
+h2 {
+  font-weight: normal;
+  font-size: 1.5rem;
+}
+
+.loadingContainer {
+  background-color:rgb(40, 40, 40);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.quoteContainer {
+  width: 40%;
+  font-size: 1.1rem;
+  letter-spacing: 0.1ch;
+  margin: auto;
+  margin-top: 10%;
+  margin-bottom: 10vh;
+}
+
+.loadingBox {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 20px;
+  margin: auto;
+  width: 40%;
+}
+
+.startButton {
+  font-family: var(--titleFont);
+  font-size: 40px;
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  cursor: pointer;
+}
+
+.hoverLine {
+  width: 0%;
+  height: 1px;
+  background-color: white;
+  margin: auto;
+  transition: width 0.5s;
+}
+
+.startButton:hover .hoverLine {
+  width: 100%;
+}
+
+.quote {
+  margin-bottom: 10vh;
+  opacity: 0;
+}
+
+#quote1 {
+  animation: fade1 2s linear 1s 1 forwards;
+}
+
+#quote2 {
+  animation: fade1 2s linear 6s 1 forwards;
+}
+
 
 p {
   margin: 0;
@@ -92,11 +163,6 @@ p {
   padding-top: 25px;
   padding-left: 5%;
   padding-right: 5%;
-  opacity: 0.5;
-}
-
-.trackUI:hover{
-  opacity: 1;
 }
 
 .trackIndicator, button{
@@ -114,6 +180,11 @@ width: 100%;
 .trackSlider {
   width: 100%;
   display: flex;
+  opacity: 0.5;
+}
+
+.trackSlider:hover{
+  opacity: 1;
 }
 
 .fxSlider {
@@ -202,7 +273,7 @@ width: 100%;
   height: var(--bottomButtonSize);
 }
 
-.fxIndicator:hover {
+.fxIndicator:hover, .button:hover {
   box-shadow: var(--hoverShadow);
 }
 
@@ -289,10 +360,6 @@ width: 100%;
   background-repeat: round;
 }
 
-button:hover {
-  box-shadow: var(--hoverShadow);
-}
-
 .iconContainer {
   width: 15%;
   margin-left: 5%;
@@ -327,19 +394,52 @@ button:hover {
 
 .driftButton {
   position: absolute;
+  display: inline-block;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  border: var(--borderstyle);
+  border: none;
   border-radius: 50%;
   text-align: center;
-  line-height: 80px;
   cursor: pointer;
+  font-family: var(--titleFont);
+  font-size: 1.8vw;
+}
+
+.driftButton:hover .hoverLine {
+  width: 100%;
+}
+
+.driftButton:hover {
+  text-shadow: 0 0 6px #FFFFFF;
+
 }
 
 .drifting {
   text-shadow: 0 0 10px #FFFFFF;
-  box-shadow: 0 0 10px #FFFFFF;
+}
+
+.show {
+  opacity: 1;
+}
+.hide {
+  opacity: 0;
+  transition: opacity 400ms;
+}
+
+@-webkit-keyframes fade1 {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-moz-keyframes fade1 {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-o-keyframes fade1 {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes fade1 {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
