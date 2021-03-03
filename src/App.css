@@ -67,6 +67,8 @@ h2 {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
   text-align: center;
   cursor: pointer;
 }
@@ -90,10 +92,13 @@ h2 {
 
 #quote1 {
   animation: fade1 2s linear 1s 1 forwards;
+  -webkit-animation: fade1 2s linear 1s 1 forwards;
+
 }
 
 #quote2 {
   animation: fade1 2s linear 6s 1 forwards;
+  -webkit-animation: fade1 2s linear 6s 1 forwards;
 }
 
 
@@ -322,7 +327,10 @@ width: 100%;
 
 .vertical {
   width: 10vh;
+  -ms-transform: rotate(270deg);
+  -webkit-transform: rotate(270deg);
   transform: rotate(270deg);
+
 }
 
 ::-webkit-slider-thumb {
@@ -397,6 +405,8 @@ width: 100%;
   display: inline-block;
   left: 50%;
   top: 50%;
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   border: none;
   border-radius: 50%;

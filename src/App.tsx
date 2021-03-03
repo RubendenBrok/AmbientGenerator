@@ -99,6 +99,7 @@ export class App extends React.Component<any, any> {
     this.handlePlayingToggle = this.handlePlayingToggle.bind(this);
     this.startApp = this.startApp.bind(this);
     this.animateLoadingScreen = this.animateLoadingScreen.bind(this);
+    this.loadChecker = this.loadChecker.bind(this);
   }
 
   startApp() {
@@ -385,6 +386,14 @@ export class App extends React.Component<any, any> {
     }
   }
 
+  loadChecker(){
+    if (amountOfSounds === amountOfSoundsLoaded){
+      this.setState({loaded : true})
+    } else {
+      setTimeout(()=>this.loadChecker(), 10)
+    }
+  }
+
   // main loop
   appLoop() {
     updateGraphics(this.state);
@@ -392,10 +401,10 @@ export class App extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    console.log(amountOfSounds)
     this.animateLoadingScreen();
     initSoundPlayer();
     initGraphics();
+    this.loadChecker();
 
     soundSources.forEach((sound: any, index: number) => {
       if (sound.kind === "inst") {
@@ -418,11 +427,6 @@ export class App extends React.Component<any, any> {
         );
         this.setState({ ...newSeq });
       }
-    });
-
-    
-    window.addEventListener("load", () => {
-      this.setState({ loaded: true });
     });
     
    //setTimeout(()=>this.setState({ loaded: true }), 1000)
