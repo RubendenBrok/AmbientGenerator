@@ -46,6 +46,7 @@ import piano22 from "./sound/11 piano2/22.mp3"
 import piano23 from "./sound/11 piano2/23.mp3"
 import piano24 from "./sound/11 piano2/24.mp3"
 
+/*
 import synthbas1 from "./sound/2 synthbas/1.mp3"
 import synthbas2 from "./sound/2 synthbas/2.mp3"
 import synthbas3 from "./sound/2 synthbas/3.mp3"
@@ -60,6 +61,7 @@ import synthbas11 from "./sound/2 synthbas/11.mp3"
 import synthbas12 from "./sound/2 synthbas/12.mp3"
 import synthbas13 from "./sound/2 synthbas/13.mp3"
 import synthbas14 from "./sound/2 synthbas/14.mp3"
+*/
 
 import moogbas1 from "./sound/9 moogbas/1.mp3"
 import moogbas2 from "./sound/9 moogbas/2.mp3"
@@ -90,6 +92,7 @@ import synthpad12 from "./sound/3 synthpad/12.mp3"
 import synthpad13 from "./sound/3 synthpad/13.mp3"
 import synthpad14 from "./sound/3 synthpad/14.mp3"
 
+/*
 import kalimba1 from "./sound/4 kalimba/1.mp3"
 import kalimba2 from "./sound/4 kalimba/2.mp3"
 import kalimba3 from "./sound/4 kalimba/3.mp3"
@@ -123,6 +126,7 @@ import strings14 from "./sound/5 strings/14.mp3"
 import strings15 from "./sound/5 strings/15.mp3"
 import strings16 from "./sound/5 strings/16.mp3"
 import strings17 from "./sound/5 strings/17.mp3"
+*/
 
 import duomoog1 from "./sound/7 duomoog/1.mp3"
 import duomoog2 from "./sound/7 duomoog/2.mp3"
@@ -171,7 +175,7 @@ import submarine8 from "./sound/10 moog submarine/8.mp3"
 import kick from "./sound/drums/kick.mp3"
 import snare1 from "./sound/drums/snare1.mp3"
 import snare2 from "./sound/drums/snare2.mp3"
-import snare3 from "./sound/drums/snare3.mp3"
+//import snare3 from "./sound/drums/snare3.mp3"
 import hihatkort1 from "./sound/drums/hihatkort1.mp3"
 import hihatkort2 from "./sound/drums/hihatkort2.mp3"
 import click1 from "./sound/drums/click1.mp3"

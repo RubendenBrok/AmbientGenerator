@@ -25,7 +25,6 @@ import trees from "./img/trees.svg"
 import gramophone from "./img/gramophone.svg"
 import play from "./img/play.svg"
 import pause from "./img/pause.svg"
-import { isPropertySignature } from "typescript";
 
 // keys for dymaically creating and accessing state properties
 export const keys = { 
@@ -105,7 +104,6 @@ export class App extends React.Component<any, any> {
   }
 
   animateLoadingScreen() {
-    console.log("hoi")
     if (!this.state.loaded){
       let newPoints = [...this.state.loadingAnimPoints];
       newPoints.push(".");
@@ -280,7 +278,7 @@ export class App extends React.Component<any, any> {
         }
         if (
           chords[newSeqState.progression[newSeqState.currentBarInProgression]]
-            .value != this.state.currentChord
+            .value !== this.state.currentChord
         ) {
           this.handleChordChange(
             chords[newSeqState.progression[newSeqState.currentBarInProgression]]
@@ -503,12 +501,12 @@ const LoadingScreen = React.memo(function LoadingScreen(props: any) {
     >
       <div className="quoteContainer">
         <div className="quote" id="quote1">
-          <p>
+          <div>
             <h2>
               <i>noun: </i>
               <b>flow</b>
             </h2>
-          </p>
+          </div>
           <ul>
             <li>
               the action or fact of moving along in a steady, continuous stream.
@@ -550,6 +548,7 @@ const InstContainer = React.memo(function InstrumentContainer(props: any) {
           return (
             <TrackContainer
               index={index}
+              key={index}
               volume={props.state[keys.volKey + index]}
               range2Value={props.state[keys.actKey + index]}
               disabled={props.state[keys.disabledKey + index]}
@@ -606,7 +605,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
       {!props.disabled ? (
         <div className="trackUI">
           <div className="trackSliderContainer">
-            <p className = "trackSlider">
+            <div className = "trackSlider">
               <IconContainer icon1={volumeOff} />
               <ControlledSlider
                 value={props.volume}
@@ -618,9 +617,9 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                 step={1}
               />
               <IconContainer icon1={volumeOn} />
-            </p>
+            </div>
             {props.kind === "inst" ? (
-              <p  className = "trackSlider">
+              <div  className = "trackSlider">
                 <IconContainer icon1={minus} />
                 <ControlledSlider
                   value={props.range2Value}
@@ -632,9 +631,9 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                   step={props.range2Step}
                 />
                 <IconContainer icon1={plus} />
-              </p>
+              </div>
             ) : (
-              <p  className = "trackSlider">
+              <div  className = "trackSlider">
                 <IconContainer icon1={minus} />
                 <ControlledSlider
                   value={props.range2Value}
@@ -646,7 +645,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                   step={props.range2Step}
                 />
                 <IconContainer icon1={plus} />
-              </p>
+              </div>
             )}
           </div>
         </div>
@@ -665,6 +664,7 @@ const DrumContainer = React.memo(function DrumContainer(props: any) {
             return (
               <TrackContainer
                 index={index}
+                key={index}
                 volume={props.tracks[keys.volKey + index]}
                 range2Value={props.tracks[keys.patKey + index]}
                 disabled={props.tracks[keys.disabledKey + index]}

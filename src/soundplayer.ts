@@ -1,7 +1,6 @@
 import { Howl, Howler } from "howler"
 import { soundSources } from "./soundsources"
 import { keys, seqLength, randomArrEntry } from "./App"
-import { SSL_OP_NO_QUERY_MTU } from "constants";
 
 class Sound {
   howl: any;
