@@ -36,6 +36,7 @@ export const MobileUI = ({
   handleBpmChange,
 }: any) => {
   const [trackOpen, setTrackOpen] = useState(false);
+
   const [openIndex, setOpenIndex] = useState(0);
 
   let playIcon: string;
