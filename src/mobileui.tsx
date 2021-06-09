@@ -4,6 +4,8 @@ import {
   amountOfSoundsLoaded,
   ControlledSlider,
   IconContainer,
+  minBpm,
+  maxBpm,
 } from "./App";
 import React, { useState } from "react";
 import { soundSources } from "./soundsources";
@@ -79,6 +81,14 @@ export const MobileUI = ({
               onClick={handlePlayingToggle}
               style={{ backgroundImage: "url('" + playIcon + "')" }}
             ></div>
+            <div className="mobileButton ">
+              <div className="mobileHelp">?</div>
+            </div>
+            <div className="mobileButton " onClick={handleDriftToggle}>
+              <div className="mobileHelp" style={{ fontSize: "1rem" }}>
+                {state.drifting ? "EVOLVING" : "EVOLVE"}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -93,6 +103,20 @@ export const MobileUI = ({
           handleDisableToggle={handleDisableToggle}
         />
       )}
+      <div className="mobileUIContainerBottom">
+        <div className="trackSlider">
+          <img className="speedIcon" src={turtle} />
+          <ControlledSlider
+            vertical={false}
+            index={0}
+            value={state.bpm}
+            onChange={handleBpmChange}
+            min={minBpm}
+            max={maxBpm}
+          />
+          <img className="speedIcon" src={rabbit} />
+        </div>
+      </div>
     </div>
   );
 };

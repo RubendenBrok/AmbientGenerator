@@ -79,11 +79,11 @@ export const chords = [
   drumChangeOptions = [2, 4, 8, 16],
   tempoChangeOptions = [8, 16],
   FXLength = 6000,
-  maxBpm = 150,
-  minBpm = 50,
   bpmVariance = 8,
   fxIcons = [gramophone, rain, trees];
-export const mobile = 650;
+export const mobile = 650,
+  maxBpm = 150,
+  minBpm = 50;
 
 export let amountOfSoundsLoaded = 0;
 export const amountOfSounds = soundSources.reduce(
