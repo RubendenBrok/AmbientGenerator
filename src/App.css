@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Alata&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Alata&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Days+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Darker+Grotesque&display=swap");
 
 :root {
   --borderstyle: solid 1px rgb(202, 202, 202);
@@ -10,23 +9,23 @@
   --bottomButtonSize: 40px;
   --UISize: 20vw;
   --iconSize: 1.2vw;
-  --hoverShadow: 0 0 5px #FFFFFF;
-  --titleFont: 'Darker Grotesque', sans-serif;
+  --hoverShadow: 0 0 5px #ffffff;
+  --titleFont: "Darker Grotesque", sans-serif;
 }
 
-body{
+body {
   background-color: rgb(40, 40, 40);
-  font-family: 'Alata', sans-serif;
+  font-family: "Alata", sans-serif;
   color: white;
-  margin:0;
-  overflow: scroll;
-  -webkit-touch-callout: none; 
-  -webkit-user-select: none; 
-   -khtml-user-select: none; 
-     -moz-user-select: none; 
-      -ms-user-select: none; 
-          user-select: none;
-
+  margin: 0;
+  overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 0;
 }
 
 h2 {
@@ -35,7 +34,7 @@ h2 {
 }
 
 .loadingContainer {
-  background-color:rgb(40, 40, 40);
+  background-color: rgb(40, 40, 40);
   position: absolute;
   top: 0;
   left: 0;
@@ -54,7 +53,7 @@ h2 {
 }
 
 .loadingBox {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 20px;
   margin: auto;
   width: 40%;
@@ -93,14 +92,12 @@ h2 {
 #quote1 {
   animation: fade1 2s linear 1s 1 forwards;
   -webkit-animation: fade1 2s linear 1s 1 forwards;
-
 }
 
 #quote2 {
   animation: fade1 2s linear 6s 1 forwards;
   -webkit-animation: fade1 2s linear 6s 1 forwards;
 }
-
 
 p {
   margin: 0;
@@ -118,16 +115,16 @@ p {
   flex-direction: column;
 }
 
-.drumdiv{
+.drumdiv {
   margin-bottom: 10px;
 }
 
 .UIContainer {
   width: 100%;
   height: 100%;
-  min-width: 650px;
   min-height: 550px;
   position: absolute;
+  overflow: hidden;
   top: 0;
   left: 0;
 }
@@ -170,7 +167,8 @@ p {
   padding-right: 5%;
 }
 
-.trackIndicator, button{
+.trackIndicator,
+button {
   width: var(--buttonSize);
   height: var(--buttonSize);
   flex-shrink: 0;
@@ -178,8 +176,8 @@ p {
 }
 
 .trackSliderContainer {
-justify-content: center;
-width: 100%;
+  justify-content: center;
+  width: 100%;
 }
 
 .trackSlider {
@@ -188,7 +186,7 @@ width: 100%;
   opacity: 0.5;
 }
 
-.trackSlider:hover{
+.trackSlider:hover {
   opacity: 1;
 }
 
@@ -197,8 +195,8 @@ width: 100%;
   opacity: 0.3;
 }
 
-.fxSlider:hover{
-  opacity:1;
+.fxSlider:hover {
+  opacity: 1;
 }
 
 .UIRight {
@@ -223,7 +221,6 @@ width: 100%;
   height: calc(10vh + 3 * var(--iconSize));
 }
 
-
 .chordContainer {
   margin-bottom: 20px;
   margin-left: 20px;
@@ -231,7 +228,7 @@ width: 100%;
 
 .chordContainer:hover {
   cursor: pointer;
-  text-shadow: 0 0 10px #FFFFFF;
+  text-shadow: 0 0 10px #ffffff;
 }
 
 .chordProgression {
@@ -243,7 +240,7 @@ width: 100%;
   border: var(--borderstyle);
 }
 
-.inst{
+.inst {
   border-radius: 50%;
 }
 
@@ -251,19 +248,19 @@ width: 100%;
   border-radius: var(--roundness);
 }
 
-.chordButton { 
+.chordButton {
   text-align: center;
   line-height: 40px;
   width: 25%;
   height: 100%;
 }
 
-.chordButton:hover{
-  text-shadow: 0 0 4px #FFFFFF;
+.chordButton:hover {
+  text-shadow: 0 0 4px #ffffff;
   background-color: #666666;
 }
 
-.fxContainer{
+.fxContainer {
   width: var(--UISize);
   display: flex;
   flex-direction: row-reverse;
@@ -278,42 +275,45 @@ width: 100%;
   height: var(--bottomButtonSize);
 }
 
-.fxIndicator:hover, .button:hover {
+.fxIndicator:hover,
+.button:hover {
   box-shadow: var(--hoverShadow);
 }
 
-.fxUI{
+.fxUI {
   width: calc(var(--UISize) / 1.5);
 }
 
-.fxUI, .fxIndicator{
+.fxUI,
+.fxIndicator {
   position: absolute;
   bottom: 20px;
   right: 60px;
 }
 
-#firstChord{
+#firstChord {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
 
-#lastChord{
+#lastChord {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
 
-#secondChord, #thirdChord {
+#secondChord,
+#thirdChord {
   border-left: solid 1px #777777;
 }
 
-#thirdChord{
+#thirdChord {
   border-right: solid 1px #777777;
 }
 
 .slider {
-  -webkit-appearance: none;  
+  -webkit-appearance: none;
   appearance: none;
-  height: 0px; 
+  height: 0px;
   background: none;
   outline: none;
   border: solid 1px #666666;
@@ -330,23 +330,21 @@ width: 100%;
   -ms-transform: rotate(270deg);
   -webkit-transform: rotate(270deg);
   transform: rotate(270deg);
-
 }
 
 ::-webkit-slider-thumb {
-  -webkit-appearance: none; 
+  -webkit-appearance: none;
   appearance: none;
-  width: 7px; 
-  height: 15px; 
+  width: 7px;
+  height: 15px;
   border-radius: 3px;
-  background: #DDDDDD; 
-  cursor: pointer; 
+  background: #dddddd;
+  cursor: pointer;
 }
 
-
 ::-webkit-slider-thumb:hover {
-  background: #FFFFFF;
-  box-shadow: 0 0 3px #FFFFFF; 
+  background: #ffffff;
+  box-shadow: 0 0 3px #ffffff;
 }
 
 .disabled {
@@ -360,11 +358,11 @@ width: 100%;
 }
 
 .button {
-	cursor: pointer;
+  cursor: pointer;
   width: var(--bottomButtonSize);
   height: var(--bottomButtonSize);
   border: var(--borderstyle);
-  border-radius:  var(--roundness);
+  border-radius: var(--roundness);
   background-repeat: round;
 }
 
@@ -372,7 +370,6 @@ width: 100%;
   width: 15%;
   margin-left: 5%;
   margin-right: 5%;
-
 }
 
 .icon {
@@ -395,8 +392,8 @@ width: 100%;
 }
 
 .currentChord {
-  text-shadow: 0 0 4px #FFFFFF;
-  background-color : #333333;
+  text-shadow: 0 0 4px #ffffff;
+  background-color: #333333;
   font-weight: bold;
 }
 
@@ -421,12 +418,11 @@ width: 100%;
 }
 
 .driftButton:hover {
-  text-shadow: 0 0 6px #FFFFFF;
-
+  text-shadow: 0 0 6px #ffffff;
 }
 
 .drifting {
-  text-shadow: 0 0 10px #FFFFFF;
+  text-shadow: 0 0 10px #ffffff;
 }
 
 .show {
@@ -438,18 +434,56 @@ width: 100%;
 }
 
 @-webkit-keyframes fade1 {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @-moz-keyframes fade1 {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @-o-keyframes fade1 {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @keyframes fade1 {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .quoteContainer {
+    width: 88%;
+    font-size: 1rem;
+  }
+  .startButton {
+    margin-top: -40px;
+  }
+  .disabled {
+    opacity: 0.1;
+  }
+  .icon {
+    width: 25px;
+    margin-top: -5px;
+    opacity: 1;
+  }
+
+  .trackSlider {
+    opacity: 1;
+  }
 }

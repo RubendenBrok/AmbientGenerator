@@ -9,71 +9,93 @@ import {
   randomMutation,
   buildFromActivity,
   buildFromPattern,
-  updateActivity
+  updateActivity,
 } from "./soundplayer";
+
+import { MobileUI } from "./mobileui";
 import { soundSources } from "./soundsources";
+import ChordContainer from "./chordcontainer";
+import LoadingScreen from "./loadingscreen";
 import "./App.css";
-import { updateGraphics, initGraphics, ripple, colors } from "./visuals";
-import minus from "./img/minus.svg"
-import plus from "./img/plus.svg"
-import volumeOn from "./img/volumeon.svg"
-import volumeOff from "./img/volumeoff.svg"
-import turtle from "./img/turtle.svg"
-import rabbit from "./img/rabbit.svg"
-import rain from "./img/rain.svg"
-import trees from "./img/trees.svg"
-import gramophone from "./img/gramophone.svg"
-import play from "./img/play.svg"
-import pause from "./img/pause.svg"
+import {
+  updateGraphics,
+  initGraphics,
+  ripple,
+  colors,
+  screenResize,
+} from "./visuals";
+import minus from "./img/minus.svg";
+import plus from "./img/plus.svg";
+import volumeOn from "./img/volumeon.svg";
+import volumeOff from "./img/volumeoff.svg";
+import turtle from "./img/turtle.svg";
+import rabbit from "./img/rabbit.svg";
+import rain from "./img/rain.svg";
+import trees from "./img/trees.svg";
+import gramophone from "./img/gramophone.svg";
+import play from "./img/play.svg";
+import pause from "./img/pause.svg";
 
 // keys for dymaically creating and accessing state properties
-export const keys = { 
-volKey : "volume",
-actKey : "activity",
-volDriftKey : "volDriftVelocity",
-actDriftKey : "actDriftVelocity",
-disabledKey : "disabled",
-patKey : "pattern",
-seqKey : "currentSequence",
-showTrack : "showTrack",
-nowPlaying : "nowPlaying"
-}
+export const keys = {
+  volKey: "volume",
+  actKey: "activity",
+  volDriftKey: "volDriftVelocity",
+  actDriftKey: "actDriftVelocity",
+  disabledKey: "disabled",
+  patKey: "pattern",
+  seqKey: "currentSequence",
+  showTrack: "showTrack",
+  nowPlaying: "nowPlaying",
+};
 export const seqLength = 32;
-const chords = [{
-  value: "G",
-  name: "G"
-},{
-  value: "A",
-  name: "Am"
-},{
-  value: "B",
-  name: "Bm"
-},{
-  value: "C",
-  name: "C"
-},{
-  value: "D",
-  name: "D"
-},{
-  value: "E",
-  name: "Em"
-}],
-chordChangeOptions = [2,4,8],
-drumChangeOptions = [2,4,8,16],
-tempoChangeOptions = [8,16],
-FXLength = 6000,
-maxBpm = 150,
-minBpm = 50,
-bpmVariance = 8,
-fxIcons = [gramophone, rain, trees];
+export const chords = [
+    {
+      value: "G",
+      name: "G",
+    },
+    {
+      value: "A",
+      name: "Am",
+    },
+    {
+      value: "B",
+      name: "Bm",
+    },
+    {
+      value: "C",
+      name: "C",
+    },
+    {
+      value: "D",
+      name: "D",
+    },
+    {
+      value: "E",
+      name: "Em",
+    },
+  ],
+  chordChangeOptions = [2, 4, 8],
+  drumChangeOptions = [2, 4, 8, 16],
+  tempoChangeOptions = [8, 16],
+  FXLength = 6000,
+  maxBpm = 150,
+  minBpm = 50,
+  bpmVariance = 8,
+  fxIcons = [gramophone, rain, trees];
+export const mobile = 650;
 
-let amountOfSoundsLoaded = 0;
-const amountOfSounds = soundSources.reduce((total : number, track : any) => {
-  return total + track.sampleLoader.length;
-}, 0)
+export let amountOfSoundsLoaded = 0;
+export const amountOfSounds = soundSources.reduce(
+  (total: number, track: any) => {
+    return total + track.sampleLoader.length;
+  },
+  0
+);
 
-export const increaseLoadedSounds = ()=>{amountOfSoundsLoaded++;}
-
+export const increaseLoadedSounds = () => {
+  amountOfSoundsLoaded++;
+};
 
 // initialize state from soundsources object, create properties for every track
 const initState: any = {};
@@ -100,6 +122,8 @@ export class App extends React.Component<any, any> {
     this.startApp = this.startApp.bind(this);
     this.animateLoadingScreen = this.animateLoadingScreen.bind(this);
     this.loadChecker = this.loadChecker.bind(this);
+    this.handleResize = this.handleResize.bind(this);
+    this.handleTrackSelect = this.handleTrackSelect.bind(this);
   }
 
   startApp() {
@@ -107,17 +131,25 @@ export class App extends React.Component<any, any> {
       let sixteenth = (60 / this.state.bpm / 4) * 1000;
       setTimeout(this.updateMasterSeq, sixteenth);
       setTimeout(this.appLoop, 100);
-      setTimeout(() => this.setState({hideOpeningScreen : true}), 500)
+      setTimeout(() => this.setState({ hideOpeningScreen: true }), 500);
     });
   }
 
+  handleTrackSelect(index: number, selected: boolean) {
+    let newSelectState = [...this.state.trackSelected];
+    newSelectState[index] = selected;
+    this.setState({ trackSelected: newSelectState });
+  }
+
   animateLoadingScreen() {
-    if (!this.state.loaded){
+    if (!this.state.loaded) {
       let newPoints = [...this.state.loadingAnimPoints];
       newPoints.push(".");
-      if (newPoints.length > 4) {newPoints.length = 0;}
-      this.setState({loadingAnimPoints : newPoints})
-      setTimeout(this.animateLoadingScreen, 500)
+      if (newPoints.length > 4) {
+        newPoints.length = 0;
+      }
+      this.setState({ loadingAnimPoints: newPoints });
+      setTimeout(this.animateLoadingScreen, 500);
     }
   }
 
@@ -386,11 +418,21 @@ export class App extends React.Component<any, any> {
     }
   }
 
-  loadChecker(){
-    if (amountOfSounds === amountOfSoundsLoaded){
-      this.setState({loaded : true})
+  loadChecker() {
+    if (amountOfSounds === amountOfSoundsLoaded) {
+      this.setState({ loaded: true });
     } else {
-      setTimeout(()=>this.loadChecker(), 10)
+      setTimeout(() => this.loadChecker(), 10);
+    }
+  }
+
+  handleResize() {
+    screenResize();
+    if (window.innerWidth < mobile && !this.state.mobileUI) {
+      this.setState({ mobileUI: true });
+    }
+    if (window.innerWidth > mobile && this.state.mobileUI) {
+      this.setState({ mobileUI: false });
     }
   }
 
@@ -403,8 +445,11 @@ export class App extends React.Component<any, any> {
   componentDidMount() {
     this.animateLoadingScreen();
     initSoundPlayer();
-    initGraphics();
+    initGraphics(this.state.mobileUI);
     this.loadChecker();
+
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
 
     soundSources.forEach((sound: any, index: number) => {
       if (sound.kind === "inst") {
@@ -428,21 +473,27 @@ export class App extends React.Component<any, any> {
         this.setState({ ...newSeq });
       }
     });
-    
-   //setTimeout(()=>this.setState({ loaded: true }), 1000)
+
+    //setTimeout(()=>this.setState({ loaded: true }), 1000)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
   }
 
   render() {
     return (
+      <div>
+        {!this.state.mobileUI && (
           <div className="UIContainer">
             <LoadingScreen
-            loaded={this.state.loaded}
-            started={this.state.appStarted}
-            hideOpeningScreen={this.state.hideOpeningScreen}
-            startApp={this.startApp}
-            loadingAnimPoints={this.state.loadingAnimPoints}
-            totalSounds={amountOfSounds}
-            loadedSounds={amountOfSoundsLoaded}
+              loaded={this.state.loaded}
+              started={this.state.appStarted}
+              hideOpeningScreen={this.state.hideOpeningScreen}
+              startApp={this.startApp}
+              loadingAnimPoints={this.state.loadingAnimPoints}
+              totalSounds={amountOfSounds}
+              loadedSounds={amountOfSoundsLoaded}
             />
             <FlowButton
               drifting={this.state.drifting}
@@ -455,6 +506,7 @@ export class App extends React.Component<any, any> {
                 handleActivityChange={this.handleActivityChange}
                 handleDisableToggle={this.handleDisableToggle}
                 handlePatternChange={this.handlePatternChange}
+                handleTrackSelect={this.handleTrackSelect}
               />
               <ChordContainer
                 currentChord={this.state.currentChord}
@@ -474,6 +526,7 @@ export class App extends React.Component<any, any> {
                 handlePatternChange={this.handlePatternChange}
                 handleDisableToggle={this.handleDisableToggle}
                 showUI={this.state.showDrumUI}
+                handleTrackSelect={this.handleTrackSelect}
               />
               <FXContainer
                 UIIndex={2}
@@ -490,76 +543,25 @@ export class App extends React.Component<any, any> {
               />
             </div>
           </div>
-
+        )}
+        {this.state.mobileUI && (
+          <MobileUI
+            state={this.state}
+            startApp={this.startApp}
+            handleTrackSelect={this.handleTrackSelect}
+            handleVolumeChange={this.handleVolumeChange}
+            handleActivityChange={this.handleActivityChange}
+            handlePatternChange={this.handlePatternChange}
+            handleDisableToggle={this.handleDisableToggle}
+            handlePlayingToggle={this.handlePlayingToggle}
+            handleDriftToggle={this.handleDriftToggle}
+            handleBpmChange={this.handleBpmChange}
+          />
+        )}
+      </div>
     );
   }
-} 
-
-const LoadingScreen = React.memo(function LoadingScreen(props: any) {
-  let opacityClass: string;
-  let displayStr: string;
-  if (props.hideOpeningScreen) {
-    displayStr = "none";
-  } else {
-    displayStr = "block";
-  }
-  if (props.started) {
-    opacityClass = "hide";
-  } else {
-    opacityClass = "show";
-  }
-  return (
-
-    <div
-      className={"loadingContainer " + opacityClass}
-      style={{ display: displayStr }}
-    >
-      <div className="quoteContainer">
-        <div className="quote" id="quote1">
-          <div>
-            <h2>
-              <i>noun: </i>
-              <b>flow</b>
-            </h2>
-          </div>
-          <ul>
-            <li>
-              the action or fact of moving along in a steady, continuous stream.
-            </li>
-            <li>a steady, continuous stream or supply of something.</li>
-            <li>
-              the gradual permanent deformation of a solid under stress, without
-              melting.
-            </li>
-          </ul>
-        </div>
-
-        <div className="quote" id="quote2">
-          “The only way to make sense out of change is to plunge into it, move
-          with it, and join the dance.”
-          <br />
-          <i>― Alan Wilson Watts</i>
-        </div>
-      </div>
-      {props.loaded ? (
-        <div className="startButton" onClick={props.startApp}>
-          Start
-          <div className="hoverLine"></div>
-        </div>
-      ) : (
-        <div className="loadingBox">
-          <div>
-          {"Loading sounds"+props.loadingAnimPoints.join("")}
-        </div>
-        <div>
-          {props.loadedSounds + " of " + props.totalSounds}
-        </div>
-        </div>
-
-      )}
-    </div>
-  );
-});
+}
 
 const InstContainer = React.memo(function InstrumentContainer(props: any) {
   return (
@@ -583,12 +585,13 @@ const InstContainer = React.memo(function InstrumentContainer(props: any) {
               handleActivityChange={props.handleActivityChange}
               handlePatternChange={props.handlePatternChange}
               handleDisableToggle={props.handleDisableToggle}
+              handleTrackSelect={props.handleTrackSelect}
             />
           );
       })}
     </div>
   );
-})
+});
 
 const TrackContainer = React.memo(function TrackUI(props: any) {
   let colorStr = colors[props.index].toString(16);
@@ -604,9 +607,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
     indicatorClass += " drum";
     flexDirection = "row-reverse";
   }
-  let disabled: string;
   let shadow: string;
-  props.disabled ? (disabled = "disabled") : (disabled = "");
   props.nowPlaying
     ? (shadow = `0px 0px 15px #${colors[props.index].toString(16)}`)
     : (shadow = `0px 0px 5px #${colors[props.index].toString(16)}`);
@@ -614,7 +615,13 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
     indicatorClass += " disabled";
   }
   return (
-    <div className="trackContainer" style={{ flexDirection: flexDirection }} id={"track"+props.index}>
+    <div
+      className="trackContainer"
+      style={{ flexDirection: flexDirection }}
+      id={"track" + props.index}
+      onMouseEnter={() => props.handleTrackSelect(props.index, true)}
+      onMouseLeave={() => props.handleTrackSelect(props.index, false)}
+    >
       <div
         className={indicatorClass}
         style={{
@@ -626,7 +633,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
       {!props.disabled ? (
         <div className="trackUI">
           <div className="trackSliderContainer">
-            <div className = "trackSlider">
+            <div className="trackSlider">
               <IconContainer icon1={volumeOff} />
               <ControlledSlider
                 value={props.volume}
@@ -640,7 +647,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
               <IconContainer icon1={volumeOn} />
             </div>
             {props.kind === "inst" ? (
-              <div  className = "trackSlider">
+              <div className="trackSlider">
                 <IconContainer icon1={minus} />
                 <ControlledSlider
                   value={props.range2Value}
@@ -654,7 +661,7 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                 <IconContainer icon1={plus} />
               </div>
             ) : (
-              <div  className = "trackSlider">
+              <div className="trackSlider">
                 <IconContainer icon1={minus} />
                 <ControlledSlider
                   value={props.range2Value}
@@ -679,39 +686,39 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
 
 const DrumContainer = React.memo(function DrumContainer(props: any) {
   return (
-      <div className="drumContainer">
-        {soundSources.map((track: any, index: number) => {
-          if (track.kind === "drum")
-            return (
-              <TrackContainer
-                index={index}
-                key={index}
-                volume={props.tracks[keys.volKey + index]}
-                range2Value={props.tracks[keys.patKey + index]}
-                disabled={props.tracks[keys.disabledKey + index]}
-                range2Min={0}
-                range2Max={100}
-                range2Step={1}
-                kind={track.kind}
-                showTrack={props.tracks[keys.showTrack + index]}
-                nowPlaying={props.tracks[keys.nowPlaying + index]}
-                handleVolumeChange={props.handleVolumeChange}
-                handleActivityChange={props.handleActivityChange}
-                handlePatternChange={props.handlePatternChange}
-                handleDisableToggle={props.handleDisableToggle}
-              />
-            );
-        })}    
-      </div>
+    <div className="drumContainer">
+      {soundSources.map((track: any, index: number) => {
+        if (track.kind === "drum")
+          return (
+            <TrackContainer
+              index={index}
+              key={index}
+              volume={props.tracks[keys.volKey + index]}
+              range2Value={props.tracks[keys.patKey + index]}
+              disabled={props.tracks[keys.disabledKey + index]}
+              range2Min={0}
+              range2Max={100}
+              range2Step={1}
+              kind={track.kind}
+              showTrack={props.tracks[keys.showTrack + index]}
+              nowPlaying={props.tracks[keys.nowPlaying + index]}
+              handleVolumeChange={props.handleVolumeChange}
+              handleActivityChange={props.handleActivityChange}
+              handlePatternChange={props.handlePatternChange}
+              handleDisableToggle={props.handleDisableToggle}
+              handleTrackSelect={props.handleTrackSelect}
+            />
+          );
+      })}
+    </div>
   );
 });
 
 const PlayContainer = React.memo(function PlayContainer(props: any) {
-  let playIcon : string;
-  props.playing ? playIcon = pause : playIcon = play;
+  let playIcon: string;
+  props.playing ? (playIcon = pause) : (playIcon = play);
   return (
     <div className="playContainer">
-
       <div className="bpmslider">
         <img className="speedIcon" src={turtle} />
         <ControlledSlider
@@ -724,62 +731,71 @@ const PlayContainer = React.memo(function PlayContainer(props: any) {
         />
         <img className="speedIcon" src={rabbit} />
       </div>
-      <div className = {"buttonContainer"}>
-      <div className="button" onClick={props.handlePlayingToggle}
-      style = {{backgroundImage: "url("+playIcon+")"}}>
-      </div>
+      <div className={"buttonContainer"}>
+        <div
+          className="button"
+          onClick={props.handlePlayingToggle}
+          style={{ backgroundImage: "url(" + playIcon + ")" }}
+        ></div>
       </div>
     </div>
   );
 });
 
-const FlowButton = React.memo(function FlowButton(props:any){
+const FlowButton = React.memo(function FlowButton(props: any) {
   let selectClass = "";
-  if (props.drifting){selectClass = " drifting"}
-  return(
-  <div onClick={props.handleDriftToggle} className = {"driftButton" + selectClass} id = "driftButton">
-  FLOW
-  <div className="hoverLine"></div>
-
-</div>
-  )
-})
+  if (props.drifting) {
+    selectClass = " drifting";
+  }
+  return (
+    <div
+      onClick={props.handleDriftToggle}
+      className={"driftButton" + selectClass}
+      id="driftButton"
+    >
+      FLOW
+      <div className="hoverLine"></div>
+    </div>
+  );
+});
 
 const FXContainer = React.memo(function FXContainer(props: any) {
   let fxIndex = -1;
   return (
     <div className="fxContainer">
-      {props.showUI?(
-      <div className="fxUI trackSliders">
-        {soundSources.map((track: any, index: number) => {
-          if (track.kind === "fx") {
-            fxIndex ++;
-            return (
-              <FXUI
-                index={index}
-                fxIndex={fxIndex}
-                volume={props.tracks[keys.volKey + index]}
-                disabled={props.tracks[keys.disabledKey + index]}
-                key={index}
-                handleVolumeChange={props.handleVolumeChange}
-                handleDriftToggle={props.handleDriftToggle}
-                handleDisableToggle={props.handleDisableToggle}
-              />
-            );
-          }
-        })}
-      </div>
+      {props.showUI ? (
+        <div className="fxUI trackSliders">
+          {soundSources.map((track: any, index: number) => {
+            if (track.kind === "fx") {
+              fxIndex++;
+              return (
+                <FXUI
+                  index={index}
+                  fxIndex={fxIndex}
+                  volume={props.tracks[keys.volKey + index]}
+                  disabled={props.tracks[keys.disabledKey + index]}
+                  key={index}
+                  handleVolumeChange={props.handleVolumeChange}
+                  handleDriftToggle={props.handleDriftToggle}
+                  handleDisableToggle={props.handleDisableToggle}
+                />
+              );
+            }
+          })}
+        </div>
       ) : (
-        <div className = "fxIndicator" onClick={props.handleFxUIToggle}>FX</div>
+        <div className="fxIndicator" onClick={props.handleFxUIToggle}>
+          FX
+        </div>
       )}
     </div>
   );
-})
+});
 
-const FXUI = React.memo(function FXUI(props: any){
+const FXUI = React.memo(function FXUI(props: any) {
   return (
     <div className="fxSlider">
-      <IconContainer icon1={""}/>
+      <IconContainer icon1={""} />
       <div className="">
         <ControlledSlider
           value={props.volume}
@@ -791,105 +807,44 @@ const FXUI = React.memo(function FXUI(props: any){
           step={1}
         />
       </div>
-      <IconContainer icon1={fxIcons[props.fxIndex]}/>
+      <IconContainer icon1={fxIcons[props.fxIndex]} />
     </div>
   );
-})
+});
 
-function ChordContainer(props: any) {
+export function IconContainer(props: any) {
   return (
-    <div className = "chordContainer">
-        {props.showUI ? (
-        <div className="chordProgression">
-          <ChordButton
-            value = {chords[props.progression[0]].value}
-            name = {chords[props.progression[0]].name}
-            currentBarInProgression = {props.currentBarInProgression}
-            index = {0}
-            handleChordClick={props.handleChordClick}
-            id = "firstChord"
-          />
-          <ChordButton
-            value = {chords[props.progression[1]].value}
-            name = {chords[props.progression[1]].name}
-            currentBarInProgression = {props.currentBarInProgression}
-
-            index = {1}
-            handleChordClick={props.handleChordClick}
-            id = "secondChord"
-          />
-          <ChordButton
-            value = {chords[props.progression[2]].value}
-            name = {chords[props.progression[2]].name}
-            currentBarInProgression = {props.currentBarInProgression}
-
-            index = {2}
-            handleChordClick={props.handleChordClick}
-            id = "thirdChord"
-          />
-          <ChordButton
-            value = {chords[props.progression[3]].value}
-            name = {chords[props.progression[3]].name}
-            currentBarInProgression = {props.currentBarInProgression}
-
-            index = {3}
-            handleChordClick={props.handleChordClick}
-            id = "lastChord"
-          />
-        </div>
-
-        ) : (
-          <div onClick = {()=> props.handleChordUIToggle()} className = "chordsButton">Change Chord Progression</div>
-        )}
+    <div className="iconContainer">
+      <img className="icon" src={props.icon1}></img>
     </div>
   );
 }
 
-function IconContainer(props: any){
-  return (
-    <div className = "iconContainer">
-      <img className = "icon" src = {props.icon1}></img>
-    </div>
-  )
-}
-
-function ChordButton(props: any) {
-  let extraClass = "";
-  if (props.currentBarInProgression === props.index){extraClass = " currentChord"}
-  return (
-    <div
-      className={"chordButton" + extraClass}
-      onClick={() => props.handleChordClick(props.index)}
-      id = {props.id}
-    >
-      {props.name}
-    </div>
-  );
-}
-
-function ControlledSlider(props : any){
-  function handleChange(event : any){
-    props.onChange(event.target.value, props.index)
+export function ControlledSlider(props: any) {
+  function handleChange(event: any) {
+    props.onChange(event.target.value, props.index);
   }
-  let verticalClass = ""
-  if (props.vertical){verticalClass = " vertical"}
-  let disabled : string;
-  props.disabled ? disabled = "disabled" : disabled = "";
+  let verticalClass = "";
+  if (props.vertical) {
+    verticalClass = " vertical";
+  }
+  let disabled: string;
+  props.disabled ? (disabled = "disabled") : (disabled = "");
   return (
     <input
-    className={"slider "+ disabled + verticalClass}
-    type="range"
-    value={props.value}
-    onChange={handleChange}
-    disabled={props.disabled}
-    min={props.min}
-    max={props.max}
-    step={props.step}
-  ></input>
-  )
+      className={"slider " + disabled + verticalClass}
+      type="range"
+      value={props.value}
+      onChange={handleChange}
+      disabled={props.disabled}
+      min={props.min}
+      max={props.max}
+      step={props.step}
+    ></input>
+  );
 }
 
-function initializeState(){
+function initializeState() {
   initState.bpm = 90;
   initState.playing = true;
   initState.drifting = false;
@@ -902,24 +857,26 @@ function initializeState(){
   initState.hideOpeningScreen = false;
   initState.loadingAnimPoints = [];
 
+  initState.trackSelected = [];
 
   initState.masterSeq = {
-    currentSequencePos : 0,
+    currentSequencePos: 0,
     lastPlayTime: performance.now(),
-    barsPlayed : 0,
+    barsPlayed: 0,
     FXTimer: -FXLength,
     newDrumSeq: randomArrEntry(drumChangeOptions),
     newChord: randomArrEntry(chordChangeOptions),
     tempoChangeTimer: randomArrEntry(tempoChangeOptions),
-    currentBarInProgression : 0,
-    progression : [5, 5, 4, 3],
-  }
+    currentBarInProgression: 0,
+    progression: [5, 5, 4, 3],
+    mobileUI: window.innerWidth < mobile ? true : false,
+  };
 
   initState.currentChord = chords[initState.masterSeq.progression[0]].value;
 
-  soundSources.forEach((track : any, index: number) => {
-
-    switch (track.kind){
+  soundSources.forEach((track: any, index: number) => {
+    initState.trackSelected.push(false);
+    switch (track.kind) {
       case "inst":
         initState[keys.volKey + index] = soundSources[index].initVolume;
         initState[keys.actKey + index] = soundSources[index].initActivity;
@@ -929,7 +886,7 @@ function initializeState(){
         initState[keys.showTrack + index] = false;
         initState[keys.nowPlaying + index] = false;
         break;
-  
+
       case "drum":
         initState[keys.volKey + index] = soundSources[index].initVolume;
         initState[keys.volDriftKey + index] = 0;
@@ -944,15 +901,15 @@ function initializeState(){
         initState[keys.disabledKey + index] = soundSources[index].initDisabled;
         break;
     }
-  })
+  });
 }
 
-export function randomArrEntry(arr : any){
-  return arr[Math.floor(Math.random() * arr.length)]
+export function randomArrEntry(arr: any) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function playSequencers(state: any) {
-  let whosPlaying : any = {};
+  let whosPlaying: any = {};
   soundSources.forEach((track: any, index: any) => {
     whosPlaying[keys.nowPlaying + index] = false;
     if (!state[keys.disabledKey + index]) {
@@ -962,7 +919,11 @@ function playSequencers(state: any) {
         if (!isNaN(soundIndex)) {
           soundSources[index].sounds[soundIndex].howl.play();
           whosPlaying[keys.nowPlaying + index] = true;
-          ripple(index, state[keys.volKey + index], state.masterSeq.currentSequencePos)
+          ripple(
+            index,
+            state[keys.volKey + index],
+            state.masterSeq.currentSequencePos
+          );
         }
       }
     }
@@ -971,4 +932,3 @@ function playSequencers(state: any) {
 }
 
 export default App;
-

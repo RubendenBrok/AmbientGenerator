@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { seqLength, keys } from "./App";
 import { soundSources } from "./soundsources";
 import { AdvancedBloomFilter, KawaseBlurFilter } from "pixi-filters";
+import { mobile } from "./App";
 
 let app: any;
 let graph: any;
@@ -31,8 +32,6 @@ let driftButton: any;
 let driftRippleCounter: number;
 let driftRippleTime = 2000;
 
-const trackElements : any[] = [];
-const trackSelected : boolean[] = [];
 const trackWidthSelected = 9;
 const trackWidthUnSelected = 2;
 let objID = 0;
@@ -40,22 +39,13 @@ const PI = Math.PI;
 const seqStepAngle = (2 * PI) / 32;
 
 export const colors = [
-  0xff1239,
-  0xd61fff,
-  0x2a22ff,
-  0x26ffff,
-  0x28ff5e,
-  0xfffa5c,
-  0xffb950,
-  0xff6d33,
-  0xffbdc8,
+  0xff1239, 0xd61fff, 0x2a22ff, 0x26ffff, 0x28ff5e, 0xfffa5c, 0xffb950,
+  0xff6d33, 0xffbdc8,
 ];
 
 let amountOfDrawnTracks: number = 0;
 
-window.onresize = () => screenResize();
-
-export function initGraphics() {
+export function initGraphics(mobileUI: boolean) {
   // prevents crash on some Firefox versions (https://github.com/pixijs/pixi.js/issues/7070)
   PIXI.settings.FAIL_IF_MAJOR_PERFORMANCE_CAVEAT = false;
 
@@ -78,15 +68,10 @@ export function initGraphics() {
   fx = new PIXI.Graphics();
   app.stage.addChild(fx);
 
-
   //initialize track data
-  soundSources.forEach((track: any, index : number) => {
+  soundSources.forEach((track: any, index: number) => {
     if (track.kind === "inst" || track.kind === "drum") {
       amountOfDrawnTracks++;
-      trackElements.push(document.getElementById("track"+index))
-      trackSelected[index]=false;
-      trackElements[index].addEventListener("mouseover", ()=>{trackSelected[index]=true;});
-      trackElements[index].addEventListener("mouseleave", ()=>{trackSelected[index]=false;});
     }
   });
   screenResize();
@@ -105,13 +90,6 @@ export function initGraphics() {
   fx.filters = [blurFilter];
 
   //initialize driftbutton
-  driftButton = document.getElementById("driftButton");
-  driftButton.addEventListener("mouseenter", () => {
-    driftHover = true;
-  });
-  driftButton.addEventListener("mouseout", () => {
-    driftHover = false;
-  });
   driftRippleCounter = performance.now();
 }
 
@@ -330,7 +308,7 @@ export function updateGraphics(state: any) {
         let size = dotSize * (state[keys.volKey + index] / 100);
 
         // draw a big circle in the color of the track
-        if (trackSelected[index]){
+        if (state.trackSelected[index]) {
           fx.lineStyle(trackWidthSelected, colors[index], 0.5);
         } else {
           fx.lineStyle(trackWidthUnSelected, colors[index], 0.5);
@@ -371,14 +349,26 @@ export function ripple(track: number, volume: number, seqIndex: number) {
   graphicsArr.push(new rippleCircle(volume, track, seqIndex));
 }
 
-function screenResize() {
-  width = Math.max(window.innerWidth, 650);
-  height = Math.max(window.innerHeight, 550);
-  app.renderer.resize(width, height);
-  circleMaxR = Math.min(height, width * 0.6) / 2 - 50;
-  circleMinR = circleMaxR / 4;
-  circleMidX = width / 2;
-  circleMidY = height / 2;
-  ringDistance = (circleMaxR - circleMinR) / (amountOfDrawnTracks - 1);
-  dotSize = Math.min(width * 0.6, height) / 60;
+export function screenResize() {
+  if (window.innerWidth < mobile) {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    app.renderer.resize(width, height);
+    circleMaxR = Math.min(height, width) / 2 - 20;
+    circleMinR = circleMaxR / 4;
+    circleMidX = width / 2;
+    circleMidY = height - width / 2 - (height / 1.8 - width);
+    ringDistance = (circleMaxR - circleMinR) / (amountOfDrawnTracks - 1);
+    dotSize = 10;
+  } else {
+    width = Math.max(window.innerWidth, 650);
+    height = Math.max(window.innerHeight, 550);
+    app.renderer.resize(width, height);
+    circleMaxR = Math.min(height, width * 0.6) / 2 - 50;
+    circleMinR = circleMaxR / 5;
+    circleMidX = width / 2;
+    circleMidY = height / 2;
+    ringDistance = (circleMaxR - circleMinR) / (amountOfDrawnTracks - 1);
+    dotSize = Math.min(width * 0.6, height) / 60;
+  }
 }
