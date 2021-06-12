@@ -1,7 +1,6 @@
 import * as PIXI from "pixi.js";
 import { seqLength, keys } from "./App";
 import { soundSources } from "./soundsources";
-import { AdvancedBloomFilter, KawaseBlurFilter } from "pixi-filters";
 import { mobile } from "./App";
 
 let app: any;
@@ -10,8 +9,6 @@ let overlay: any;
 let fx: any;
 
 let graphicsArr: any[] = [];
-let bloomFilter: any;
-let blurFilter: any;
 
 let height: number;
 let width: number;
@@ -45,7 +42,7 @@ export const colors = [
 
 let amountOfDrawnTracks: number = 0;
 
-export function initGraphics(mobileUI: boolean) {
+export function initGraphics(mobileUI: boolean, hq: boolean) {
   // prevents crash on some Firefox versions (https://github.com/pixijs/pixi.js/issues/7070)
   PIXI.settings.FAIL_IF_MAJOR_PERFORMANCE_CAVEAT = false;
 
@@ -76,19 +73,6 @@ export function initGraphics(mobileUI: boolean) {
   });
   screenResize();
 
-  //initialize filters
-  bloomFilter = new AdvancedBloomFilter();
-  bloomFilter.threshold = 0.2;
-  bloomFilter.bloomScale = 1;
-  bloomFilter.blur = 3;
-  bloomFilter.quality = 4;
-  bloomFilter.brightness = 0.4;
-  graph.filters = [bloomFilter];
-
-  blurFilter = new KawaseBlurFilter();
-  blurFilter.blur = 2;
-  fx.filters = [blurFilter];
-
   //initialize driftbutton
   driftRippleCounter = performance.now();
 }
@@ -116,7 +100,7 @@ class rippleCircle {
     this.y = circleMidY + this.r * Math.cos(-seqIndex * seqStepAngle + PI);
     this.size = (volume / 100) * dotSize;
     this.color = colors[track];
-    this.thickness = 5 + 5 * (volume / 100);
+    this.thickness = 2 + 5 * (volume / 100);
     this.creationTime = performance.now();
     this.lifeTime = 500 + 600 * (volume / 100);
     this.beginFade = 200;
@@ -125,7 +109,7 @@ class rippleCircle {
     objID++;
     this.dead = false;
     this.growth = 0.2 + volume / 300;
-    this.startOpacity = 0.4;
+    this.startOpacity = 0.3;
     this.opacity = this.startOpacity;
     this.update = this.update.bind(this);
   }

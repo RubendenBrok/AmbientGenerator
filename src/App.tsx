@@ -266,11 +266,12 @@ export class App extends React.Component<any, any> {
   }
 
   updateMasterSeq() {
-    this.setState({ lastPlayTime: performance.now() });
     let sixteenth = (60 / this.state.bpm / 4) * 1000;
     setTimeout(this.updateMasterSeq, sixteenth);
 
     let { masterSeq, ...newState }: any = { ...this.state };
+
+    newState.lastPlayTime = performance.now();
 
     if (this.state.playing) {
       if (this.state.drifting) {
@@ -463,7 +464,7 @@ export class App extends React.Component<any, any> {
   componentDidMount() {
     this.animateLoadingScreen();
     initSoundPlayer();
-    initGraphics(this.state.mobileUI);
+    initGraphics(this.state.mobileUI, this.state.hq);
     this.loadChecker();
 
     window.addEventListener("resize", this.handleResize);
@@ -866,6 +867,8 @@ function initializeState() {
   initState.bpm = 90;
   initState.playing = true;
   initState.drifting = false;
+
+  initState.hq = false;
 
   initState.showChordUI = false;
   initState.showFxUI = false;
