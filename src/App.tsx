@@ -270,67 +270,77 @@ export class App extends React.Component<any, any> {
     let sixteenth = (60 / this.state.bpm / 4) * 1000;
     setTimeout(this.updateMasterSeq, sixteenth);
 
+    let { masterSeq, ...newState }: any = { ...this.state };
+
     if (this.state.playing) {
       if (this.state.drifting) {
         //check if track properties should 'drift'
         soundSources.forEach((track: any, index: number) => {
-          let newVolDriftVelocity: any = {};
-          let newActDriftVelocity: any = {};
           let newVolumeObj = updateDrift(
-            this.state[keys.volKey + index],
-            this.state[keys.volDriftKey + index],
+            newState[keys.volKey + index],
+            newState[keys.volDriftKey + index],
             100,
             0
           );
-          newVolDriftVelocity[keys.volDriftKey + index] = newVolumeObj.velocity;
-          this.setState({ ...newVolDriftVelocity });
-          this.handleVolumeChange(newVolumeObj.value, index);
+          newState[keys.volDriftKey + index] = newVolumeObj.velocity;
+          newState[keys.volKey + index] = newVolumeObj.value;
+          setTrackVolume(newState[keys.volKey + index], index);
 
           if (track.kind === "inst") {
             let newActivityObj = updateDrift(
-              this.state[keys.actKey + index],
-              this.state[keys.actDriftKey + index],
+              newState[keys.actKey + index],
+              newState[keys.actDriftKey + index],
               100,
               0
             );
-            newActDriftVelocity[keys.actDriftKey + index] =
-              newActivityObj.velocity;
-            this.setState({ ...newActDriftVelocity });
-            this.handleActivityChange(newActivityObj.value, index);
+            newState[keys.actDriftKey + index] = newActivityObj.velocity;
+            newState[keys.actKey + index] = newActivityObj.value;
+            newState[keys.seqKey + index] = updateActivity(
+              newState.currentChord,
+              soundSources[index].sounds,
+              newState[keys.actKey + index],
+              soundSources[index].minSoundsInSequence,
+              soundSources[index].maxSoundsInSequence,
+              newState[keys.seqKey + index]
+            );
           }
         });
       }
 
-      let newSeqState = { ...this.state.masterSeq };
-
       // play sounds
       let whosPlaying = playSequencers(this.state);
-      this.setState({ ...whosPlaying });
-      newSeqState.currentSequencePos++;
-      if (newSeqState.currentSequencePos >= seqLength) {
-        newSeqState.currentSequencePos = 0;
-        newSeqState.barsPlayed++;
+      soundSources.forEach((track: any, index: any) => {
+        if (track.kind === "inst" || track.kind === "drum") {
+          newState[keys.nowPlaying + index] =
+            whosPlaying[keys.nowPlaying + index];
+        }
+      });
+
+      masterSeq.currentSequencePos++;
+      if (masterSeq.currentSequencePos >= seqLength) {
+        masterSeq.currentSequencePos = 0;
+        masterSeq.barsPlayed++;
 
         //handle cycling through the chord progression
-        newSeqState.currentBarInProgression++;
-        if (newSeqState.currentBarInProgression > 3) {
-          newSeqState.currentBarInProgression = 0;
+        masterSeq.currentBarInProgression++;
+        if (masterSeq.currentBarInProgression > 3) {
+          masterSeq.currentBarInProgression = 0;
         }
         if (
-          chords[newSeqState.progression[newSeqState.currentBarInProgression]]
+          chords[masterSeq.progression[masterSeq.currentBarInProgression]]
             .value !== this.state.currentChord
         ) {
           this.handleChordChange(
-            chords[newSeqState.progression[newSeqState.currentBarInProgression]]
+            chords[masterSeq.progression[masterSeq.currentBarInProgression]]
               .value
           );
         }
 
         //should the tempo randomly change?
-        if (this.state.drifting) {
-          if (newSeqState.barsPlayed >= newSeqState.tempoChangeTimer) {
-            newSeqState.tempoChangeTimer =
-              newSeqState.barsPlayed + randomArrEntry(tempoChangeOptions);
+        if (newState.drifting) {
+          if (masterSeq.barsPlayed >= masterSeq.tempoChangeTimer) {
+            masterSeq.tempoChangeTimer =
+              masterSeq.barsPlayed + randomArrEntry(tempoChangeOptions);
             let newBpm = this.state.bpm;
             newBpm -= bpmVariance;
             newBpm += Math.round(bpmVariance * 2 * Math.random());
@@ -340,81 +350,89 @@ export class App extends React.Component<any, any> {
             if (newBpm < minBpm) {
               newBpm = minBpm;
             }
-            this.handleBpmChange(newBpm);
+            newState.bpm = newBpm;
           }
 
           // should a sequence mutate/evolve?
           soundSources.forEach((track: any, index: number) => {
-            if (!this.state[keys.disabledKey + index]) {
+            if (!newState[keys.disabledKey + index]) {
               if (track.kind === "inst") {
                 if (Math.random() < track.mutationChance) {
-                  let newSeq: any = {};
-                  newSeq[keys.seqKey + index] = randomMutation(
+                  newState[keys.seqKey + index] = randomMutation(
                     1,
-                    this.state[keys.seqKey + index],
+                    newState[keys.seqKey + index],
                     soundSources[index].sounds,
                     true,
-                    this.state.currentChord
+                    newState.currentChord
                   );
-                  this.setState({ ...newSeq });
                 }
               }
               if (track.kind === "drum") {
                 if (Math.random() < track.mutationChance) {
-                  let newSeq: any = {};
-                  newSeq[keys.seqKey + index] = randomMutation(
+                  newState[keys.seqKey + index] = randomMutation(
                     1,
-                    this.state[keys.seqKey + index],
+                    newState[keys.seqKey + index],
                     soundSources[index].sounds,
                     false,
-                    this.state.currentChord
+                    newState.currentChord
                   );
-                  this.setState({ ...newSeq });
                 }
               }
             }
           });
 
           // should the drums change to a new pattern?
-          if (newSeqState.barsPlayed >= newSeqState.newDrumSeq) {
+          if (masterSeq.barsPlayed >= masterSeq.newDrumSeq) {
             soundSources.forEach((track: any, index: number) => {
               if (track.kind === "drum") {
-                this.handlePatternChange(
-                  Math.floor(Math.random() * track.patterns.length) + 1,
-                  index
+                newState[keys.patKey + index] =
+                  Math.floor(Math.random() * track.patterns.length) + 1;
+
+                newState[keys.seqKey + index] = buildFromPattern(
+                  newState[keys.patKey + index] - 1,
+                  soundSources[index].patterns,
+                  soundSources[index].sounds
                 );
               }
             });
-            newSeqState.newDrumSeq =
-              randomArrEntry(drumChangeOptions) + newSeqState.barsPlayed;
+            masterSeq.newDrumSeq =
+              randomArrEntry(drumChangeOptions) + masterSeq.barsPlayed;
           }
 
           //should the chords randomly change?
-          if (newSeqState.barsPlayed >= newSeqState.newChord) {
+          if (masterSeq.barsPlayed >= masterSeq.newChord) {
             let changeIndex = Math.floor(
-              Math.random() * newSeqState.progression.length
+              Math.random() * masterSeq.progression.length
             );
-            newSeqState.progression[changeIndex] = Math.floor(
+            masterSeq.progression[changeIndex] = Math.floor(
               Math.random() * chords.length
             );
-            newSeqState.newChord =
-              randomArrEntry(chordChangeOptions) + newSeqState.barsPlayed;
-            if (newSeqState.barsPlayed % 4 === changeIndex) {
-              this.handleChordChange(
-                chords[newSeqState.progression[changeIndex]].value
-              );
+            masterSeq.newChord =
+              randomArrEntry(chordChangeOptions) + masterSeq.barsPlayed;
+            if (masterSeq.barsPlayed % 4 === changeIndex) {
+              newState.currentChord =
+                chords[masterSeq.progression[changeIndex]].value;
+              soundSources.forEach((track: any, index: any) => {
+                if (track.kind === "inst") {
+                  newState[keys.seqKey + index] = updateSeqChords(
+                    newState.currentChord,
+                    soundSources[index].sounds,
+                    newState[keys.seqKey + index]
+                  );
+                }
+              });
             }
           }
         }
       }
 
       //retrigger FX loops if necessary
-      if (performance.now() - newSeqState.FXTimer > FXLength) {
+      if (performance.now() - masterSeq.FXTimer > FXLength) {
         playFX(this.state);
-        newSeqState.FXTimer = performance.now();
+        masterSeq.FXTimer = performance.now();
       }
 
-      this.setState({ masterSeq: newSeqState });
+      this.setState({ masterSeq: { ...masterSeq }, ...newState });
     }
   }
 

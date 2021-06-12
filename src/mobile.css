@@ -71,6 +71,11 @@
   border: 1px solid white;
 }
 
+.single {
+  position: relative;
+  margin-top: 30px;
+}
+
 .mobileButtonContainer {
   width: calc(25% - 20px);
   height: var(--UIHeight);
@@ -99,6 +104,7 @@
 .mobileTrackEditorTop {
   display: flex;
   justify-content: space-around;
+  position: relative;
 }
 
 .mobileEditorButtonContainer {

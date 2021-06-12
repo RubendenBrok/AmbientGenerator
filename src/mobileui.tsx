@@ -174,7 +174,7 @@ const MobileTrackEditor = ({
     ? (shadow = `0px 0px 15px #${colors[openIndex].toString(16)}`)
     : (shadow = `0px 0px 5px #${colors[openIndex].toString(16)}`);
 
-  let indicatorClass = "mobileTrackIndicator";
+  let indicatorClass = "mobileTrackIndicator single";
 
   if (state[keys.disabledKey + openIndex]) {
     indicatorClass += " disabled";

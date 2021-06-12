@@ -251,6 +251,7 @@ export function updateGraphics(state: any) {
   }
 
   // draw 8 white indicator lines
+  /*
   overlay.lineStyle(1, 0x555555);
   for (let i = 0; i < 8; i++) {
     overlay.moveTo(
@@ -266,6 +267,7 @@ export function updateGraphics(state: any) {
       circleMidY + circleMaxR * Math.cos((i / 8) * (2 * PI))
     );
   }
+  */
 
   //draw the flow button circle
   if (state.drifting) {
