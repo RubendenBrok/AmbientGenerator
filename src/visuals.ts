@@ -29,7 +29,7 @@ let driftButton: any;
 let driftRippleCounter: number;
 let driftRippleTime = 2000;
 
-const trackWidthSelected = 9;
+const trackWidthSelected = 5;
 const trackWidthUnSelected = 2;
 let objID = 0;
 const PI = Math.PI;
@@ -235,7 +235,7 @@ export function updateGraphics(state: any) {
   }
 
   // draw 8 white indicator lines
-  /*
+
   overlay.lineStyle(1, 0x555555);
   for (let i = 0; i < 8; i++) {
     overlay.moveTo(
@@ -251,7 +251,6 @@ export function updateGraphics(state: any) {
       circleMidY + circleMaxR * Math.cos((i / 8) * (2 * PI))
     );
   }
-  */
 
   //draw the flow button circle
   if (state.drifting) {
@@ -343,7 +342,7 @@ export function screenResize() {
     circleMaxR = Math.min(height, width) / 2 - 20;
     circleMinR = circleMaxR / 4;
     circleMidX = width / 2;
-    circleMidY = height - width / 2 - (height / 1.8 - width);
+    circleMidY = height - width / 2 - (height / 1.5 - width);
     ringDistance = (circleMaxR - circleMinR) / (amountOfDrawnTracks - 1);
     dotSize = 10;
   } else {

@@ -7,7 +7,7 @@ import {
   minBpm,
   maxBpm,
 } from "./App";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { soundSources } from "./soundsources";
 import { colors } from "./visuals";
 import LoadingScreen from "./loadingscreen";
@@ -34,13 +34,13 @@ export const MobileUI = ({
   handlePlayingToggle,
   handleDriftToggle,
   handleBpmChange,
+  handleVolumeClick,
+  handleActivityClick,
+  handlePatternClick,
 }: any) => {
   const [trackOpen, setTrackOpen] = useState(false);
 
   const [openIndex, setOpenIndex] = useState(0);
-
-  let playIcon: string;
-  state.playing ? (playIcon = pause) : (playIcon = play);
 
   const handleTrackClick = (index: number, open: boolean) => {
     setTrackOpen(open);
@@ -69,28 +69,19 @@ export const MobileUI = ({
                     handleTrackClick={handleTrackClick}
                     key={index}
                     index={index}
-                    nowPlaying={false}
+                    nowPlaying={state[keys.nowPlaying + index]}
                     disabled={state[keys.disabledKey + index]}
                   />
                 );
               }
             })}
           </div>
-          <div className={"mobileButtonContainer"}>
-            <div
-              className="mobileButton"
-              onClick={handlePlayingToggle}
-              style={{ backgroundImage: "url('" + playIcon + "')" }}
-            ></div>
-            <div className="mobileButton ">
-              <div className="mobileHelp">?</div>
-            </div>
-            <div className="mobileButton " onClick={handleDriftToggle}>
-              <div className="mobileHelp" style={{ fontSize: "1rem" }}>
-                {state.drifting ? "EVOLVING" : "EVOLVE"}
-              </div>
-            </div>
-          </div>
+          <MobileSideButtons
+            handlePlayingToggle={handlePlayingToggle}
+            handleDriftToggle={handleDriftToggle}
+            playing={state.playing}
+            drifting={state.drifting}
+          />
         </div>
       )}
       {trackOpen && (
@@ -102,6 +93,9 @@ export const MobileUI = ({
           handlePatternChange={handlePatternChange}
           handleActivityChange={handleActivityChange}
           handleDisableToggle={handleDisableToggle}
+          handleVolumeClick={handleVolumeClick}
+          handleActivityClick={handleActivityClick}
+          handlePatternClick={handlePatternClick}
         />
       )}
       <div className="mobileUIContainerBottom">
@@ -122,12 +116,42 @@ export const MobileUI = ({
   );
 };
 
-const MobileTrackButton = ({
+const MobileSideButtons = React.memo(function MobileSideButtons({
+  handlePlayingToggle,
+  handleDriftToggle,
+  playing,
+  drifting,
+}: any) {
+  let playIcon: string;
+  playing ? (playIcon = pause) : (playIcon = play);
+  return (
+    <div className={"mobileButtonContainer"}>
+      <div
+        className="mobileButton"
+        onClick={handlePlayingToggle}
+        style={{ backgroundImage: "url('" + playIcon + "')" }}
+      ></div>
+      <div className="mobileButton ">
+        <div className="mobileHelp">?</div>
+      </div>
+      <div className="mobileButton " onClick={handleDriftToggle}>
+        <div
+          className={drifting ? "mobileHelp flash" : "mobileHelp"}
+          style={{ fontSize: "1rem" }}
+        >
+          {drifting ? "EVOLVING" : "EVOLVE"}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const MobileTrackButton = React.memo(function MobileTrackButton({
   handleTrackClick,
   index,
   nowPlaying,
   disabled,
-}: any) => {
+}: any) {
   let colorStr = colors[index].toString(16);
   colorStr = "#".concat(colorStr);
 
@@ -154,9 +178,9 @@ const MobileTrackButton = ({
       ></div>
     </div>
   );
-};
+});
 
-const MobileTrackEditor = ({
+const MobileTrackEditor = React.memo(function MobileTrackEditor({
   openIndex,
   nowPlaying,
   state,
@@ -165,7 +189,10 @@ const MobileTrackEditor = ({
   handleActivityChange,
   handlePatternChange,
   handleDisableToggle,
-}: any) => {
+  handleVolumeClick,
+  handleActivityClick,
+  handlePatternClick,
+}: any) {
   let colorStr = colors[openIndex].toString(16);
   colorStr = "#".concat(colorStr);
 
@@ -201,7 +228,10 @@ const MobileTrackEditor = ({
         <div className="trackUI">
           <div className="trackSliderContainer">
             <div className="trackSlider">
-              <IconContainer icon1={volumeOff} />
+              <IconContainer
+                icon1={volumeOff}
+                click={() => handleVolumeClick(-10, openIndex)}
+              />
               <ControlledSlider
                 value={state[keys.volKey + openIndex]}
                 onChange={handleVolumeChange}
@@ -211,11 +241,17 @@ const MobileTrackEditor = ({
                 max={100}
                 step={1}
               />
-              <IconContainer icon1={volumeOn} />
+              <IconContainer
+                icon1={volumeOn}
+                click={() => handleVolumeClick(10, openIndex)}
+              />
             </div>
             {soundSources[openIndex].kind === "inst" ? (
               <div className="trackSlider">
-                <IconContainer icon1={minus} />
+                <IconContainer
+                  icon1={minus}
+                  click={() => handleActivityClick(-10, openIndex)}
+                />
                 <ControlledSlider
                   value={state[keys.actKey + openIndex]}
                   onChange={handleActivityChange}
@@ -225,11 +261,17 @@ const MobileTrackEditor = ({
                   max={100}
                   step={1}
                 />
-                <IconContainer icon1={plus} />
+                <IconContainer
+                  icon1={plus}
+                  click={() => handleActivityClick(10, openIndex)}
+                />
               </div>
             ) : (
               <div className="trackSlider">
-                <IconContainer icon1={minus} />
+                <IconContainer
+                  icon1={minus}
+                  click={() => handlePatternClick(-1, openIndex)}
+                />
                 <ControlledSlider
                   value={state[keys.patKey + openIndex]}
                   onChange={handlePatternChange}
@@ -239,7 +281,10 @@ const MobileTrackEditor = ({
                   max={soundSources[openIndex].patterns.length}
                   step={1}
                 />
-                <IconContainer icon1={plus} />
+                <IconContainer
+                  icon1={plus}
+                  click={() => handlePatternClick(1, openIndex)}
+                />
               </div>
             )}
           </div>
@@ -265,4 +310,4 @@ const MobileTrackEditor = ({
       </div>
     </div>
   );
-};
+});

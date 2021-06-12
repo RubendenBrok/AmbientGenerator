@@ -173,6 +173,7 @@ button {
   height: var(--buttonSize);
   flex-shrink: 0;
   cursor: pointer;
+  transition: box-shadow 0.2s;
 }
 
 .trackSliderContainer {
@@ -184,6 +185,7 @@ button {
   width: 100%;
   display: flex;
   opacity: 0.5;
+  transition: opacity 0.3s;
 }
 
 .trackSlider:hover {
@@ -193,6 +195,7 @@ button {
 .fxSlider {
   display: flex;
   opacity: 0.3;
+  transition: opacity 0.3s;
 }
 
 .fxSlider:hover {
@@ -226,13 +229,9 @@ button {
   margin-left: 20px;
 }
 
-.chordContainer:hover {
-  cursor: pointer;
-  text-shadow: 0 0 10px #ffffff;
-}
-
 .chordProgression {
   display: flex;
+  position: relative;
   justify-self: flex-end;
   width: 300px;
   height: 40px;
@@ -249,15 +248,32 @@ button {
 }
 
 .chordButton {
-  text-align: center;
+  text-align: left;
+  padding-left: 10px;
   line-height: 40px;
   width: 25%;
   height: 100%;
+  position: relative;
 }
 
-.chordButton:hover {
-  text-shadow: 0 0 4px #ffffff;
-  background-color: #666666;
+.chordArrowContainer {
+  width: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.chordArrow {
+  height: 50%;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.chordArrow:hover {
+  opacity: 1;
+  cursor: pointer;
 }
 
 .fxContainer {
@@ -273,6 +289,7 @@ button {
   text-align: center;
   width: var(--bottomButtonSize);
   height: var(--bottomButtonSize);
+  transition: box-shadow 0.3s;
 }
 
 .fxIndicator:hover,
@@ -282,6 +299,7 @@ button {
 
 .fxUI {
   width: calc(var(--UISize) / 1.5);
+  position: relative;
 }
 
 .fxUI,
@@ -289,6 +307,33 @@ button {
   position: absolute;
   bottom: 20px;
   right: 60px;
+}
+
+.closeButton {
+  position: absolute;
+  top: -25px;
+  right: 15px;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+  font-size: 0.8rem;
+}
+
+.left {
+  left: 15px;
+}
+
+.closeButton:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.chordsButton {
+  transition: text-shadow 0.3s;
+}
+
+.chordsButton:hover {
+  text-shadow: var(--hoverShadow);
+  cursor: pointer;
 }
 
 #firstChord {
@@ -364,12 +409,17 @@ button {
   border: var(--borderstyle);
   border-radius: var(--roundness);
   background-repeat: round;
+  transition: box-shadow 0.3s;
 }
 
 .iconContainer {
   width: 15%;
   margin-left: 5%;
   margin-right: 5%;
+}
+
+.iconContainer:hover {
+  cursor: pointer;
 }
 
 .icon {

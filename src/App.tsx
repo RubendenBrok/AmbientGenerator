@@ -124,6 +124,9 @@ export class App extends React.Component<any, any> {
     this.loadChecker = this.loadChecker.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.handleTrackSelect = this.handleTrackSelect.bind(this);
+    this.handleVolumeClick = this.handleVolumeClick.bind(this);
+    this.handleActivityClick = this.handleActivityClick.bind(this);
+    this.handlePatternClick = this.handlePatternClick.bind(this);
   }
 
   startApp() {
@@ -161,6 +164,12 @@ export class App extends React.Component<any, any> {
     );
   }
 
+  handleVolumeClick(amt: number, index: number) {
+    let newVol = this.state[keys.volKey + index] + amt;
+    newVol = Math.min(Math.max(newVol, 0), 100);
+    this.handleVolumeChange(newVol, index);
+  }
+
   handleActivityChange(value: any, index: number) {
     let newActivityState: any = {};
     newActivityState[keys.actKey + index] = parseFloat(value);
@@ -176,6 +185,12 @@ export class App extends React.Component<any, any> {
       );
       this.setState({ ...newSeqState });
     });
+  }
+
+  handleActivityClick(amt: number, index: number) {
+    let newAct = this.state[keys.actKey + index] + amt;
+    newAct = Math.min(Math.max(newAct, 0), 100);
+    this.handleActivityChange(newAct, index);
   }
 
   handleDriftToggle() {
@@ -208,15 +223,20 @@ export class App extends React.Component<any, any> {
     this.setState({ ...newUIState });
   }
 
-  handleChordClick(index: number) {
-    let newSeq = this.state.masterSeq;
-    newSeq.progression[index] = newSeq.progression[index] + 1;
+  handleChordClick(index: number, amt: number) {
+    let newSeq = { ...this.state.masterSeq };
+    newSeq.progression[index] += amt;
     if (newSeq.progression[index] >= chords.length) {
       newSeq.progression[index] = 0;
     }
-    if (newSeq.currentBarInProgression === index) {
-      this.handleChordChange(chords[newSeq.progression[index]].value);
+    if (newSeq.progression[index] < 0) {
+      newSeq.progression[index] = chords.length - 1;
     }
+    this.setState({ ...newSeq }, () => {
+      if (newSeq.currentBarInProgression === index) {
+        this.handleChordChange(chords[newSeq.progression[index]].value);
+      }
+    });
   }
 
   handleChordChange(chord: string) {
@@ -263,6 +283,12 @@ export class App extends React.Component<any, any> {
       );
       this.setState({ ...newSeq });
     });
+  }
+
+  handlePatternClick(amt: number, index: number) {
+    let newPat = this.state[keys.patKey + index] + amt;
+    newPat = Math.min(Math.max(newPat, 1), soundSources[index].patterns.length);
+    this.handlePatternChange(newPat, index);
   }
 
   updateMasterSeq() {
@@ -329,12 +355,22 @@ export class App extends React.Component<any, any> {
         }
         if (
           chords[masterSeq.progression[masterSeq.currentBarInProgression]]
-            .value !== this.state.currentChord
+            .value !== newState.currentChord
         ) {
-          this.handleChordChange(
-            chords[masterSeq.progression[masterSeq.currentBarInProgression]]
-              .value
-          );
+          newState.currentChord =
+            chords[
+              masterSeq.progression[masterSeq.currentBarInProgression]
+            ].value;
+          console.log(newState);
+          soundSources.forEach((track: any, index: any) => {
+            if (track.kind === "inst") {
+              newState[keys.seqKey + index] = updateSeqChords(
+                newState.currentChord,
+                soundSources[index].sounds,
+                newState[keys.seqKey + index]
+              );
+            }
+          });
         }
 
         //should the tempo randomly change?
@@ -342,7 +378,7 @@ export class App extends React.Component<any, any> {
           if (masterSeq.barsPlayed >= masterSeq.tempoChangeTimer) {
             masterSeq.tempoChangeTimer =
               masterSeq.barsPlayed + randomArrEntry(tempoChangeOptions);
-            let newBpm = this.state.bpm;
+            let newBpm = newState.bpm;
             newBpm -= bpmVariance;
             newBpm += Math.round(bpmVariance * 2 * Math.random());
             if (newBpm > maxBpm) {
@@ -523,6 +559,8 @@ export class App extends React.Component<any, any> {
                 state={this.state}
                 handleVolumeChange={this.handleVolumeChange}
                 handleActivityChange={this.handleActivityChange}
+                handleVolumeClick={this.handleVolumeClick}
+                handleActivityClick={this.handleActivityClick}
                 handleDisableToggle={this.handleDisableToggle}
                 handlePatternChange={this.handlePatternChange}
                 handleTrackSelect={this.handleTrackSelect}
@@ -544,6 +582,8 @@ export class App extends React.Component<any, any> {
                 handleVolumeChange={this.handleVolumeChange}
                 handlePatternChange={this.handlePatternChange}
                 handleDisableToggle={this.handleDisableToggle}
+                handleVolumeClick={this.handleVolumeClick}
+                handlePatternClick={this.handlePatternClick}
                 showUI={this.state.showDrumUI}
                 handleTrackSelect={this.handleTrackSelect}
               />
@@ -575,6 +615,9 @@ export class App extends React.Component<any, any> {
             handlePlayingToggle={this.handlePlayingToggle}
             handleDriftToggle={this.handleDriftToggle}
             handleBpmChange={this.handleBpmChange}
+            handleVolumeClick={this.handleVolumeClick}
+            handleActivityClick={this.handleActivityClick}
+            handlePatternClick={this.handlePatternClick}
           />
         )}
       </div>
@@ -605,6 +648,8 @@ const InstContainer = React.memo(function InstrumentContainer(props: any) {
               handlePatternChange={props.handlePatternChange}
               handleDisableToggle={props.handleDisableToggle}
               handleTrackSelect={props.handleTrackSelect}
+              handleVolumeClick={props.handleVolumeClick}
+              handleActivityClick={props.handleActivityClick}
             />
           );
       })}
@@ -638,8 +683,8 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
       className="trackContainer"
       style={{ flexDirection: flexDirection }}
       id={"track" + props.index}
-      onMouseEnter={() => props.handleTrackSelect(props.index, true)}
-      onMouseLeave={() => props.handleTrackSelect(props.index, false)}
+      onMouseOver={() => props.handleTrackSelect(props.index, true)}
+      onMouseOut={() => props.handleTrackSelect(props.index, false)}
     >
       <div
         className={indicatorClass}
@@ -653,7 +698,10 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
         <div className="trackUI">
           <div className="trackSliderContainer">
             <div className="trackSlider">
-              <IconContainer icon1={volumeOff} />
+              <IconContainer
+                icon1={volumeOff}
+                click={() => props.handleVolumeClick(-10, props.index)}
+              />
               <ControlledSlider
                 value={props.volume}
                 onChange={props.handleVolumeChange}
@@ -663,11 +711,17 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                 max={100}
                 step={1}
               />
-              <IconContainer icon1={volumeOn} />
+              <IconContainer
+                icon1={volumeOn}
+                click={() => props.handleVolumeClick(10, props.index)}
+              />
             </div>
             {props.kind === "inst" ? (
               <div className="trackSlider">
-                <IconContainer icon1={minus} />
+                <IconContainer
+                  icon1={minus}
+                  click={() => props.handleActivityClick(-10, props.index)}
+                />
                 <ControlledSlider
                   value={props.range2Value}
                   onChange={props.handleActivityChange}
@@ -677,11 +731,17 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                   max={props.range2Max}
                   step={props.range2Step}
                 />
-                <IconContainer icon1={plus} />
+                <IconContainer
+                  icon1={plus}
+                  click={() => props.handleActivityClick(10, props.index)}
+                />
               </div>
             ) : (
               <div className="trackSlider">
-                <IconContainer icon1={minus} />
+                <IconContainer
+                  icon1={minus}
+                  click={() => props.handlePatternClick(-1, props.index)}
+                />
                 <ControlledSlider
                   value={props.range2Value}
                   onChange={props.handlePatternChange}
@@ -691,7 +751,10 @@ const TrackContainer = React.memo(function TrackUI(props: any) {
                   max={soundSources[props.index].patterns.length}
                   step={props.range2Step}
                 />
-                <IconContainer icon1={plus} />
+                <IconContainer
+                  icon1={plus}
+                  click={() => props.handlePatternClick(1, props.index)}
+                />
               </div>
             )}
           </div>
@@ -726,6 +789,8 @@ const DrumContainer = React.memo(function DrumContainer(props: any) {
               handlePatternChange={props.handlePatternChange}
               handleDisableToggle={props.handleDisableToggle}
               handleTrackSelect={props.handleTrackSelect}
+              handleVolumeClick={props.handleVolumeClick}
+              handlePatternClick={props.handlePatternClick}
             />
           );
       })}
@@ -801,6 +866,9 @@ const FXContainer = React.memo(function FXContainer(props: any) {
               );
             }
           })}
+          <div className="closeButton" onClick={props.handleFxUIToggle}>
+            close
+          </div>
         </div>
       ) : (
         <div className="fxIndicator" onClick={props.handleFxUIToggle}>
@@ -833,7 +901,7 @@ const FXUI = React.memo(function FXUI(props: any) {
 
 export function IconContainer(props: any) {
   return (
-    <div className="iconContainer">
+    <div className="iconContainer" onClick={props.click}>
       <img className="icon" src={props.icon1}></img>
     </div>
   );
