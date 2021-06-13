@@ -550,10 +550,7 @@ export class App extends React.Component<any, any> {
               totalSounds={amountOfSounds}
               loadedSounds={amountOfSoundsLoaded}
             />
-            <FlowButton
-              drifting={this.state.drifting}
-              handleDriftToggle={this.handleDriftToggle}
-            />
+
             <div className="UILeft">
               <InstContainer
                 state={this.state}
@@ -600,6 +597,12 @@ export class App extends React.Component<any, any> {
                 handleBpmChange={this.handleBpmChange}
                 handlePlayingToggle={this.handlePlayingToggle}
               />
+              {!this.state.showFxUI && (
+                <FlowButton
+                  drifting={this.state.drifting}
+                  handleDriftToggle={this.handleDriftToggle}
+                />
+              )}
             </div>
           </div>
         )}
@@ -829,7 +832,7 @@ const PlayContainer = React.memo(function PlayContainer(props: any) {
 const FlowButton = React.memo(function FlowButton(props: any) {
   let selectClass = "";
   if (props.drifting) {
-    selectClass = " drifting";
+    selectClass = " flash";
   }
   return (
     <div
@@ -837,8 +840,7 @@ const FlowButton = React.memo(function FlowButton(props: any) {
       className={"driftButton" + selectClass}
       id="driftButton"
     >
-      FLOW
-      <div className="hoverLine"></div>
+      {props.drifting ? "EVOLVING" : "EVOLVE"}
     </div>
   );
 });
@@ -862,6 +864,7 @@ const FXContainer = React.memo(function FXContainer(props: any) {
                   handleVolumeChange={props.handleVolumeChange}
                   handleDriftToggle={props.handleDriftToggle}
                   handleDisableToggle={props.handleDisableToggle}
+                  label={soundSources[index].name}
                 />
               );
             }
@@ -882,7 +885,7 @@ const FXContainer = React.memo(function FXContainer(props: any) {
 const FXUI = React.memo(function FXUI(props: any) {
   return (
     <div className="fxSlider">
-      <IconContainer icon1={""} />
+      <div className="fxLabel">{props.label}</div>
       <div className="">
         <ControlledSlider
           value={props.volume}

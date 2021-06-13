@@ -19,15 +19,8 @@ let circleMidY: number;
 let ringDistance: number;
 let dotSize: number;
 
-let driftCircleMin = 2;
-const driftCircleUnSelect = 2;
-const driftCircleSelect = 8;
-const driftCircleMax = 12;
-let driftCircle = driftCircleMin;
-let driftHover = false;
-let driftButton: any;
 let driftRippleCounter: number;
-let driftRippleTime = 2000;
+let driftRippleTime = 1000;
 
 const trackWidthSelected = 5;
 const trackWidthUnSelected = 2;
@@ -102,13 +95,13 @@ class rippleCircle {
     this.color = colors[track];
     this.thickness = 2 + 5 * (volume / 100);
     this.creationTime = performance.now();
-    this.lifeTime = 500 + 600 * (volume / 100);
+    this.lifeTime = 300 + 600 * (volume / 100);
     this.beginFade = 200;
     this.fadeTime = this.lifeTime - this.beginFade;
     this.id = objID;
     objID++;
     this.dead = false;
-    this.growth = 0.2 + volume / 300;
+    this.growth = 0.1 + volume / 300;
     this.startOpacity = 0.3;
     this.opacity = this.startOpacity;
     this.update = this.update.bind(this);
@@ -149,9 +142,9 @@ class driftRipple {
   thickness: number;
 
   constructor() {
-    this.size = circleMaxR - ringDistance * amountOfDrawnTracks;
     this.color = 0xffffff;
-    this.thickness = 15;
+    this.thickness = 6;
+    this.size = circleMaxR - ringDistance * amountOfDrawnTracks;
     this.creationTime = performance.now();
     this.lifeTime = 2000;
     this.beginFade = 400;
@@ -159,8 +152,8 @@ class driftRipple {
     this.id = objID;
     objID++;
     this.dead = false;
-    this.growth = 0.3;
-    this.startOpacity = 0.2;
+    this.growth = 0.4;
+    this.startOpacity = 0.1;
     this.opacity = this.startOpacity;
     this.update = this.update.bind(this);
   }
@@ -178,7 +171,7 @@ class driftRipple {
       width / 2,
       height / 2,
       this.size,
-      this.thickness,
+      Math.min(this.size, this.thickness),
       this.color,
       this.opacity
     );
@@ -251,24 +244,7 @@ export function updateGraphics(state: any) {
       circleMidY + circleMaxR * Math.cos((i / 8) * (2 * PI))
     );
   }
-
-  //draw the flow button circle
-  if (state.drifting) {
-    driftCircleMin = driftCircleSelect;
-  } else {
-    driftCircleMin = driftCircleUnSelect;
-  }
-
-  if (driftHover && driftCircle < driftCircleMax) {
-    driftCircle += 1;
-  }
-  if (!driftHover && driftCircle > driftCircleMin) {
-    driftCircle -= 1;
-  }
   let r = circleMaxR - ringDistance * amountOfDrawnTracks;
-  fx.lineStyle(driftCircle, 0xffffff, 0.5);
-  fx.drawCircle(circleMidX, circleMidY, r);
-  overlay.lineStyle(2, 0xffffff, 0.5);
   overlay.drawCircle(circleMidX, circleMidY, r);
 
   //draw ripples if sequencer is drifting
