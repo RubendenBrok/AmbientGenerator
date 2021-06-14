@@ -65,6 +65,7 @@ h2 {
   display: inline-block;
   position: absolute;
   left: 50%;
+  width: 90%;
   transform: translateX(-50%);
   -ms-transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
@@ -81,7 +82,7 @@ h2 {
 }
 
 .startButton:hover .hoverLine {
-  width: 100%;
+  width: 100px;
 }
 
 .quote {
@@ -518,6 +519,10 @@ button {
   transform: translate(-50%, -50%);
 }
 
+.headphoneMessage {
+  font-size: 1.1rem;
+}
+
 .helpTextContainer p,
 li {
   margin-bottom: 20px;
@@ -571,7 +576,11 @@ h1 {
 @media only screen and (max-width: 650px) {
   .quoteContainer {
     width: 88%;
-    font-size: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .quote {
+    margin-bottom: 0;
   }
   .startButton {
     margin-top: -40px;

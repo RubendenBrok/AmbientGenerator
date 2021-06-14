@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 export const LoadingScreen = React.memo(function LoadingScreen(props: any) {
   let opacityClass: string;
@@ -14,7 +14,6 @@ export const LoadingScreen = React.memo(function LoadingScreen(props: any) {
     opacityClass = "show";
   }
   return (
-
     <div
       className={"loadingContainer " + opacityClass}
       style={{ display: displayStr }}
@@ -50,20 +49,19 @@ export const LoadingScreen = React.memo(function LoadingScreen(props: any) {
         <div className="startButton" onClick={props.startApp}>
           Start
           <div className="hoverLine"></div>
+          <div className="headphoneMessage">
+            (This webApp is all about music - Headphones or decent speakers
+            highly recommended!)
+          </div>
         </div>
       ) : (
         <div className="loadingBox">
-          <div>
-          {"Loading sounds"+props.loadingAnimPoints.join("")}
+          <div>{"Loading sounds" + props.loadingAnimPoints.join("")}</div>
+          <div>{props.loadedSounds + " of " + props.totalSounds}</div>
         </div>
-        <div>
-          {props.loadedSounds + " of " + props.totalSounds}
-        </div>
-        </div>
-
       )}
     </div>
   );
 });
 
-export default LoadingScreen
+export default LoadingScreen;
