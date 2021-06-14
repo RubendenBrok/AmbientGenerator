@@ -5,7 +5,13 @@ export function ChordContainer(props: any) {
   return (
     <div className="chordContainer">
       {props.showUI ? (
-        <div className="chordProgression">
+        <div
+          className={
+            !props.mobile
+              ? "chordProgression"
+              : "chordProgression mobileProgression"
+          }
+        >
           <ChordButton
             value={chords[props.progression[0]].value}
             name={chords[props.progression[0]].name}

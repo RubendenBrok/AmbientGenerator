@@ -75,6 +75,16 @@
   margin-top: 30px;
 }
 
+.mobileHelpTextContainer {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  overflow-y: auto;
+}
+
 .mobileButtonContainer {
   width: calc(25% - 20px);
   height: var(--UIHeight);
@@ -90,6 +100,10 @@
   border: none;
   background-repeat: round;
   position: relative;
+}
+
+.mobileDriftButton {
+  margin-top: 22px;
 }
 
 .mobileHelp {

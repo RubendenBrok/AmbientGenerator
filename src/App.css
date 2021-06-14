@@ -239,6 +239,13 @@ button {
   border: var(--borderstyle);
 }
 
+.mobileProgression {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .inst {
   border-radius: 50%;
 }
@@ -417,6 +424,12 @@ button {
   transition: box-shadow 0.3s;
 }
 
+.helpButton {
+  position: absolute;
+  right: 260px;
+  bottom: 20px;
+}
+
 .iconContainer {
   width: 15%;
   margin-left: 5%;
@@ -458,7 +471,7 @@ button {
   bottom: 20px;
   width: 120px;
   height: var(--bottomButtonSize);
-  right: calc(120px);
+  right: 120px;
   border: var(--borderstyle);
   border-radius: var(--roundness);
   text-align: center;
@@ -477,6 +490,34 @@ button {
 
 .drifting {
   text-shadow: 0 0 10px #ffffff;
+}
+
+.helpScreen {
+  position: absolute;
+  background: rgb(40, 40, 40);
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+}
+
+.helpTextContainer {
+  position: absolute;
+  width: 60%;
+  min-width: 650px;
+  height: 90%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.helpTextContainer p,
+li {
+  margin-bottom: 20px;
+}
+
+h1 {
+  text-align: center;
 }
 
 .show {

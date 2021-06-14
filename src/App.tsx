@@ -13,6 +13,7 @@ import {
 } from "./soundplayer";
 
 import { MobileUI } from "./mobileui";
+import HelpScreen from "./helpscreen";
 import { soundSources } from "./soundsources";
 import ChordContainer from "./chordcontainer";
 import LoadingScreen from "./loadingscreen";
@@ -127,6 +128,7 @@ export class App extends React.Component<any, any> {
     this.handleVolumeClick = this.handleVolumeClick.bind(this);
     this.handleActivityClick = this.handleActivityClick.bind(this);
     this.handlePatternClick = this.handlePatternClick.bind(this);
+    this.toggleHelp = this.toggleHelp.bind(this);
   }
 
   startApp() {
@@ -136,6 +138,10 @@ export class App extends React.Component<any, any> {
       setTimeout(this.appLoop, 100);
       setTimeout(() => this.setState({ hideOpeningScreen: true }), 500);
     });
+  }
+
+  toggleHelp() {
+    this.setState({ showHelp: !this.state.showHelp });
   }
 
   handleTrackSelect(index: number, selected: boolean) {
@@ -464,11 +470,12 @@ export class App extends React.Component<any, any> {
       }
 
       //retrigger FX loops if necessary
-      if (performance.now() - masterSeq.FXTimer > FXLength) {
-        playFX(this.state);
-        masterSeq.FXTimer = performance.now();
+      if (!this.state.mobile) {
+        if (performance.now() - masterSeq.FXTimer > FXLength) {
+          playFX(this.state);
+          masterSeq.FXTimer = performance.now();
+        }
       }
-
       this.setState({ masterSeq: { ...masterSeq }, ...newState });
     }
   }
@@ -539,73 +546,81 @@ export class App extends React.Component<any, any> {
   render() {
     return (
       <div>
-        {!this.state.mobileUI && (
-          <div className="UIContainer">
-            <LoadingScreen
-              loaded={this.state.loaded}
-              started={this.state.appStarted}
-              hideOpeningScreen={this.state.hideOpeningScreen}
-              startApp={this.startApp}
-              loadingAnimPoints={this.state.loadingAnimPoints}
-              totalSounds={amountOfSounds}
-              loadedSounds={amountOfSoundsLoaded}
-            />
+        {!this.state.mobileUI &&
+          (this.state.showHelp ? (
+            <HelpScreen mobile={false} toggleHelp={this.toggleHelp} />
+          ) : (
+            <div className="UIContainer">
+              <LoadingScreen
+                loaded={this.state.loaded}
+                started={this.state.appStarted}
+                hideOpeningScreen={this.state.hideOpeningScreen}
+                startApp={this.startApp}
+                loadingAnimPoints={this.state.loadingAnimPoints}
+                totalSounds={amountOfSounds}
+                loadedSounds={amountOfSoundsLoaded}
+              />
 
-            <div className="UILeft">
-              <InstContainer
-                state={this.state}
-                handleVolumeChange={this.handleVolumeChange}
-                handleActivityChange={this.handleActivityChange}
-                handleVolumeClick={this.handleVolumeClick}
-                handleActivityClick={this.handleActivityClick}
-                handleDisableToggle={this.handleDisableToggle}
-                handlePatternChange={this.handlePatternChange}
-                handleTrackSelect={this.handleTrackSelect}
-              />
-              <ChordContainer
-                currentChord={this.state.currentChord}
-                currentBarInProgression={
-                  this.state.masterSeq.currentBarInProgression
-                }
-                progression={this.state.masterSeq.progression}
-                handleChordClick={this.handleChordClick}
-                showUI={this.state.showChordUI}
-                handleChordUIToggle={this.handleChordUIToggle}
-              />
-            </div>
-            <div className="UIRight">
-              <DrumContainer
-                tracks={this.state}
-                handleVolumeChange={this.handleVolumeChange}
-                handlePatternChange={this.handlePatternChange}
-                handleDisableToggle={this.handleDisableToggle}
-                handleVolumeClick={this.handleVolumeClick}
-                handlePatternClick={this.handlePatternClick}
-                showUI={this.state.showDrumUI}
-                handleTrackSelect={this.handleTrackSelect}
-              />
-              <FXContainer
-                UIIndex={2}
-                tracks={this.state}
-                handleVolumeChange={this.handleVolumeChange}
-                handleFxUIToggle={this.handleFxUIToggle}
-                showUI={this.state.showFxUI}
-              />
-              <PlayContainer
-                bpm={this.state.bpm}
-                playing={this.state.playing}
-                handleBpmChange={this.handleBpmChange}
-                handlePlayingToggle={this.handlePlayingToggle}
-              />
-              {!this.state.showFxUI && (
-                <FlowButton
-                  drifting={this.state.drifting}
-                  handleDriftToggle={this.handleDriftToggle}
+              <div className="UILeft">
+                <InstContainer
+                  state={this.state}
+                  handleVolumeChange={this.handleVolumeChange}
+                  handleActivityChange={this.handleActivityChange}
+                  handleVolumeClick={this.handleVolumeClick}
+                  handleActivityClick={this.handleActivityClick}
+                  handleDisableToggle={this.handleDisableToggle}
+                  handlePatternChange={this.handlePatternChange}
+                  handleTrackSelect={this.handleTrackSelect}
                 />
-              )}
+                <ChordContainer
+                  currentChord={this.state.currentChord}
+                  currentBarInProgression={
+                    this.state.masterSeq.currentBarInProgression
+                  }
+                  progression={this.state.masterSeq.progression}
+                  handleChordClick={this.handleChordClick}
+                  showUI={this.state.showChordUI}
+                  handleChordUIToggle={this.handleChordUIToggle}
+                />
+              </div>
+              <div className="UIRight">
+                <DrumContainer
+                  tracks={this.state}
+                  handleVolumeChange={this.handleVolumeChange}
+                  handlePatternChange={this.handlePatternChange}
+                  handleDisableToggle={this.handleDisableToggle}
+                  handleVolumeClick={this.handleVolumeClick}
+                  handlePatternClick={this.handlePatternClick}
+                  showUI={this.state.showDrumUI}
+                  handleTrackSelect={this.handleTrackSelect}
+                />
+                <FXContainer
+                  UIIndex={2}
+                  tracks={this.state}
+                  handleVolumeChange={this.handleVolumeChange}
+                  handleFxUIToggle={this.handleFxUIToggle}
+                  showUI={this.state.showFxUI}
+                />
+                <PlayContainer
+                  bpm={this.state.bpm}
+                  playing={this.state.playing}
+                  handleBpmChange={this.handleBpmChange}
+                  handlePlayingToggle={this.handlePlayingToggle}
+                />
+                {!this.state.showFxUI && (
+                  <FlowButton
+                    drifting={this.state.drifting}
+                    handleDriftToggle={this.handleDriftToggle}
+                  />
+                )}
+                {!this.state.showFxUI && (
+                  <div className="helpButton button" onClick={this.toggleHelp}>
+                    <div className="mobileHelp">?</div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          ))}
         {this.state.mobileUI && (
           <MobileUI
             state={this.state}
@@ -621,6 +636,9 @@ export class App extends React.Component<any, any> {
             handleVolumeClick={this.handleVolumeClick}
             handleActivityClick={this.handleActivityClick}
             handlePatternClick={this.handlePatternClick}
+            handleChordUIToggle={this.handleChordUIToggle}
+            handleChordClick={this.handleChordClick}
+            toggleHelp={this.toggleHelp}
           />
         )}
       </div>
@@ -943,6 +961,7 @@ function initializeState() {
 
   initState.showChordUI = false;
   initState.showFxUI = false;
+  initState.showHelp = false;
 
   initState.appStarted = false;
   initState.loaded = false;
@@ -950,6 +969,7 @@ function initializeState() {
   initState.loadingAnimPoints = [];
 
   initState.trackSelected = [];
+  initState.mobileUI = window.innerWidth < mobile ? true : false;
 
   initState.masterSeq = {
     currentSequencePos: 0,
@@ -961,7 +981,6 @@ function initializeState() {
     tempoChangeTimer: randomArrEntry(tempoChangeOptions),
     currentBarInProgression: 0,
     progression: [5, 5, 4, 3],
-    mobileUI: window.innerWidth < mobile ? true : false,
   };
 
   initState.currentChord = chords[initState.masterSeq.progression[0]].value;

@@ -11,6 +11,9 @@ import React, { useState, useEffect } from "react";
 import { soundSources } from "./soundsources";
 import { colors } from "./visuals";
 import LoadingScreen from "./loadingscreen";
+import HelpScreen from "./helpscreen";
+
+import ChordContainer from "./chordcontainer";
 
 import minus from "./img/minus.svg";
 import plus from "./img/plus.svg";
@@ -37,6 +40,9 @@ export const MobileUI = ({
   handleVolumeClick,
   handleActivityClick,
   handlePatternClick,
+  handleChordUIToggle,
+  handleChordClick,
+  toggleHelp,
 }: any) => {
   const [trackOpen, setTrackOpen] = useState(false);
 
@@ -59,31 +65,45 @@ export const MobileUI = ({
         totalSounds={amountOfSounds}
         loadedSounds={amountOfSoundsLoaded}
       />
-      {!trackOpen && (
-        <div className="mobileUIContainerBase">
-          <div className="mobileTrackContainer">
-            {soundSources.map((track: any, index: number) => {
-              if (track.kind === "drum" || track.kind === "inst") {
-                return (
-                  <MobileTrackButton
-                    handleTrackClick={handleTrackClick}
-                    key={index}
-                    index={index}
-                    nowPlaying={state[keys.nowPlaying + index]}
-                    disabled={state[keys.disabledKey + index]}
-                  />
-                );
-              }
-            })}
-          </div>
-          <MobileSideButtons
-            handlePlayingToggle={handlePlayingToggle}
-            handleDriftToggle={handleDriftToggle}
-            playing={state.playing}
-            drifting={state.drifting}
+      {!trackOpen &&
+        (state.showHelp ? (
+          <HelpScreen mobile={true} toggleHelp={toggleHelp} />
+        ) : state.showChordUI ? (
+          <ChordContainer
+            showUI={true}
+            progression={state.masterSeq.progression}
+            handleChordUIToggle={handleChordUIToggle}
+            handleChordClick={handleChordClick}
+            currentBarInProgression={state.masterSeq.currentBarInProgression}
+            mobile={true}
           />
-        </div>
-      )}
+        ) : (
+          <div className="mobileUIContainerBase">
+            <div className="mobileTrackContainer">
+              {soundSources.map((track: any, index: number) => {
+                if (track.kind === "drum" || track.kind === "inst") {
+                  return (
+                    <MobileTrackButton
+                      handleTrackClick={handleTrackClick}
+                      key={index}
+                      index={index}
+                      nowPlaying={state[keys.nowPlaying + index]}
+                      disabled={state[keys.disabledKey + index]}
+                    />
+                  );
+                }
+              })}
+            </div>
+            <MobileSideButtons
+              handlePlayingToggle={handlePlayingToggle}
+              handleDriftToggle={handleDriftToggle}
+              handleChordUIToggle={handleChordUIToggle}
+              toggleHelp={toggleHelp}
+              playing={state.playing}
+              drifting={state.drifting}
+            />
+          </div>
+        ))}
       {trackOpen && (
         <MobileTrackEditor
           state={state}
@@ -98,20 +118,22 @@ export const MobileUI = ({
           handlePatternClick={handlePatternClick}
         />
       )}
-      <div className="mobileUIContainerBottom">
-        <div className="trackSlider">
-          <img className="speedIcon" src={turtle} />
-          <ControlledSlider
-            vertical={false}
-            index={0}
-            value={state.bpm}
-            onChange={handleBpmChange}
-            min={minBpm}
-            max={maxBpm}
-          />
-          <img className="speedIcon" src={rabbit} />
+      {!state.showChordUI && (
+        <div className="mobileUIContainerBottom">
+          <div className="trackSlider">
+            <img className="speedIcon" src={turtle} />
+            <ControlledSlider
+              vertical={false}
+              index={0}
+              value={state.bpm}
+              onChange={handleBpmChange}
+              min={minBpm}
+              max={maxBpm}
+            />
+            <img className="speedIcon" src={rabbit} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -119,6 +141,8 @@ export const MobileUI = ({
 const MobileSideButtons = React.memo(function MobileSideButtons({
   handlePlayingToggle,
   handleDriftToggle,
+  handleChordUIToggle,
+  toggleHelp,
   playing,
   drifting,
 }: any) {
@@ -131,10 +155,21 @@ const MobileSideButtons = React.memo(function MobileSideButtons({
         onClick={handlePlayingToggle}
         style={{ backgroundImage: "url('" + playIcon + "')" }}
       ></div>
-      <div className="mobileButton ">
+      <div className="mobileButton " onClick={toggleHelp}>
         <div className="mobileHelp">?</div>
       </div>
-      <div className="mobileButton " onClick={handleDriftToggle}>
+      <div className="mobileButton " onClick={handleChordUIToggle}>
+        <div
+          className={drifting ? "mobileHelp flash" : "mobileHelp"}
+          style={{ fontSize: "1rem" }}
+        >
+          CHORDS
+        </div>
+      </div>
+      <div
+        className="mobileButton mobileDriftButton"
+        onClick={handleDriftToggle}
+      >
         <div
           className={drifting ? "mobileHelp flash" : "mobileHelp"}
           style={{ fontSize: "1rem" }}

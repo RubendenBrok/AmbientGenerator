@@ -169,7 +169,7 @@ class driftRipple {
     // graph.beginFill(this.color, this.opacity);
     drawFXCircle(
       width / 2,
-      height / 2,
+      circleMidY,
       this.size,
       Math.min(this.size, this.thickness),
       this.color,
@@ -318,7 +318,7 @@ export function screenResize() {
     circleMaxR = Math.min(height, width) / 2 - 20;
     circleMinR = circleMaxR / 4;
     circleMidX = width / 2;
-    circleMidY = height - width / 2 - (height / 1.5 - width);
+    circleMidY = height - width / 2 - (height / 1.65 - width);
     ringDistance = (circleMaxR - circleMinR) / (amountOfDrawnTracks - 1);
     dotSize = 10;
   } else {
