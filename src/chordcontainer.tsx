@@ -19,6 +19,7 @@ export function ChordContainer(props: any) {
             index={0}
             handleChordClick={props.handleChordClick}
             id="firstChord"
+            mobile={props.mobile}
           />
           <ChordButton
             value={chords[props.progression[1]].value}
@@ -27,6 +28,7 @@ export function ChordContainer(props: any) {
             index={1}
             handleChordClick={props.handleChordClick}
             id="secondChord"
+            mobile={props.mobile}
           />
           <ChordButton
             value={chords[props.progression[2]].value}
@@ -35,6 +37,7 @@ export function ChordContainer(props: any) {
             index={2}
             handleChordClick={props.handleChordClick}
             id="thirdChord"
+            mobile={props.mobile}
           />
           <ChordButton
             value={chords[props.progression[3]].value}
@@ -43,6 +46,7 @@ export function ChordContainer(props: any) {
             index={3}
             handleChordClick={props.handleChordClick}
             id="lastChord"
+            mobile={props.mobile}
           />
           <div className="closeButton left" onClick={props.handleChordUIToggle}>
             close
@@ -64,6 +68,9 @@ function ChordButton(props: any) {
   let extraClass = "";
   if (props.currentBarInProgression === props.index) {
     extraClass = " currentChord";
+  }
+  if (props.mobile) {
+    extraClass += " mobileChordButton";
   }
   return (
     <div className={"chordButton" + extraClass} id={props.id}>
