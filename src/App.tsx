@@ -470,7 +470,7 @@ export class App extends React.Component<any, any> {
       }
 
       //retrigger FX loops if necessary
-      if (!this.state.mobile) {
+      if (!this.state.mobileUI) {
         if (performance.now() - masterSeq.FXTimer > FXLength) {
           playFX(this.state);
           masterSeq.FXTimer = performance.now();
