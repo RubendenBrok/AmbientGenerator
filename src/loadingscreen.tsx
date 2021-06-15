@@ -50,7 +50,7 @@ export const LoadingScreen = React.memo(function LoadingScreen(props: any) {
           Start
           <div className="hoverLine"></div>
           <div className="headphoneMessage">
-            (This webApp is all about music - Headphones or decent speakers
+            (This web app is all about music - Headphones or decent speakers
             highly recommended!)
           </div>
         </div>

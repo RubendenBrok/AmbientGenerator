@@ -159,10 +159,7 @@ const MobileSideButtons = React.memo(function MobileSideButtons({
         <div className="mobileHelp">?</div>
       </div>
       <div className="mobileButton " onClick={handleChordUIToggle}>
-        <div
-          className={drifting ? "mobileHelp flash" : "mobileHelp"}
-          style={{ fontSize: "1rem" }}
-        >
+        <div className="mobileHelp" style={{ fontSize: "1rem" }}>
           CHORDS
         </div>
       </div>
